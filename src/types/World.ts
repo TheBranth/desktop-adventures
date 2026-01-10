@@ -1,21 +1,36 @@
-export interface InteractionObject {
-    id: string;
-    name: string;
-    sprite_key: string;
-    x: number;
-    y: number;
-    type: 'pickup' | 'readable' | 'switch';
-    effect?: string;
-    usable: boolean;
-}
+export type EnemyType = 'intern' | 'roomba' | 'manager' | 'printer';
+export type ItemType = 'weapon' | 'consumable' | 'key_blue' | 'key_red' | 'pto_form';
+export type AIState = 'idle' | 'chase' | 'patrol' | 'alert' | 'stunned';
 
 export interface Enemy {
     id: string;
-    type: string;
-    start_x: number;
-    start_y: number;
+    type: EnemyType;
+    x: number;
+    y: number;
     hp: number;
-    state: 'idle' | 'alert' | 'stunned';
+    maxHp: number;
+    damage: number;
+    aiState: AIState;
+    // For patrol logic
+    patrolDir?: { x: number, y: number };
+}
+
+export interface InteractionObject {
+    id: string;
+    type: string; // 'pickup', 'vending', 'desk', 'whiteboard', 'server'
+    x: number;
+    y: number;
+    sprite_key: string;
+    // Item properties
+    itemType?: ItemType;
+    effect?: string; // 'heal', 'damage', 'unlock'
+    value?: number; // HP heal amount, or Damage amount
+    range?: number; // Weapon range
+    // Container properties
+    cost?: number; // Vending machine cost
+    loot_table?: { item: ItemType, chance: number }[];
+    // Text properties
+    text?: string; // Whiteboard text
 }
 
 export interface Room {
@@ -27,19 +42,17 @@ export interface Room {
     objects: InteractionObject[];
 }
 
-export interface RoomNode {
-    x: number;
-    y: number;
-    type: 'start' | 'end' | 'key' | 'lock' | 'normal';
-    connections: RoomNode[]; // Adjacency list
-}
-
 export interface GameState {
     currentRoomId: string;
     playerX: number;
     playerY: number;
-    inventory: string[];
     hp: number;
     burnout: number; // 0-100
+    inventory: string[];
+    credits: number; // Score/Currency
     worldMap: { [key: string]: Room }; // Map room_id to Room data
+    // Engine Room Specs
+    tower_level: number;
+    global_flags: { [key: string]: boolean };
+    visited_rooms: string[];
 }
