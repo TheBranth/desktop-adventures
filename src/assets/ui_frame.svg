@@ -1,0 +1,50 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- UI: Spreadsheet Frame (Windows 95 style) -->
+  
+  <!-- Outer Bevel (Raised) -->
+  <rect x="0" y="0" width="800" height="600" fill="#C0C0C0" />
+  <path d="M0 0 H800 V600 H0 Z" fill="none" stroke="#FFF" stroke-width="2" stroke-dasharray="800 600" stroke-dashoffset="0" /> <!-- Top/Left Highlight -->
+  <path d="M0 600 H800 V0" stroke="#808080" stroke-width="2" fill="none" /> <!-- Bottom/Right Shadow -->
+  
+  <!-- Title Bar -->
+  <rect x="4" y="4" width="792" height="30" fill="#000080" />
+  <text x="10" y="24" font-family="sans-serif" font-weight="bold" font-size="16" fill="#FFF">Microsoft Excel - Dungeon.xls</text>
+  
+  <!-- Window Controls -->
+  <rect x="770" y="8" width="22" height="22" fill="#C0C0C0" stroke="#FFF" stroke-width="2" /> <!-- X Button -->
+  <line x1="775" y1="13" x2="787" y2="25" stroke="#000" stroke-width="2" />
+  <line x1="775" y1="25" x2="787" y2="13" stroke="#000" stroke-width="2" />
+  
+  <!-- Menu Bar -->
+  <rect x="4" y="34" width="792" height="24" fill="#C0C0C0" />
+  <text x="10" y="50" font-family="sans-serif" font-size="14" fill="#000">File  Edit  View  Insert  Format  Tools  Data  Window  Help</text>
+  
+  <!-- Toolbar Area -->
+  <rect x="4" y="58" width="792" height="30" fill="#C0C0C0" />
+  <!-- Icons placeholder -->
+  <rect x="10" y="62" width="22" height="22" fill="#FFF" stroke="#808080" />
+  <rect x="36" y="62" width="22" height="22" fill="#FFF" stroke="#808080" />
+  <rect x="62" y="62" width="22" height="22" fill="#FFF" stroke="#808080" />
+  
+  <!-- Formula Bar -->
+  <rect x="4" y="88" width="792" height="24" fill="#C0C0C0" />
+  <rect x="40" y="90" width="750" height="20" fill="#FFF" stroke="#808080" stroke-width="1" />
+  <text x="45" y="105" font-family="monospace" font-size="14" fill="#000">=SUM(HP, AMMO)</text>
+  
+  <!-- Main Grid Area (Transparent Center for Game) -->
+  <rect x="4" y="116" width="792" height="460" fill="none" /> <!-- This is where the game renders -->
+  
+  <!-- Scroll Bars -->
+  <!-- Right Scroll -->
+  <rect x="776" y="116" width="20" height="460" fill="#DFDFDF" stroke="#F0F0F0" />
+  <rect x="778" y="118" width="16" height="16" fill="#C0C0C0" stroke="#FFF" /> <!-- Up Arrow BG -->
+  <path d="M786 122 L790 130 H782 Z" fill="#000" /> <!-- Up Arrow -->
+  
+  <!-- Bottom Scroll -->
+  <rect x="4" y="576" width="772" height="20" fill="#DFDFDF" stroke="#F0F0F0" />
+
+  <!-- Sheet Tabs -->
+  <rect x="4" y="576" width="60" height="18" fill="#FFF" stroke="#000" />
+  <text x="10" y="588" font-family="sans-serif" font-size="12" fill="#000">Sheet1</text>
+  
+</svg>

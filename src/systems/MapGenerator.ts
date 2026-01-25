@@ -40,14 +40,6 @@ export class MapGenerator {
             keyNode = this.getRandomNode();
         }
 
-        // Place Lock (Adjacent to Goal for simplicity, or on path)
-        // Let's pick a neighbor of Goal that is reachable
-        // For simple topology, we mark the connection entering Goal as locked. 
-        // We will designate a "Lock Room" that connects to the Goal.
-        // Ideally, Lock Room is just the Goal's neighbor on the path.
-        // For now, let's just mark the Goal Room as needing a key to ENTER.
-        // Or strictly follow spec: "Select a coordinate [lX, lY] adjacent to the Goal... Mark connection to Goal as LOCKED_DOOR."
-
         // We will generate the grid first.
         const rooms: { [key: string]: Room } = {};
         for (let y = 0; y < this.height; y++) {
@@ -61,8 +53,28 @@ export class MapGenerator {
         // Start Room
         this.populateReception(rooms[`${startNode.x}_${startNode.y}`]);
 
-        // Key Room
+        // Key Room (Blue)
         this.populateKeyRoom(rooms[`${keyNode.x}_${keyNode.y}`], 'key_blue');
+
+        // MacGuffin Room (Furthest from Start besides Key/Goal?)
+        let mgNode = this.getRandomNode();
+        while (this.getManhattanDist(startNode, mgNode) <= 3 ||
+            (mgNode.x === keyNode.x && mgNode.y === keyNode.y) ||
+            (mgNode.x === goalNode.x && mgNode.y === goalNode.y)) {
+            mgNode = this.getRandomNode();
+        }
+        this.populateMacGuffinRoom(rooms[`${mgNode.x}_${mgNode.y}`], 'The Objective');
+
+        // Red Key Room (Another random node)
+        let redKeyNode = this.getRandomNode();
+        while (this.getManhattanDist(startNode, redKeyNode) <= 3 ||
+            (redKeyNode.x === keyNode.x && redKeyNode.y === keyNode.y) ||
+            (redKeyNode.x === goalNode.x && redKeyNode.y === goalNode.y) ||
+            (redKeyNode.x === mgNode.x && redKeyNode.y === mgNode.y)) {
+            redKeyNode = this.getRandomNode();
+        }
+        this.populateRedKeyRoom(rooms[`${redKeyNode.x}_${redKeyNode.y}`]);
+
 
         // Goal Room
         this.populateGoalRoom(rooms[`${goalNode.x}_${goalNode.y}`]);
@@ -74,7 +86,9 @@ export class MapGenerator {
                 // Skip if Start, Key, or Goal (already populated)
                 if ((x === startNode.x && y === startNode.y) ||
                     (x === keyNode.x && y === keyNode.y) ||
-                    (x === goalNode.x && y === goalNode.y)) continue;
+                    (x === goalNode.x && y === goalNode.y) ||
+                    (x === mgNode.x && y === mgNode.y) ||
+                    (x === redKeyNode.x && y === redKeyNode.y)) continue;
 
                 this.populateRandomRoom(rooms[id]);
             }
@@ -87,6 +101,7 @@ export class MapGenerator {
             playerX: 5,
             playerY: 5,
             hp: 20, // Spec: 20
+            maxHp: 20,
             burnout: 0,
             inventory: [],
             credits: 0,
@@ -139,14 +154,32 @@ export class MapGenerator {
 
     private populateKeyRoom(room: Room, keyType: ItemType) {
         room.enemies.push(this.createEnemy('manager', 5, 5));
-        room.objects.push({ x: 5, y: 8, id: 'key', type: 'pickup', sprite_key: 'key_blue', itemType: keyType });
+        room.objects.push({ x: 5, y: 8, id: 'key', type: 'pickup', sprite_key: 'key_blue', itemType: keyType }); // Barrier Key
+    }
+
+    private populateRedKeyRoom(room: Room) {
+        room.enemies.push(this.createEnemy('printer', 5, 5));
+        room.objects.push({ x: 5, y: 5, id: 'key_red', type: 'pickup', sprite_key: 'key_red', itemType: 'key_red' }); // Elevator Key
     }
 
     private populateGoalRoom(room: Room) {
         room.enemies.push(this.createEnemy('printer', 3, 3));
         room.enemies.push(this.createEnemy('printer', 7, 3));
-        room.objects.push({ x: 5, y: 5, id: 'elevator', type: 'readable', sprite_key: 'door', text: '[ELEVATOR] Needs Blue Keycard.' });
-        // Logic for win condition will be in InteractionSystem
+
+        // Barrier blocking the elevator
+        room.objects.push({ x: 5, y: 6, id: 'barrier', type: 'barrier', sprite_key: 'wall', text: 'Security Barrier' }); // Sprite? Wall for now.
+
+        // Elevator
+        room.objects.push({ x: 5, y: 4, id: 'elevator', type: 'elevator', sprite_key: 'door', text: '[ELEVATOR] Needs MacGuffin & Red Key.' });
+    }
+
+    private populateMacGuffinRoom(room: Room, name: string) {
+        room.enemies.push(this.createEnemy('roomba', 4, 4));
+        // Check if name contains 'Stapler' etc for sprite?
+        let sprite = 'consumable';
+        if (name.includes('Stapler')) sprite = 'weapon'; // Reuse weapon icon
+
+        room.objects.push({ x: 5, y: 5, id: 'macguffin', type: 'pickup', sprite_key: sprite, itemType: name });
     }
 
     private populateRandomRoom(room: Room) {
@@ -184,7 +217,7 @@ export class MapGenerator {
     private createEnemy(type: EnemyType, x: number, y: number): Enemy {
         const stats = {
             'intern': { hp: 10, maxHp: 10, damage: 2 },
-            'roomba': { hp: 999, maxHp: 999, damage: 5 },
+            'roomba': { hp: 25, maxHp: 25, damage: 5 },
             'manager': { hp: 15, maxHp: 15, damage: 3 },
             'printer': { hp: 30, maxHp: 30, damage: 4 }
         };

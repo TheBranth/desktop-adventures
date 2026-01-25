@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Environment: Frozen Floor -->
+  <!-- Blue-tinted carpet with ice patches and Grid Border -->
+  
+  <rect width="32" height="32" fill="#CFD8DC" stroke="#B0BEC5" stroke-width="1" />
+  
+  <!-- Ice Patches -->
+  <path d="M5 8 Q10 4 15 10 T25 8" fill="#E1F5FE" opacity="0.8" />
+  <path d="M20 20 Q24 16 28 22 T22 28" fill="#E1F5FE" opacity="0.8" />
+  <circle cx="8" cy="24" r="3" fill="#E1F5FE" opacity="0.8" />
+  
+  <!-- Sparkles -->
+  <path d="M10 10 L11 8 L12 10 L14 11 L12 12 L11 14 L10 12 L8 11 Z" fill="#FFF" />
+  <path d="M24 24 L25 22 L26 24 L28 25 L26 26 L25 28 L24 26 L22 25 Z" fill="#FFF" />
+</svg>

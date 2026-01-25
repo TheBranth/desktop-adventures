@@ -1,0 +1,41 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Protagonist: Temp (The Salaryman) -->
+  <!-- Top-down 3/4 view, Chibi style -->
+  
+  <!-- Shadow/Grounding -->
+  <ellipse cx="16" cy="29" rx="8" ry="3" fill="rgba(0,0,0,0.3)" />
+
+  <!-- Legs/Pants (Brown) -->
+  <rect x="11" y="22" width="4" height="6" fill="#5D4037" />
+  <rect x="17" y="22" width="4" height="6" fill="#5D4037" />
+
+  <!-- Body/Shirt (White, untucked) -->
+  <rect x="10" y="14" width="12" height="10" rx="2" fill="#FFFFFF" />
+  <path d="M10 14 L10 24 L22 24 L22 14 Z" fill="#EEE" opacity="0.5" /> <!-- Shading -->
+  
+  <!-- Arms (White sleeves) -->
+  <rect x="8" y="15" width="3" height="7" rx="1" fill="#FFFFFF" />
+  <rect x="21" y="15" width="3" height="7" rx="1" fill="#FFFFFF" />
+  <!-- Hands (Skin tone) -->
+  <circle cx="9.5" cy="22.5" r="1.5" fill="#FFCCBC" />
+  <circle cx="22.5" cy="22.5" r="1.5" fill="#FFCCBC" />
+
+  <!-- Tie (Red, loose) -->
+  <path d="M15 14 L17 14 L16.5 20 L15.5 20 Z" fill="#D32F2F" />
+
+  <!-- Head (Skin tone, Oversized) -->
+  <rect x="9" y="4" width="14" height="12" rx="3" fill="#FFCCBC" />
+
+  <!-- Hair (Balding, sides only, dark grey) -->
+  <path d="M9 7 L9 12 L7 12 L7 6 L9 4 Z" fill="#424242" />
+  <path d="M23 7 L23 12 L25 12 L25 6 L23 4 Z" fill="#424242" />
+
+  <!-- Glasses (Thick black rims) -->
+  <rect x="10" y="8" width="5" height="3" stroke="#000" stroke-width="1" fill="rgba(200,240,255,0.5)" />
+  <rect x="17" y="8" width="5" height="3" stroke="#000" stroke-width="1" fill="rgba(200,240,255,0.5)" />
+  <line x1="15" y1="9.5" x2="17" y2="9.5" stroke="#000" stroke-width="1" />
+
+  <!-- Mouth (Tired line) -->
+  <path d="M14 14 Q16 13 18 14" stroke="#8D6E63" stroke-width="1" fill="none" />
+
+</svg>

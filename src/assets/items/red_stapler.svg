@@ -1,0 +1,21 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Item: Red Stapler -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Base (Silver/Grey) -->
+    <rect x="6" y="24" width="20" height="4" rx="1" fill="#9E9E9E" />
+    
+    <!-- Top Arm (Red Plastic) -->
+    <path d="M6 18 L26 14 L26 18 L6 22 Z" fill="#D32F2F" />
+    <path d="M26 14 A 2 2 0 0 1 26 18" fill="#B71C1C" /> <!-- Rounded back -->
+    
+    <!-- Hinge Mechanism -->
+    <circle cx="25" cy="19" r="1.5" fill="#424242" />
+  </g>
+</svg>

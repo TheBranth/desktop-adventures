@@ -1,0 +1,18 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Environment: Office Floor -->
+  <!-- Grey Carpet Loops with Grid Border -->
+  
+  <rect width="32" height="32" fill="#9E9E9E" stroke="#757575" stroke-width="1" />
+  
+  <!-- Noise Pattern -->
+  <rect x="2" y="2" width="2" height="2" fill="#BDBDBD" />
+  <rect x="10" y="5" width="2" height="2" fill="#757575" />
+  <rect x="20" y="3" width="2" height="2" fill="#BDBDBD" />
+  <rect x="28" y="8" width="2" height="2" fill="#757575" />
+  <rect x="5" y="15" width="2" height="2" fill="#BDBDBD" />
+  <rect x="15" y="12" width="2" height="2" fill="#757575" />
+  <rect x="25" y="18" width="2" height="2" fill="#BDBDBD" />
+  <rect x="8" y="25" width="2" height="2" fill="#757575" />
+  <rect x="18" y="22" width="2" height="2" fill="#BDBDBD" />
+  <rect x="30" y="28" width="2" height="2" fill="#757575" />
+</svg>

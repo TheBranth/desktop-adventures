@@ -1,0 +1,24 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Item: Signed PTO Form -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Paper -->
+    <rect x="8" y="6" width="16" height="20" fill="#FFF" stroke="#EEE" stroke-width="1" />
+    
+    <!-- Text Lines -->
+    <line x1="10" y1="9" x2="22" y2="9" stroke="#9E9E9E" stroke-width="1" />
+    <line x1="10" y1="12" x2="22" y2="12" stroke="#9E9E9E" stroke-width="1" />
+    <line x1="10" y1="15" x2="22" y2="15" stroke="#9E9E9E" stroke-width="1" />
+    <line x1="10" y1="18" x2="22" y2="18" stroke="#9E9E9E" stroke-width="1" />
+    
+    <!-- Signature (Red Stamp or Ink) -->
+    <path d="M14 22 Q16 20 18 22 T22 21" stroke="#D50000" stroke-width="2" fill="none" />
+    <text x="12" y="24" font-family="sans-serif" font-size="4" fill="#D50000" transform="rotate(-15 16 23)">APPROVED</text>
+  </g>
+</svg>

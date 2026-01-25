@@ -1,0 +1,33 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enemy: The IT Ninja -->
+  <!-- Black Hoodie, Hidden Face, Ethernet Nunchucks -->
+
+  <!-- Shadow -->
+  <ellipse cx="16" cy="29" rx="6" ry="2" fill="rgba(0,0,0,0.3)" />
+
+  <!-- Legs (Black skinny jeans) -->
+  <rect x="13" y="18" width="2" height="10" fill="#212121" />
+  <rect x="17" y="18" width="2" height="10" fill="#212121" />
+
+  <!-- Body (Black Hoodie) -->
+  <rect x="11" y="12" width="10" height="10" rx="3" fill="#212121" />
+  
+  <!-- Head (Wrapped in fabric) -->
+  <circle cx="16" cy="9" r="5" fill="#212121" />
+  
+  <!-- Face/Monitor Glow (Mysterious green glow) -->
+  <path d="M14 8 H18 V10 H14 Z" fill="#00E676" opacity="0.8" filter="url(#glow)" />
+  
+  <!-- Weapon: Ethernet Cable Nunchucks -->
+  <!-- Handle 1 -->
+  <rect x="8" y="15" width="2" height="6" fill="#424242" transform="rotate(45 9 18)" />
+  <!-- Cable -->
+  <path d="M9 15 Q12 10 16 6" stroke="#2962FF" stroke-width="2" fill="none" />
+  <!-- Plug head -->
+  <rect x="15" y="5" width="3" height="3" fill="#E0E0E0" />
+  
+  <!-- Arms (Crossed or holding weapons) -->
+  <rect x="10" y="13" width="3" height="6" fill="#212121" />
+  <rect x="19" y="13" width="3" height="6" fill="#212121" />
+
+</svg>

@@ -1,0 +1,28 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Item: Rolled-up Newspaper -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)" transform="rotate(-45 16 16)">
+    <!-- Roll Body -->
+    <rect x="12" y="6" width="8" height="20" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="1" />
+    
+    <!-- Text Lines -->
+    <line x1="14" y1="8" x2="18" y2="8" stroke="#424242" stroke-width="1" />
+    <line x1="14" y1="11" x2="18" y2="11" stroke="#424242" stroke-width="1" />
+    <line x1="14" y1="14" x2="18" y2="14" stroke="#424242" stroke-width="1" />
+    <line x1="14" y1="17" x2="18" y2="17" stroke="#424242" stroke-width="1" />
+    <line x1="14" y1="20" x2="18" y2="20" stroke="#424242" stroke-width="1" />
+    
+    <!-- Rubber Band -->
+    <rect x="11" y="12" width="10" height="2" fill="#F44336" />
+    
+    <!-- Roll End -->
+    <ellipse cx="16" cy="26" rx="4" ry="1.5" fill="#BDBDBD" stroke="#9E9E9E" stroke-width="1" />
+    <path d="M16 26 L16 25" stroke="#424242" stroke-width="1" /> <!-- Spiral hint -->
+  </g>
+</svg>

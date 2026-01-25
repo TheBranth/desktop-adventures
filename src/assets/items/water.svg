@@ -1,0 +1,23 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Item: Water Cooler Jug (or Cup of Water?) -->
+  <!-- Brief says "Water Cooler Jug: Clears Stun" but an icon of a whole jug might be big. -->
+  <!-- Let's do a blue plastic cup or a mini jug icon. -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Cup -->
+    <path d="M10 10 L12 24 L20 24 L22 10 Z" fill="rgba(33, 150, 243, 0.3)" stroke="#2196F3" stroke-width="1" />
+    
+    <!-- Water Level -->
+    <path d="M11 14 L12 24 L20 24 L21 14 Z" fill="rgba(33, 150, 243, 0.6)" />
+    
+    <!-- Bubbles -->
+    <circle cx="15" cy="20" r="1" fill="#FFF" opacity="0.6" />
+    <circle cx="17" cy="17" r="1" fill="#FFF" opacity="0.6" />
+  </g>
+</svg>

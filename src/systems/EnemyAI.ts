@@ -38,22 +38,59 @@ export class EnemyAI {
                 dy = enemy.patrolDir.y;
                 break;
 
+            case 'printer':
+                // Turret: Line of Sight check
+                const distP = Math.abs(gameState.playerX - enemy.x) + Math.abs(gameState.playerY - enemy.y);
+                if (distP > 4) return; // Range Limit (Nerf)
+
+                // Same Row
+                if (enemy.y === gameState.playerY) {
+                    // Check for walls between
+                    if (this.hasLineOfSight(enemy.x, enemy.y, gameState.playerX, gameState.playerY, room, false)) {
+                        log("Printer blasts you with toner! (Ranged)");
+                        gameState.hp = Math.max(0, gameState.hp - 2);
+                        gameState.burnout += 2;
+                        return; // Attacked, so don't move (it doesn't move anyway)
+                    }
+                }
+                // Same Column
+                else if (enemy.x === gameState.playerX) {
+                    if (this.hasLineOfSight(enemy.x, enemy.y, gameState.playerX, gameState.playerY, room, true)) {
+                        log("Printer blasts you with toner! (Ranged)");
+                        gameState.hp = Math.max(0, gameState.hp - 2);
+                        gameState.burnout += 2;
+                        return;
+                    }
+                }
+                return; // Stationary
+
             case 'manager':
-                // Kiting: Maintain distance 3
-                const dist = Math.abs(gameState.playerX - enemy.x) + Math.abs(gameState.playerY - enemy.y);
-                if (dist < 3) {
-                    // Too close, run away
+                // Kiting & Shouting
+                // Dist formula
+                const distM = Math.abs(gameState.playerX - enemy.x) + Math.abs(gameState.playerY - enemy.y);
+
+                // Shout Ability (Range 3-4)
+                if (distM >= 3 && distM <= 4 && Math.random() < 0.15) { // Reduced from 0.3
+                    log("Manager yells about TPS reports! +10 Burnout.");
+                    gameState.burnout = Math.min(100, gameState.burnout + 10);
+                    return; // Action taken
+                }
+
+                // Movement Logic (Maintain Dist 3)
+                if (distM < 2) {
+                    // Too close, run away (Only if very close)
                     if (gameState.playerX > enemy.x) dx = -1;
                     else if (gameState.playerX < enemy.x) dx = 1;
                     else if (gameState.playerY > enemy.y) dy = -1;
                     else if (gameState.playerY < enemy.y) dy = 1;
+                } else if (distM > 4) {
+                    // Too far, close in
+                    if (gameState.playerX > enemy.x) dx = 1;
+                    else if (gameState.playerX < enemy.x) dx = -1;
+                    else if (gameState.playerY > enemy.y) dy = 1;
+                    else if (gameState.playerY < enemy.y) dy = -1;
                 }
-                // If optimal distance, maybe attack? (Attacks handled separately)
                 break;
-
-            case 'printer':
-                // Turret: Does not move
-                return;
         }
 
         // Try move
@@ -108,6 +145,25 @@ export class EnemyAI {
         // Other Enemies
         if (room.enemies.some(e => e.x === x && e.y === y && e.hp > 0)) return false;
 
+        return true;
+    }
+
+    private static hasLineOfSight(x1: number, y1: number, x2: number, y2: number, room: Room, vertical: boolean): boolean {
+        if (vertical) {
+            // x is constant
+            const start = Math.min(y1, y2);
+            const end = Math.max(y1, y2);
+            for (let y = start + 1; y < end; y++) {
+                if (room.collision_map[y][x1] === 1) return false; // Wall hit
+            }
+        } else {
+            // y is constant
+            const start = Math.min(x1, x2);
+            const end = Math.max(x1, x2);
+            for (let x = start + 1; x < end; x++) {
+                if (room.collision_map[y1][x] === 1) return false; // Wall hit
+            }
+        }
         return true;
     }
 }

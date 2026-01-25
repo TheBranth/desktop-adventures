@@ -22,7 +22,7 @@ export interface InteractionObject {
     y: number;
     sprite_key: string;
     // Item properties
-    itemType?: ItemType;
+    itemType?: string;
     effect?: string; // 'heal', 'damage', 'unlock'
     value?: number; // HP heal amount, or Damage amount
     range?: number; // Weapon range
@@ -47,6 +47,7 @@ export interface GameState {
     playerX: number;
     playerY: number;
     hp: number;
+    maxHp: number;
     burnout: number; // 0-100
     inventory: string[];
     credits: number; // Score/Currency

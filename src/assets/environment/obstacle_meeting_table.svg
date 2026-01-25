@@ -1,0 +1,42 @@
+<svg width="96" height="64" viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Environment: Meeting Table (3x2 Tiles = 96x64) -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Chairs (Tucked in) -->
+    <!-- Top Row -->
+    <rect x="20" y="8" width="16" height="12" rx="2" fill="#424242" />
+    <rect x="40" y="8" width="16" height="12" rx="2" fill="#424242" />
+    <rect x="60" y="8" width="16" height="12" rx="2" fill="#424242" />
+    
+    <!-- Bottom Row -->
+    <rect x="20" y="44" width="16" height="12" rx="2" fill="#424242" />
+    <rect x="40" y="44" width="16" height="12" rx="2" fill="#424242" />
+    <rect x="60" y="44" width="16" height="12" rx="2" fill="#424242" />
+
+    <!-- Table Top (Oval-ish Rect) -->
+    <rect x="10" y="16" width="76" height="32" rx="8" fill="#A1887F" stroke="#8D6E63" stroke-width="2" />
+    
+    <!-- Table Grain/Reflection -->
+    <path d="M18 20 L78 20" stroke="#FFF" stroke-width="2" opacity="0.2" stroke-linecap="round" />
+    
+    <!-- Meeting Clutter -->
+    <!-- Papers -->
+    <rect x="24" y="24" width="8" height="10" fill="#FFF" transform="rotate(10 28 29)" />
+    <rect x="50" y="26" width="8" height="10" fill="#FFF" transform="rotate(-5 54 31)" />
+    
+    <!-- Laptop (Open) -->
+    <rect x="64" y="22" width="14" height="10" fill="#212121" />
+    <rect x="65" y="23" width="12" height="8" fill="#424242" /> <!-- Screen off -->
+    <rect x="64" y="32" width="14" height="8" fill="#616161" /> <!-- Keyboard part -->
+    
+    <!-- Coffee Cups -->
+    <circle cx="35" cy="35" r="3" fill="#FFF" stroke="#EEE" stroke-width="1" />
+    <circle cx="35" cy="35" r="2" fill="#3E2723" />
+  </g>
+</svg>

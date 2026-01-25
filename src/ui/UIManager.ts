@@ -5,11 +5,27 @@ export class UIManager {
     private hpBar: HTMLElement | null;
     private burnoutBar: HTMLElement | null;
     private messageLog: HTMLElement | null;
+    private minimapGrid: HTMLElement | null;
 
     private constructor() {
         this.hpBar = document.getElementById('hp-bar');
         this.burnoutBar = document.getElementById('burnout-bar');
         this.messageLog = document.getElementById('message-log');
+        this.minimapGrid = document.getElementById('minimap-grid');
+        this.initMinimap();
+    }
+
+    private initMinimap() {
+        if (!this.minimapGrid) return;
+        this.minimapGrid.innerHTML = '';
+        for (let y = 0; y < 10; y++) {
+            for (let x = 0; x < 10; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'map-cell unknown';
+                cell.id = `map-${x}_${y}`;
+                this.minimapGrid.appendChild(cell);
+            }
+        }
     }
 
     public static getInstance(): UIManager {
@@ -19,16 +35,117 @@ export class UIManager {
         return UIManager.instance;
     }
 
-    public updateStats(hp: number, maxHp: number, burnout: number) {
+    public updateStats(hp: number, maxHp: number, burnout: number, credits: number) {
         if (this.hpBar) {
             const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
             this.hpBar.style.width = `${hpPercent}%`;
         }
+
+        const hpVal = document.getElementById('hp-value');
+        if (hpVal) {
+            hpVal.textContent = `${hp}/${maxHp}`;
+        }
+
         if (this.burnoutBar) {
             this.burnoutBar.style.width = `${Math.max(0, Math.min(100, burnout))}%`;
-            // Change color based on stage?
             if (burnout >= 50) this.burnoutBar.style.backgroundColor = 'purple';
             else this.burnoutBar.style.backgroundColor = 'blue';
+        }
+
+        const burnVal = document.getElementById('burnout-value');
+        if (burnVal) {
+            burnVal.textContent = `${burnout}%`;
+            burnVal.style.color = burnout >= 80 ? '#FF5555' : '#CCCCCC';
+        }
+
+        const credVal = document.getElementById('credits-value');
+        if (credVal) {
+            credVal.textContent = `¥${credits}`;
+        }
+
+        const headerStats = document.getElementById('header-stats');
+        if (headerStats) {
+            headerStats.textContent = `HP: ${hp}/${maxHp} | Burnout: ${burnout}%`;
+            headerStats.style.fontSize = '12px';
+            headerStats.style.color = '#aaa';
+            headerStats.style.marginTop = '4px';
+        }
+    }
+
+    public updateMinimap(visited: string[], currentRoomId: string) {
+        if (!this.minimapGrid) return;
+
+        for (let y = 0; y < 10; y++) {
+            for (let x = 0; x < 10; x++) {
+                const id = `${x}_${y}`;
+                const cell = document.getElementById(`map-${id}`);
+                if (!cell) continue;
+
+                cell.className = 'map-cell';
+
+                if (id === currentRoomId) {
+                    cell.classList.add('current');
+                } else if (visited.includes(id)) {
+                    cell.classList.add('visited');
+                } else {
+                    cell.classList.add('unknown');
+                }
+            }
+        }
+    }
+
+    public onItemClick: ((itemId: string, index: number) => void) | null = null;
+
+    public updateInventory(inventory: string[]) {
+        const grid = document.getElementById('inventory-grid');
+        if (!grid) return;
+
+        // Clear existing slots
+        grid.innerHTML = '';
+
+        // Generate slots for items
+        inventory.forEach((itemId, index) => {
+            const slot = document.createElement('div');
+            slot.className = 'slot';
+            slot.style.width = '100%';
+            slot.style.aspectRatio = '1';
+            slot.style.background = '#2A2A2A';
+            slot.style.border = '1px solid var(--border-color)';
+            slot.style.borderRadius = '8px';
+            slot.style.display = 'flex';
+            slot.style.alignItems = 'center';
+            slot.style.justifyContent = 'center';
+            slot.style.fontSize = '24px';
+            slot.style.cursor = 'pointer';
+            slot.title = itemId;
+
+            // Hover effects handled by CSS .slot:hover
+
+            const div = document.createElement('div');
+            div.textContent = this.getItemEmoji(itemId);
+            slot.appendChild(div);
+
+            slot.onclick = () => {
+                if (this.onItemClick) this.onItemClick(itemId, index);
+            };
+
+            grid.appendChild(slot);
+        });
+    }
+
+    private getItemEmoji(id: string): string {
+        switch (id) {
+            case 'coffee': return '☕';
+            case 'consumable': return '☕';
+            case 'id_card': return '🪪';
+            case 'stapler': return '📌';
+            case 'weapon': return '⚔️';
+            case 'key_blue': return '💳';
+            case 'key_red': return '🔥';
+            case 'granola_bar': return '🍫';
+            case 'mint': return '🍬';
+            case 'vitamin_pill': return '💊';
+            default: return '📦';
         }
     }
 
@@ -36,11 +153,9 @@ export class UIManager {
         if (this.messageLog) {
             const p = document.createElement('p');
             p.className = 'log-entry';
-            // Simple timestamp mock
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             p.innerHTML = `<span style="color:#666; font-size:10px; margin-right:5px;">${time}</span>${message}`;
             this.messageLog.appendChild(p);
-            // Auto scroll
             this.messageLog.scrollTop = this.messageLog.scrollHeight;
         }
     }

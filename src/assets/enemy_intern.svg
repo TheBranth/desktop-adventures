@@ -1,0 +1,36 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enemy: The Intern -->
+  <!-- Young, Hoodie, Papers -->
+
+  <!-- Shadow -->
+  <ellipse cx="16" cy="29" rx="7" ry="2.5" fill="rgba(0,0,0,0.3)" />
+
+  <!-- Legs (Jeans) -->
+  <rect x="12" y="22" width="3" height="6" fill="#1565C0" />
+  <rect x="17" y="22" width="3" height="6" fill="#1565C0" />
+
+  <!-- Body (Hoodie - Green) -->
+  <path d="M10 12 L22 12 L23 23 L9 23 Z" fill="#4CAF50" />
+  
+  <!-- Arms/Sleeves -->
+  <rect x="8" y="13" width="3" height="8" rx="1" fill="#4CAF50" />
+  <rect x="21" y="13" width="3" height="8" rx="1" fill="#4CAF50" />
+
+  <!-- Hands holding papers -->
+  <circle cx="9.5" cy="21.5" r="1.5" fill="#FFCCBC" />
+  <circle cx="22.5" cy="21.5" r="1.5" fill="#FFCCBC" />
+
+  <!-- Stack of Papers (White rectangles) -->
+  <rect x="19" y="18" width="6" height="5" fill="#EEE" stroke="#999" stroke-width="0.5" transform="rotate(-15 22 20.5)" />
+  
+  <!-- Head (Skin tone, Hood up) -->
+  <!-- Hood base -->
+  <path d="M10 5 Q16 -1 22 5 L22 13 L10 13 Z" fill="#4CAF50" />
+  <!-- Face area -->
+  <rect x="12" y="6" width="8" height="7" rx="2" fill="#FFCCBC" />
+  
+  <!-- Eyes (Wide, eager/scared) -->
+  <circle cx="14" cy="9" r="1" fill="#000" />
+  <circle cx="18" cy="9" r="1" fill="#000" />
+
+</svg>

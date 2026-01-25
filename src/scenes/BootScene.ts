@@ -6,52 +6,98 @@ export class BootScene extends Phaser.Scene {
     }
 
     preload() {
-        // Load assets here later
-        // this.load.image('logo', 'assets/logo.png');
+        // Load assets
+        this.load.image('chars', 'src/assets/sprites_character_2.png');
+
+        // Load SVGs
+        // Enemies
+        this.load.svg('intern', 'src/assets/enemy_intern.svg', { width: 32, height: 32 });
+        this.load.svg('manager', 'src/assets/enemy_manager.svg', { width: 32, height: 32 });
+        this.load.svg('printer', 'src/assets/enemy_printer.svg', { width: 32, height: 32 });
+        this.load.svg('roomba', 'src/assets/enemy_roomba.svg', { width: 32, height: 32 });
+
+        // Hero
+        this.load.svg('protagonist', 'src/assets/protagonist_sheet.svg', { width: 96, height: 32 }); // 3 frames x 32
+
+
+        // Environment
+        this.load.svg('floor', 'src/assets/environment/floor_office.svg', { width: 32, height: 32 });
+        this.load.svg('wall', 'src/assets/environment/wall_office.svg', { width: 32, height: 32 });
+        this.load.svg('floor_server', 'src/assets/environment/floor_server.svg', { width: 32, height: 32 });
+        this.load.svg('wall_server', 'src/assets/environment/wall_server.svg', { width: 32, height: 32 });
+
+        // Items
+        this.load.svg('coffee', 'src/assets/items/coffee.svg', { width: 32, height: 32 });
+        this.load.svg('consumable', 'src/assets/items/coffee.svg', { width: 32, height: 32 }); // Alias
+        this.load.svg('key_blue', 'src/assets/items/keycard_blue.svg', { width: 32, height: 32 });
+        this.load.svg('key_red', 'src/assets/items/keycard_red.svg', { width: 32, height: 32 });
+        this.load.svg('stapler', 'src/assets/items/red_stapler.svg', { width: 32, height: 32 });
+        this.load.svg('weapon', 'src/assets/items/newspaper.svg', { width: 32, height: 32 }); // Newspaper as weapon
+        this.load.svg('macguffin', 'src/assets/items/floppy.svg', { width: 32, height: 32 });
+        this.load.svg('id_card', 'src/assets/items/pto_form.svg', { width: 32, height: 32 }); // PTO Form as ID? Close enough.
+
+        // New Consumables Mapping
+        this.load.svg('granola_bar', 'src/assets/items/granola_bar.svg', { width: 32, height: 32 });
+        this.load.svg('mint', 'src/assets/items/mint.svg', { width: 32, height: 32 });
+        this.load.svg('vitamin_pill', 'src/assets/items/vitamin_pill.svg', { width: 32, height: 32 });
     }
 
     create() {
-        // Generate Placeholder Patterns
+        // Create Textures from the "Master Sheet" for legacy if needed, or define frames for SVG sheet
+        if (this.textures.exists('protagonist')) {
+            const tex = this.textures.get('protagonist');
+            // Frame 0: Idle
+            tex.add('idle', 0, 0, 0, 32, 32);
+            // Frame 1: Walk L
+            tex.add('move_0', 0, 32, 0, 32, 32);
+            // Frame 2: Walk R
+            tex.add('move_1', 0, 64, 0, 32, 32);
+
+            console.log('Protagonist SVG frames added.');
+        } else if (this.textures.exists('chars')) {
+            // ... Legacy (PNG) ...
+            const tex = this.textures.get('chars');
+            tex.add('idle_0', 0, 585, 45, 225, 455);
+            tex.add('idle_1', 0, 1020, 45, 300, 455);
+            tex.add('move_0', 0, 1185, 560, 280, 440);
+            tex.add('move_1', 0, 1485, 560, 270, 440);
+            tex.add('attack_0', 0, 505, 1075, 425, 415);
+        }
+
+        // Generate Placeholder Patterns (Fallback for Environment)
         const gfx = this.make.graphics({ x: 0, y: 0 });
 
-        // Wall
-        gfx.fillStyle(0x444444); gfx.fillRect(0, 0, 32, 32); gfx.generateTexture('wall', 32, 32); gfx.clear();
-
-        // Floor (Modern Carpet)
-        gfx.fillStyle(0x222222); gfx.fillRect(0, 0, 32, 32);
-        gfx.lineStyle(1, 0x333333); gfx.strokeRect(0, 0, 32, 32);
-        gfx.generateTexture('floor', 32, 32); gfx.clear();
-
-        // Player
-        gfx.fillStyle(0xffffff); gfx.fillRect(4, 4, 24, 24); gfx.generateTexture('player', 32, 32); gfx.clear();
-
-        // Enemies
-        // Intern (Green Hoodie)
-        gfx.fillStyle(0x00ff00); gfx.fillRect(4, 4, 24, 24); gfx.generateTexture('intern', 32, 32); gfx.clear();
-        // Roomba (Red Circle)
-        gfx.fillStyle(0xff0000); gfx.fillCircle(16, 16, 12); gfx.generateTexture('roomba', 32, 32); gfx.clear();
-        // Manager (Blue Suit)
-        gfx.fillStyle(0x0000ff); gfx.fillRect(4, 4, 24, 24); gfx.generateTexture('manager', 32, 32); gfx.clear();
-        // Printer (Grey Box)
-        gfx.fillStyle(0x888888); gfx.fillRect(2, 2, 28, 28); gfx.generateTexture('printer', 32, 32); gfx.clear();
-
-        // Items
-        // Blue Key
-        gfx.fillStyle(0x0000ff); gfx.fillRect(10, 8, 12, 16); gfx.generateTexture('key_blue', 32, 32); gfx.clear();
-        // Red Key
-        gfx.fillStyle(0xff0000); gfx.fillRect(10, 8, 12, 16); gfx.generateTexture('key_red', 32, 32); gfx.clear();
-        // Newspaper
-        gfx.fillStyle(0xdddddd); gfx.fillRect(8, 12, 16, 8); gfx.generateTexture('weapon', 32, 32); gfx.clear();
-        // Coffee
-        gfx.fillStyle(0x6f4e37); gfx.fillCircle(16, 16, 8); gfx.generateTexture('consumable', 32, 32); gfx.clear();
+        // Helper to generate if missing
+        const createPlaceholder = (key: string, color: number, shape: 'rect' | 'circle' = 'rect') => {
+            if (!this.textures.exists(key)) {
+                gfx.fillStyle(color);
+                if (shape === 'rect') gfx.fillRect(4, 4, 24, 24);
+                else gfx.fillCircle(16, 16, 12);
+                gfx.generateTexture(key, 32, 32);
+                gfx.clear();
+            }
+        };
 
         // Environment
-        // Desk
-        gfx.fillStyle(0x8b4513); gfx.fillRect(0, 10, 32, 12); gfx.generateTexture('desk', 32, 32); gfx.clear();
-        // Vending
-        gfx.fillStyle(0x333333); gfx.fillRect(4, 0, 24, 32); gfx.fillStyle(0x00ffff); gfx.fillRect(6, 4, 20, 10); gfx.generateTexture('vending', 32, 32); gfx.clear();
+        createPlaceholder('wall', 0x444444);
+        createPlaceholder('floor', 0x222222);
+        createPlaceholder('desk', 0x8b4513);
+        createPlaceholder('vending', 0x00ffff);
 
-        console.log('BootScene created. Starting GameScene...');
-        this.scene.start('GameScene');
+        // Items
+        createPlaceholder('key_blue', 0x0000ff);
+        createPlaceholder('key_red', 0xff0000);
+        createPlaceholder('weapon', 0xdddddd);
+        createPlaceholder('consumable', 0x6f4e37, 'circle');
+        createPlaceholder('macguffin', 0xffff00); // New
+
+        // Enemies
+        createPlaceholder('intern', 0x00ff00);
+        createPlaceholder('roomba', 0xff0000, 'circle');
+        createPlaceholder('manager', 0x0000ff);
+        createPlaceholder('printer', 0x888888);
+
+        console.log('BootScene created. Starting StartScreen...');
+        this.scene.start('StartScreen');
     }
 }

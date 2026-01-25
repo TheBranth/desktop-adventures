@@ -1,0 +1,21 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Item: Blue Keycard -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Card -->
+    <rect x="8" y="10" width="16" height="12" rx="2" fill="#2196F3" stroke="#1565C0" stroke-width="1" />
+    
+    <!-- Chip / Stripe -->
+    <rect x="10" y="12" width="4" height="3" fill="#FFC107" />
+    <rect x="8" y="18" width="16" height="2" fill="#0D47A1" />
+    
+    <!-- Lanyard Hole -->
+    <circle cx="16" cy="11" r="1" fill="#FFF" />
+  </g>
+</svg>

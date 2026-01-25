@@ -1,0 +1,41 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enemy: The Middle Manager -->
+  <!-- Blue Suit, Red Face, Angry -->
+
+  <!-- Shadow -->
+  <ellipse cx="16" cy="29" rx="9" ry="3" fill="rgba(0,0,0,0.3)" />
+
+  <!-- Legs (Suit Pants) -->
+  <rect x="11" y="21" width="4" height="7" fill="#1A237E" />
+  <rect x="17" y="21" width="4" height="7" fill="#1A237E" />
+
+  <!-- Body (Suit Jacket - Broad shouldered) -->
+  <path d="M8 12 L24 12 L22 23 L10 23 Z" fill="#283593" />
+  <!-- Tie (Yellow power tie) -->
+  <path d="M15 13 L17 13 L16 19 Z" fill="#FFEB3B" />
+
+  <!-- Arms -->
+  <rect x="6" y="13" width="4" height="8" rx="1" fill="#283593" />
+  <rect x="22" y="13" width="4" height="8" rx="1" fill="#283593" />
+
+  <!-- Hands -->
+  <circle cx="8" cy="21" r="2" fill="#EF9A9A" /> <!-- Reddened skin -->
+  <circle cx="24" cy="21" r="2" fill="#EF9A9A" />
+
+  <!-- Coffee Mug (held in right hand) -->
+  <path d="M23 19 H26 V22 H23 Z" fill="#FFF" />
+  <path d="M26 20 Q27 20 27 21 S26 22 26 22" fill="none" stroke="#FFF" stroke-width="1" />
+
+  <!-- Head (Big, Red/Angry) -->
+  <rect x="10" y="4" width="12" height="11" rx="3" fill="#FF5252" />
+  
+  <!-- Hair (Slicked back grey) -->
+  <path d="M10 6 L10 5 Q16 2 22 5 L22 6 L10 6 Z" fill="#9E9E9E" />
+
+  <!-- Face (Angry eyebrows, shouting mouth) -->
+  <path d="M11 8 L14 10" stroke="#000" stroke-width="1" />
+  <path d="M21 8 L18 10" stroke="#000" stroke-width="1" />
+  
+  <rect x="13" y="11" width="6" height="3" rx="1" fill="#000" /> <!-- Open mouth -->
+
+</svg>

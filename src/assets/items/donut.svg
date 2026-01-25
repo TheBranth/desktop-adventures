@@ -1,0 +1,28 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Item: Gluten-Free Donut -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Donut Body -->
+    <circle cx="16" cy="16" r="10" fill="#D7CCC8" />
+    <!-- Hole -->
+    <circle cx="16" cy="16" r="3" fill="#FFF" /> <!-- Assuming white background, or transparent if needed but SVG has no bg -->
+    
+    <!-- Icing (Pink) -->
+    <path d="M16 16 m -10 0 a 10 10 0 1 1 20 0 a 10 10 0 1 1 -20 0" fill="none" stroke="#F48FB1" stroke-width="5" stroke-dasharray="10, 5" />
+    <!-- Actually let's draw a proper icing blob -->
+    <path d="M6 16 Q6 6 16 6 Q26 6 26 16 Q26 26 16 26 Q6 26 6 16" fill="none" /> <!-- Guide -->
+    <path d="M7 16 Q7 7 16 7 Q25 7 25 16 Q25 25 16 25 Q7 25 7 16" fill="none" stroke="#F48FB1" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Sprinkles -->
+    <rect x="12" y="10" width="3" height="1" fill="#FFF" transform="rotate(45 13.5 10.5)" />
+    <rect x="18" y="12" width="3" height="1" fill="#FFF" transform="rotate(-30 19.5 12.5)" />
+    <rect x="14" y="20" width="3" height="1" fill="#FFF" />
+    <rect x="20" y="18" width="3" height="1" fill="#FFF" transform="rotate(90 21.5 18.5)" />
+  </g>
+</svg>

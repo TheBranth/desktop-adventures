@@ -1,0 +1,30 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enemy: The Printer Beast -->
+  <!-- Large copier, paper teeth, toner spewing -->
+
+  <!-- Shadow -->
+  <ellipse cx="16" cy="28" rx="12" ry="4" fill="rgba(0,0,0,0.3)" />
+
+  <!-- Main Body (Beige Box) -->
+  <rect x="6" y="10" width="20" height="18" rx="2" fill="#E0E0E0" />
+  <rect x="6" y="10" width="20" height="18" rx="2" fill="none" stroke="#BDBDBD" stroke-width="1" />
+
+  <!-- Paper Tray (Mouth) -->
+  <path d="M10 14 H22 V20 H10 Z" fill="#424242" />
+  <!-- Teeth (Jagged Paper) -->
+  <path d="M10 14 L12 17 L14 14 L16 17 L18 14 L20 17 L22 14" fill="#FFF" />
+  <path d="M10 20 L12 17 L14 20 L16 17 L18 20 L20 17 L22 20" fill="#FFF" />
+
+  <!-- Control Panel -->
+  <rect x="20" y="8" width="6" height="4" fill="#616161" transform="skewX(-10)" />
+  <circle cx="22" cy="10" r="1" fill="#00E676" /> <!-- Green light -->
+  <circle cx="24" cy="10" r="1" fill="#F44336" /> <!-- Red light -->
+
+  <!-- Toner Leak (Black blob) -->
+  <path d="M12 25 Q16 30 20 25 T12 25" fill="#212121" />
+  
+  <!-- Eyes? (Does a printer have eyes? Maybe sensors) -->
+  <rect x="8" y="11" width="2" height="2" fill="#F44336" />
+  <rect x="22" y="11" width="2" height="2" fill="#F44336" />
+
+</svg>
