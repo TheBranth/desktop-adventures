@@ -41,6 +41,11 @@ export class GameScene extends Phaser.Scene {
         // Setup Groups
         this.mapGroup = this.add.group();
 
+        // Create Player
+        this.player = this.add.sprite(0, 0, 'protagonist').setOrigin(0);
+        this.player.setDepth(100);
+        this.updatePlayerSprite(); // Snap to grid immediately
+
         // Render Initial Room
         this.renderRoom();
 
@@ -62,6 +67,9 @@ export class GameScene extends Phaser.Scene {
 
             this.input.keyboard.on('keydown', this.handleInput, this);
         }
+
+        // Mouse Input
+        this.input.on('pointerdown', this.handlePointerDown, this);
 
         this.cameras.main.setBackgroundColor('#111');
 
@@ -118,6 +126,7 @@ export class GameScene extends Phaser.Scene {
             if (dy === -1) this.gameState.playerY = 10;
 
             this.renderRoom();
+            this.updatePlayerSprite(); // Ensure sprite moves to new entry point
             this.updateUI();
         } else {
             this.uiManager.log("Restricted Area.");
@@ -134,9 +143,14 @@ export class GameScene extends Phaser.Scene {
         for (let y = 0; y < 11; y++) {
             for (let x = 0; x < 11; x++) {
                 const cell = room.collision_map[y][x];
-                const texture = cell === 1 ? 'wall' : 'floor';
+                let texture = 'floor';
+                if (cell === 1) texture = 'wall';
+                else if (cell === 2) texture = 'window';
+
                 const tile = this.mapGroup.create(x * this.tileSize, y * this.tileSize, texture).setOrigin(0);
-                if (cell === 1) tile.setTint(0x888888);
+
+                // Dim walls/windows slightly for atmosphere?
+                if (cell === 1 || cell === 2) tile.setTint(0xCCCCCC);
             }
         }
 
@@ -166,50 +180,17 @@ export class GameScene extends Phaser.Scene {
             }
         });
 
-        // Player
-        if (!this.player || !this.player.active) {
-            // Check for new SVG texture first
-            const textureKey = this.textures.exists('protagonist') ? 'protagonist' : (this.textures.exists('chars') ? 'chars' : 'player_fallback');
-            const frameKey = this.textures.exists('protagonist') ? 'idle' : (this.textures.exists('chars') ? 'idle_0' : undefined);
-
-            this.player = this.add.sprite(
-                this.gameState.playerX * this.tileSize,
-                this.gameState.playerY * this.tileSize,
-                textureKey,
-                frameKey
-            ).setOrigin(0.5, 1);
-
-            if (textureKey === 'chars') {
-                this.player.setScale(32 / 455);
-            } else if (textureKey === 'protagonist') {
-                // SVG is already 32x32 per frame, but origin 0.5, 1 needs alignment
-                // If it's 1x1 grid size, we might want 0,0 origin for simplicity? 
-                // But let's stick to center-bottom to match logic
-                this.player.setOrigin(0, 0);
-            } else {
-                this.player.setOrigin(0);
-            }
-
-            this.player.setDepth(10);
-        }
-
-        this.updatePlayerSprite();
+        // Player logic continues...
+        // ...
     }
+
+    // ... (re-find Player Code block if needed, but the chunk above ends before it ideally) ...
+    // Wait, replacing lines 134-167 to include window logic.
 
     private getEmoji(key: string): string | null {
         switch (key) {
-            // case 'key_blue': return '💳'; // Now SVG
-            // case 'key_red': return '🔥'; 
-            // case 'item': case 'consumable': return '☕';
             case 'elevator': return '🛗';
-            // case 'weapon': return '⚔️';
-            // case 'intern': return '🧟';
-            // case 'manager': return '🧛';
-            // case 'printer': return '🖨️';
-            // case 'roomba': return '🧹';
-            default:
-                // if (key.includes('Stapler')) return '📎';
-                return null;
+            default: return null;
         }
     }
 
@@ -229,9 +210,13 @@ export class GameScene extends Phaser.Scene {
                 this.gameState.playerY * this.tileSize
             );
         }
+
+        // Ensure Player is always on top
+        this.player.setDepth(100);
+        this.player.setVisible(true); // Redundant but safe
+        console.log(`Debug Player: [${this.gameState.playerX},${this.gameState.playerY}] -> (${this.player.x},${this.player.y})`);
     }
 
-    // Animation Loop
     update(time: number, delta: number) {
         if (!this.player) return;
 
@@ -248,7 +233,6 @@ export class GameScene extends Phaser.Scene {
             if (this.playerState === 'IDLE') {
                 this.player.setFrame('idle');
             }
-            // MOVE state frames are set in executePhase2
             return;
         }
 
@@ -258,6 +242,8 @@ export class GameScene extends Phaser.Scene {
             this.player.setFrame(frame);
         }
     }
+
+    // ...
 
     // Phase 1: Input Validation
     private handleInput(event: KeyboardEvent) {
@@ -288,9 +274,10 @@ export class GameScene extends Phaser.Scene {
         }
 
         const room = this.gameState.worldMap[this.gameState.currentRoomId];
-        // Wall Check
-        if (room.collision_map[targetY][targetX] === 1) {
-            this.uiManager.log("Bonk! That's a wall.");
+        // Wall/Window Check
+        const cell = room.collision_map[targetY][targetX];
+        if (cell === 1 || cell === 2) {
+            this.uiManager.log(cell === 2 ? "A nice view of the void." : "Bonk! That's a wall.");
             // Bump logic (maybe small sound/shake)
             return;
         }
@@ -378,7 +365,9 @@ export class GameScene extends Phaser.Scene {
         this.turnLock = true;
 
         // Enemy Moves
-        EnemyAI.processTurn(this.gameState, (msg) => this.uiManager.log(msg));
+        EnemyAI.processTurn(this.gameState, (msg) => this.uiManager.log(msg), (type, x, y, tx, ty) => {
+            this.handleEnemyFX(type, x, y, tx, ty);
+        });
 
         // Re-render
         this.renderRoom();
@@ -425,8 +414,88 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
+
+    private handleEnemyFX(type: string, x: number, y: number, tx: number, ty: number) {
+        if (type === 'projectile') {
+            // Toner Blast
+            const startX = (x * this.tileSize) + 16;
+            const startY = (y * this.tileSize) + 16;
+            const endX = (tx * this.tileSize) + 16;
+            const endY = (ty * this.tileSize) + 16;
+
+            const blob = this.add.circle(startX, startY, 6, 0x000000); // Black Toner
+            blob.setDepth(200);
+
+            this.tweens.add({
+                targets: blob,
+                x: endX,
+                y: endY,
+                duration: 200,
+                onComplete: () => {
+                    blob.destroy();
+                    // Splash effect?
+                    const splash = this.add.circle(endX, endY, 12, 0x000000);
+                    splash.setDepth(199);
+                    this.tweens.add({
+                        targets: splash,
+                        alpha: 0,
+                        scale: 2,
+                        duration: 300,
+                        onComplete: () => splash.destroy()
+                    });
+                }
+            });
+        }
+    }
+
+    // Targeting State
+    private targetingItem: string | null = null;
+
+    // ... handleInput ...
+
+    private handlePointerDown(pointer: Phaser.Input.Pointer) {
+        if (this.turnLock || !this.targetingItem) return;
+
+        // Convert to Grid Coords
+        const x = Math.floor(pointer.worldX / this.tileSize);
+        const y = Math.floor(pointer.worldY / this.tileSize);
+
+        if (x < 0 || x > 10 || y < 0 || y > 10) return;
+
+        // Check Range (Stapler Ranged Attack)
+        if (this.targetingItem === 'stapler' || this.targetingItem === 'weapon') {
+            const output = InteractionSystem.handleRangedAttack(
+                this.gameState,
+                x,
+                y,
+                this.targetingItem,
+                (msg) => this.uiManager.log(msg),
+                (id) => this.flashEnemyDamage(id)
+            );
+
+            if (output.success) {
+                // Consume turn?
+                this.targetingItem = null;
+                this.uiManager.log("Targeting Disengaged.");
+                this.executePhase3_World();
+            }
+        }
+    }
+
     private handleItemUse(itemId: string, index: number) {
         if (this.turnLock || this.gameState.hp <= 0) return;
+
+        // Toggle Targeting
+        if (itemId === 'stapler' || itemId === 'weapon') {
+            if (this.targetingItem === itemId) {
+                this.targetingItem = null;
+                this.uiManager.log("Targeting Cancelled.");
+            } else {
+                this.targetingItem = itemId;
+                this.uiManager.log(`Aiming ${itemId}... Click a target!`);
+            }
+            return;
+        }
 
         let used = false;
         if (itemId === 'consumable' || itemId === 'coffee') {
@@ -447,8 +516,6 @@ export class GameScene extends Phaser.Scene {
             this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 10);
             this.uiManager.log("Vitamin C Boost! HP +10.");
             used = true;
-        } else if (itemId === 'weapon' || itemId === 'stapler') {
-            this.uiManager.log(`You brandish the ${itemId} menacingly.`);
         } else if (itemId === 'id_card') {
             this.uiManager.log("Access Card. Use on Barriers automatically.");
         } else {
@@ -459,7 +526,7 @@ export class GameScene extends Phaser.Scene {
             // Remove 1 instance
             this.gameState.inventory.splice(index, 1);
             this.updateUI();
-            this.executePhase3_World(); // Consumes a turn? Let's say yes for balance.
+            this.executePhase3_World();
         }
     }
 

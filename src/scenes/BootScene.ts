@@ -23,8 +23,19 @@ export class BootScene extends Phaser.Scene {
         // Environment
         this.load.svg('floor', 'src/assets/environment/floor_office.svg', { width: 32, height: 32 });
         this.load.svg('wall', 'src/assets/environment/wall_office.svg', { width: 32, height: 32 });
+        this.load.svg('window', 'src/assets/environment/window_office.svg', { width: 32, height: 32 }); // Edge decoration
+        this.load.svg('obstacle_plant', 'src/assets/environment/obstacle_plant.svg', { width: 32, height: 32 });
         this.load.svg('floor_server', 'src/assets/environment/floor_server.svg', { width: 32, height: 32 });
         this.load.svg('wall_server', 'src/assets/environment/wall_server.svg', { width: 32, height: 32 });
+        this.load.svg('vending', 'src/assets/environment/vending.svg', { width: 32, height: 32 });
+        this.load.svg('obstacle_meeting_table', 'src/assets/environment/obstacle_meeting_table.svg', { width: 96, height: 64 });
+        this.load.svg('water_cooler', 'src/assets/environment/obstacle_water_cooler.svg', { width: 32, height: 32 });
+        this.load.svg('desk', 'src/assets/environment/obstacle_desk.svg', { width: 32, height: 32 });
+
+        // UI Icons
+        this.load.svg('icon_heart', 'src/assets/ui/ui_icon_heart.svg', { width: 32, height: 32 });
+        this.load.svg('icon_fire', 'src/assets/ui/ui_icon_fire.svg', { width: 32, height: 32 });
+        this.load.svg('icon_coin', 'src/assets/ui/ui_icon_coin.svg', { width: 32, height: 32 });
 
         // Items
         this.load.svg('coffee', 'src/assets/items/coffee.svg', { width: 32, height: 32 });
@@ -80,9 +91,8 @@ export class BootScene extends Phaser.Scene {
 
         // Environment
         createPlaceholder('wall', 0x444444);
-        createPlaceholder('floor', 0x222222);
-        createPlaceholder('desk', 0x8b4513);
         createPlaceholder('vending', 0x00ffff);
+        // Desks & Coolers now have assets!
 
         // Items
         createPlaceholder('key_blue', 0x0000ff);

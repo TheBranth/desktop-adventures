@@ -20,6 +20,8 @@ export interface InteractionObject {
     type: string; // 'pickup', 'vending', 'desk', 'whiteboard', 'server'
     x: number;
     y: number;
+    width?: number; // For multi-tile objects
+    height?: number;
     sprite_key: string;
     // Item properties
     itemType?: string;

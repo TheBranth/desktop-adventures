@@ -6,7 +6,13 @@ export class InteractionSystem {
     public static handleBump(gameState: GameState, x: number, y: number, log: (msg: string) => void, onDamage?: (id: string) => void, onWin?: () => void): boolean {
         // Check for Objects
         const room = gameState.worldMap[gameState.currentRoomId];
-        const objectIndex = room.objects.findIndex(obj => obj.x === x && obj.y === y);
+        // Updated for Multi-Tile: Find object where X,Y is inside its bounds
+        const objectIndex = room.objects.findIndex(obj => {
+            const w = obj.width || 1;
+            const h = obj.height || 1;
+            return x >= obj.x && x < obj.x + w &&
+                y >= obj.y && y < obj.y + h;
+        });
 
         if (objectIndex !== -1) {
             const obj = room.objects[objectIndex];
@@ -67,6 +73,51 @@ export class InteractionSystem {
             room.enemies.splice(enemyIndex, 1);
         }
     }
+
+    // Ranged Attack Logic
+    public static handleRangedAttack(
+        gameState: GameState,
+        targetX: number,
+        targetY: number,
+        weapon: string,
+        log: (msg: string) => void,
+        flashEffect: (id: string) => void
+    ): { success: boolean } {
+        const room = gameState.worldMap[gameState.currentRoomId];
+
+        // 1. Find Target
+        const enemy = room.enemies.find(e => e.x === targetX && e.y === targetY && e.hp > 0);
+        if (!enemy) {
+            log("You missed! Nothing there.");
+            return { success: true }; // Turn consumed even on miss? Yes.
+        }
+
+        // 2. Check Range (Manhattan vs Player)
+        const dist = Math.abs(gameState.playerX - targetX) + Math.abs(gameState.playerY - targetY);
+        let maxRange = 1;
+        let damage = 2;
+
+        if (weapon === 'stapler') { maxRange = 4; damage = 4; }
+        else if (weapon === 'weapon') { maxRange = 1; damage = 5; } // Newspaper is melee? Re-using logic.
+
+        if (dist > maxRange) {
+            log("Target out of range!");
+            return { success: false }; // Don't consume turn
+        }
+
+        // 3. Deal Damage
+        enemy.hp -= damage;
+        flashEffect(enemy.id);
+        log(`Sniped the ${enemy.type} for ${damage} dmg!`);
+
+        if (enemy.hp <= 0) {
+            this.handleDefeat(gameState, enemy, log, room);
+        }
+
+        return { success: true };
+    }
+
+
 
     private static interactWithObject(obj: InteractionObject, index: number, gameState: GameState, room: any, log: (msg: string) => void, onWin?: () => void): boolean {
         switch (obj.type) {
@@ -139,6 +190,13 @@ export class InteractionSystem {
                 } else {
                     log(`Need ${cost} Credits.`);
                 }
+                return true; // Block movement
+
+            case 'water_cooler':
+                log("Hydration is key. (+1 HP)");
+                gameState.hp = Math.min(gameState.maxHp, gameState.hp + 1);
+                gameState.burnout = Math.max(0, gameState.burnout - 1);
+                UIManager.getInstance().updateStats(gameState.hp, gameState.maxHp, gameState.burnout, gameState.credits);
                 return true; // Block movement
 
             case 'desk':

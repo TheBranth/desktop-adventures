@@ -1,0 +1,50 @@
+<svg width="32" height="64" viewBox="0 0 32 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Environment: Server Rack (1x2 Tall) -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Main Cabinet (Black) -->
+    <rect x="2" y="4" width="28" height="58" rx="1" fill="#212121" />
+    <rect x="2" y="4" width="28" height="58" rx="1" fill="none" stroke="#424242" stroke-width="1" />
+    
+    <!-- Rack Units -->
+    <g fill="#000" stroke="#333">
+       <rect x="4" y="8" width="24" height="4" />
+       <rect x="4" y="14" width="24" height="4" />
+       <rect x="4" y="20" width="24" height="4" />
+       <rect x="4" y="26" width="24" height="4" />
+       <rect x="4" y="32" width="24" height="4" />
+       <rect x="4" y="38" width="24" height="4" />
+       <rect x="4" y="44" width="24" height="4" />
+       <rect x="4" y="50" width="24" height="4" />
+    </g>
+    
+    <!-- Blinking Lights (Static for SVG) -->
+    <!-- Pattern 1 -->
+    <circle cx="6" cy="10" r="1" fill="#4CAF50" />
+    <circle cx="10" cy="10" r="1" fill="#4CAF50" />
+    <circle cx="26" cy="10" r="1" fill="#F44336" />
+    
+    <!-- Pattern 2 -->
+    <circle cx="6" cy="16" r="1" fill="#4CAF50" />
+    <circle cx="8" cy="16" r="1" fill="#4CAF50" />
+    <circle cx="10" cy="16" r="1" fill="#2196F3" />
+    
+    <!-- Pattern 3 -->
+    <circle cx="24" cy="28" r="1" fill="#FFEB3B" />
+    <circle cx="26" cy="28" r="1" fill="#4CAF50" />
+    
+    <!-- Mesh Door Texture (Overlay) -->
+    <path d="M4 6 L28 6 M4 56 L28 56" stroke="#424242" stroke-width="1" />
+    <rect x="4" y="6" width="24" height="50" fill="url(#mesh)" opacity="0.3" /> <!-- Placeholder for mesh effect -->
+    
+    <!-- Simple Cross-hatch for Mesh if pattern not supported easily in pure simple SVG, but we can do lines -->
+    <line x1="4" y1="6" x2="28" y2="56" stroke="#424242" stroke-width="0.5" opacity="0.5" />
+    <line x1="28" y1="6" x2="4" y2="56" stroke="#424242" stroke-width="0.5" opacity="0.5" />
+  </g>
+</svg>

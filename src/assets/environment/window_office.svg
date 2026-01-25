@@ -1,0 +1,33 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Environment: Office Window -->
+  <!-- Window with Blinds -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Frame -->
+    <rect x="0" y="0" width="32" height="32" fill="#CFD8DC" />
+    <rect x="2" y="2" width="28" height="28" fill="#E3F2FD" /> <!-- Glass/Sky -->
+    
+    <!-- Blinds (Horizontal slats) -->
+    <rect x="2" y="2" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" />
+    <rect x="2" y="5" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" />
+    <rect x="2" y="8" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" />
+    <rect x="2" y="11" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" />
+    <rect x="2" y="14" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" />
+    <rect x="2" y="17" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" />
+    <rect x="2" y="20" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" />
+    <rect x="2" y="23" width="28" height="3" fill="#FFF" stroke="#B0BEC5" stroke-width="0.5" /> <!-- Open at bottom -->
+    
+    <!-- Strings -->
+    <line x1="8" y1="2" x2="8" y2="26" stroke="#90A4AE" stroke-width="1" />
+    <line x1="24" y1="2" x2="24" y2="26" stroke="#90A4AE" stroke-width="1" />
+    
+    <!-- Sill -->
+    <rect x="0" y="28" width="32" height="4" fill="#B0BEC5" />
+  </g>
+</svg>

@@ -2,7 +2,7 @@ import { GameState, Enemy, Room } from '../types/World';
 
 export class EnemyAI {
 
-    public static processTurn(gameState: GameState, log: (msg: string) => void) {
+    public static processTurn(gameState: GameState, log: (msg: string) => void, onFX?: (type: string, x: number, y: number, tx: number, ty: number) => void) {
         const room = gameState.worldMap[gameState.currentRoomId];
         if (!room || !room.enemies) return;
 
@@ -14,11 +14,11 @@ export class EnemyAI {
                 return;
             }
 
-            this.moveEnemy(enemy, gameState, room, log);
+            this.moveEnemy(enemy, gameState, room, log, onFX);
         });
     }
 
-    private static moveEnemy(enemy: Enemy, gameState: GameState, room: Room, log: (msg: string) => void) {
+    private static moveEnemy(enemy: Enemy, gameState: GameState, room: Room, log: (msg: string) => void, onFX?: (type: string, x: number, y: number, tx: number, ty: number) => void) {
         let dx = 0;
         let dy = 0;
 
@@ -48,6 +48,7 @@ export class EnemyAI {
                     // Check for walls between
                     if (this.hasLineOfSight(enemy.x, enemy.y, gameState.playerX, gameState.playerY, room, false)) {
                         log("Printer blasts you with toner! (Ranged)");
+                        if (onFX) onFX('projectile', enemy.x, enemy.y, gameState.playerX, gameState.playerY); // FX
                         gameState.hp = Math.max(0, gameState.hp - 2);
                         gameState.burnout += 2;
                         return; // Attacked, so don't move (it doesn't move anyway)
@@ -57,6 +58,7 @@ export class EnemyAI {
                 else if (enemy.x === gameState.playerX) {
                     if (this.hasLineOfSight(enemy.x, enemy.y, gameState.playerX, gameState.playerY, room, true)) {
                         log("Printer blasts you with toner! (Ranged)");
+                        if (onFX) onFX('projectile', enemy.x, enemy.y, gameState.playerX, gameState.playerY); // FX
                         gameState.hp = Math.max(0, gameState.hp - 2);
                         gameState.burnout += 2;
                         return;
@@ -144,6 +146,22 @@ export class EnemyAI {
 
         // Other Enemies
         if (room.enemies.some(e => e.x === x && e.y === y && e.hp > 0)) return false;
+
+        // Objects (Obstacles)
+        // Multi-Tile Check
+        const object = room.objects.find(o => {
+            const w = o.width || 1;
+            const h = o.height || 1;
+            return x >= o.x && x < o.x + w &&
+                y >= o.y && y < o.y + h;
+        });
+
+        if (object) {
+            // Pickups are walkable
+            if (object.type === 'pickup') return true;
+            // Everything else (desk, vending, barrier, elevator) is blocking
+            return false;
+        }
 
         return true;
     }

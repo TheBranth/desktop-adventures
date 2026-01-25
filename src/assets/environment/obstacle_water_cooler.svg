@@ -1,0 +1,30 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Environment: Water Cooler (1x1) -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Base (White plastic) -->
+    <rect x="10" y="14" width="12" height="16" rx="1" fill="#F5F5F5" stroke="#E0E0E0" stroke-width="1" />
+    
+    <!-- Water Bottle (Blue transparent) -->
+    <path d="M11 14 L12 2 L20 2 L21 14" fill="#29B6F6" opacity="0.8" />
+    <ellipse cx="16" cy="14" rx="5" ry="1" fill="#29B6F6" opacity="0.8" /> <!-- Neck connection -->
+    
+    <!-- Water Level/Bubbles -->
+    <circle cx="14" cy="10" r="1" fill="#FFF" opacity="0.6" />
+    <circle cx="18" cy="6" r="1" fill="#FFF" opacity="0.6" />
+    
+    <!-- Dispenser Area -->
+    <rect x="12" y="18" width="8" height="6" fill="#BDBDBD" inset="1" /> <!-- Niche -->
+    <rect x="13" y="19" width="1" height="2" fill="#F44336" /> <!-- Hot tap -->
+    <rect x="18" y="19" width="1" height="2" fill="#2196F3" /> <!-- Cold tap -->
+    
+    <!-- Drip Tray -->
+    <rect x="12" y="24" width="8" height="2" fill="#9E9E9E" />
+  </g>
+</svg>

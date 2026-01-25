@@ -96,6 +96,30 @@ export class UIManager {
 
     public onItemClick: ((itemId: string, index: number) => void) | null = null;
 
+    private getItemIconPath(id: string): string {
+        // Map Item IDs to SVG Paths
+        // Note: These paths are relative to web root (public) or handled by Vite?
+        // Since we imported them in BootScene as 'src/assets/...', we can reference them directly if they are in public or built.
+        // Vite handles 'src/assets' imports. 
+        // For DOM IMG tags, we should use the URL. 
+        // In dev: /src/assets/items/...
+        const basePath = '/src/assets/items/';
+
+        switch (id) {
+            case 'coffee': case 'consumable': return `${basePath}coffee.svg`;
+            case 'id_card': return `${basePath}pto_form.svg`;
+            case 'stapler': return `${basePath}red_stapler.svg`;
+            case 'weapon': return `${basePath}newspaper.svg`;
+            case 'key_blue': return `${basePath}keycard_blue.svg`;
+            case 'key_red': return `${basePath}keycard_red.svg`;
+            case 'granola_bar': return `${basePath}granola_bar.svg`;
+            case 'mint': return `${basePath}mint.svg`;
+            case 'vitamin_pill': return `${basePath}vitamin_pill.svg`;
+            case 'macguffin': return `${basePath}floppy.svg`;
+            default: return ''; // No icon
+        }
+    }
+
     public updateInventory(inventory: string[]) {
         const grid = document.getElementById('inventory-grid');
         if (!grid) return;
@@ -115,15 +139,24 @@ export class UIManager {
             slot.style.display = 'flex';
             slot.style.alignItems = 'center';
             slot.style.justifyContent = 'center';
-            slot.style.fontSize = '24px';
             slot.style.cursor = 'pointer';
             slot.title = itemId;
 
-            // Hover effects handled by CSS .slot:hover
-
-            const div = document.createElement('div');
-            div.textContent = this.getItemEmoji(itemId);
-            slot.appendChild(div);
+            const iconPath = this.getItemIconPath(itemId);
+            if (iconPath) {
+                const img = document.createElement('img');
+                img.src = iconPath;
+                img.style.width = '80%';
+                img.style.height = '80%';
+                img.style.objectFit = 'contain';
+                slot.appendChild(img);
+            } else {
+                // Fallback to text/emoji if path missing?
+                const div = document.createElement('div');
+                div.textContent = '📦';
+                div.style.fontSize = '24px';
+                slot.appendChild(div);
+            }
 
             slot.onclick = () => {
                 if (this.onItemClick) this.onItemClick(itemId, index);
@@ -131,22 +164,6 @@ export class UIManager {
 
             grid.appendChild(slot);
         });
-    }
-
-    private getItemEmoji(id: string): string {
-        switch (id) {
-            case 'coffee': return '☕';
-            case 'consumable': return '☕';
-            case 'id_card': return '🪪';
-            case 'stapler': return '📌';
-            case 'weapon': return '⚔️';
-            case 'key_blue': return '💳';
-            case 'key_red': return '🔥';
-            case 'granola_bar': return '🍫';
-            case 'mint': return '🍬';
-            case 'vitamin_pill': return '💊';
-            default: return '📦';
-        }
     }
 
     public log(message: string) {

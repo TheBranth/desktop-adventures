@@ -31,6 +31,12 @@ Floor tiles are designed to be seamless when placed adjacently. Obstacles occupy
 | **Wall** | Office Wall | `wall_office.svg` | 32x32 px | 1x1 | Beige cubicle partition. |
 | **Wall** | Server Wall | `wall_server.svg` | 32x32 px | 1x1 | Black server rack with LEDs. |
 | **Wall** | Frozen Wall | `wall_frozen.svg` | 32x32 px | 1x1 | Iced-over filing cabinet. |
+| **Wall** | Office Window | `window_office.svg` | 32x32 px | 1x1 | Window with blinds. |
+| **Obstacle**| Vending Machine | `vending.svg` | 32x32 px | 1x1 | Glass front, keypad. |
+| **Obstacle**| Office Desk | `obstacle_desk.svg` | 32x32 px | 1x1 | PC, Keyboard, Mug. |
+| **Obstacle**| Water Cooler | `obstacle_water_cooler.svg` | 32x32 px | 1x1 | Blue jug, tap. |
+| **Obstacle**| Whiteboard | `obstacle_whiteboard.svg` | 32x32 px | 1x1 | Stand, scribbles. |
+| **Obstacle**| Server Rack | `obstacle_server_rack.svg` | 32x64 px | **1x2** | Tall black cabinet. |
 | **Obstacle**| Potted Plant | `obstacle_plant.svg`| 32x32 px | **1x1** | Potted Ficus. |
 | **Obstacle**| Meeting Table| `obstacle_meeting_table.svg`| 96x64 px | **3x2** | large table with chairs. |
 
@@ -55,6 +61,10 @@ Items are represented as 32x32 icons.
 
 ## 5. UI Elements
 
-| Asset | Filename | Dimensions | Description |
+| **Asset** | Filename | Dimensions | Description |
 | :--- | :--- | :--- | :--- |
 | **Main Frame** | `ui_frame.svg` | 800x600 px | "Windows 95" Spreadsheet styling. Transparent center for game view. |
+| **Icon** | `ui/ui_icon_heart.svg` | 32x32 px | Red Heart (HP). |
+| **Icon** | `ui/ui_icon_fire.svg` | 32x32 px | Orange Flame (Burnout). |
+| **Icon** | `ui/ui_icon_coin.svg` | 32x32 px | Gold Coin (Credits). |
+

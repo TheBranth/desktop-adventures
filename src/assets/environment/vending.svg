@@ -1,0 +1,43 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Environment: Vending Machine -->
+  <!-- 32x32px Office Vending Machine -->
+  
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Main Chassis (Dark Grey) -->
+    <rect x="4" y="2" width="24" height="28" rx="1" fill="#424242" />
+    <rect x="4" y="2" width="24" height="28" rx="1" fill="none" stroke="#616161" stroke-width="1" />
+    
+    <!-- Glass Front (Blue tint) -->
+    <rect x="6" y="4" width="16" height="18" fill="#E1F5FE" opacity="0.8" />
+    
+    <!-- Coils / Shelves -->
+    <line x1="6" y1="8" x2="22" y2="8" stroke="#90A4AE" stroke-width="1" />
+    <line x1="6" y1="12" x2="22" y2="12" stroke="#90A4AE" stroke-width="1" />
+    <line x1="6" y1="16" x2="22" y2="16" stroke="#90A4AE" stroke-width="1" />
+    <line x1="6" y1="20" x2="22" y2="20" stroke="#90A4AE" stroke-width="1" />
+    
+    <!-- Items inside (Blobs) -->
+    <rect x="7" y="5" width="2" height="2" fill="#F44336" /> <!-- Chips -->
+    <rect x="11" y="9" width="2" height="2" fill="#FFEB3B" /> <!-- Candy -->
+    <rect x="15" y="13" width="2" height="2" fill="#4CAF50" /> <!-- Soda -->
+    
+    <!-- Side Panel (Keypad & Retrieval) -->
+    <rect x="23" y="4" width="4" height="26" fill="#212121" />
+    
+    <!-- Keypad -->
+    <rect x="24" y="8" width="2" height="4" fill="#64FFDA" /> <!-- Screen -->
+    <rect x="24" y="13" width="2" height="3" fill="#E0E0E0" /> <!-- Buttons -->
+    
+    <!-- Coin Slot -->
+    <rect x="24.5" y="17" width="1" height="2" fill="#000" />
+    
+    <!-- Retrieval Bin -->
+    <rect x="6" y="24" width="16" height="4" fill="#212121" stroke="#616161" stroke-width="1" />
+  </g>
+</svg>

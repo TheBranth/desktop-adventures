@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- UI Icon: Heart (HP) -->
+  
+  <desc>Pixel Art Heart</desc>
+  
+  <!-- Shadow (Optional for UI, but keeping style) -->
+  <path d="M16 28 L6 18 Q2 14 6 10 T16 10 Q20 6 26 10 T26 18 Z" fill="rgba(0,0,0,0.3)" transform="translate(1,1)" />
+
+  <g stroke="#B71C1C" stroke-width="1">
+     <!-- Heart Shape -->
+    <path d="M16 27 L6 17 Q2 13 6 9 Q10 5 16 12 Q22 5 26 9 Q30 13 26 17 Z" fill="#F44336" />
+    
+    <!-- Shine -->
+    <path d="M8 12 Q7 11 8 10" stroke="#FFCDD2" stroke-width="2" fill="none" />
+  </g>
+</svg>

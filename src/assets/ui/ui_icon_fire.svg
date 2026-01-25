@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- UI Icon: Fire (Burnout) -->
+  
+  <desc>Pixel Art Fire</desc>
+  
+  <g transform="translate(0, 2)">
+      <!-- Outer Flame (Orange) -->
+      <path d="M16 28 Q4 28 8 16 Q12 4 16 2 Q20 4 24 16 Q28 28 16 28 Z" fill="#FF9800" stroke="#E65100" stroke-width="1" />
+      
+      <!-- Inner Flame (Yellow) -->
+      <path d="M16 26 Q10 26 12 18 Q14 12 16 10 Q18 12 20 18 Q22 26 16 26 Z" fill="#FFEB3B" />
+      
+      <!-- Core (White) -->
+      <path d="M16 24 Q14 24 15 20 Q16 18 17 20 Q18 24 16 24 Z" fill="#FFF" />
+  </g>
+</svg>
