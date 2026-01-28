@@ -219,74 +219,174 @@ export class MapGenerator {
             return;
         }
 
-        // Difficulty Logic: Count = MIN(12, MAX(2, FLOOR(TowerLevel * 0.4) + 2))
-        const count = Math.min(12, Math.max(2, Math.floor(this.towerLevel * 0.4) + 2));
+        // Validation Constants
+        const MAX_RETRIES = 3;
+        let validLayout = false;
+        let macroLimit = 2; // Initial macro elements max
 
-        let spawned = 0;
-        let attempts = 0;
-        while (spawned < count && attempts < 20) {
-            const tx = Math.floor(this.rng() * 9) + 1; // 1-9
-            const ty = Math.floor(this.rng() * 9) + 1;
+        // Element Tables
+        const smallElements = [
+            { type: 'desk', key: 'desk', w: 1, h: 1 },
+            { type: 'water_cooler', key: 'water_cooler', w: 1, h: 1 },
+            { type: 'desk', key: 'obstacle_plant', w: 1, h: 1 } // Plant acts as obstacle
+        ];
 
-            // Basic overlap check (very simple)
-            if (room.enemies.some(e => e.x === tx && e.y === ty)) {
-                attempts++;
-                continue;
-            }
+        const bigElements = [
+            { type: 'desk', key: 'obstacle_meeting_table', w: 3, h: 2 },
+            // Placeholder for Server Rack (1x2)
+            { type: 'desk', key: 'wall', w: 1, h: 2, isPlaceholder: true } // "Server Rack"
+        ];
 
-            // Type Selection
-            // Min Tier: FLOOR(Tower / 5) + 1. Max Tier: Tower + 1.
-            // Simplified: Just pick random for now.
-            const types: EnemyType[] = ['intern', 'roomba', 'manager', 'printer'];
-            const type = types[Math.floor(this.rng() * types.length)];
+        // Retry Loop
+        for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            // clear previous failed attempts (but enemies persist? No, clear all specialized objects)
+            // Note: We don't want to clear enemies if they were added by default, but here we populate enemies too.
+            // Let's reset room.objects for this generated content.
+            // CAUTION: If we had guaranteed objects (like key), they might be wiped? 
+            // `populateRandomRoom` is called for "empty" rooms, so it's safe to start fresh relative to this method.
+            // But we must preserve existing inputs if any? No, this method is the primary populater.
+            room.objects = [];
+            room.enemies = [];
 
-            room.enemies.push(this.createEnemy(type, tx, ty));
-            spawned++;
-        }
-
-        // Vending
-        if (this.rng() < 0.2) {
-            room.objects.push({ x: 1, y: 1, id: `vending_${room.room_id}`, type: 'vending', sprite_key: 'vending', cost: 5 });
-        }
-        // Decoration: Plants (Coverage 10%)
-        let decorAttempts = 0;
-        while (decorAttempts < 5) {
-            const rx = Math.floor(this.rng() * 9) + 1;
-            const ry = Math.floor(this.rng() * 9) + 1;
-
-            // Allow only if empty AND not blocking a door
-            // Door Positions: (5,0), (5,10), (0,5), (10,5)
-            // Critical Path Buffer: (5,1), (5,9), (1,5), (9,5)
-            const isBlockingDoor = (rx === 5 && (ry <= 1 || ry >= 9)) ||
-                (ry === 5 && (rx <= 1 || rx >= 9));
-
-            if (!room.objects.some(o => o.x === rx && o.y === ry) &&
-                !room.enemies.some(e => e.x === rx && e.y === ry) &&
-                !isBlockingDoor) {
-
-                // Add Plant or Desk or Water Cooler
-                if (this.rng() < 0.3) {
-                    const roll = this.rng();
-                    let key = 'obstacle_plant';
-                    let type = 'desk'; // Default blocking
-
-                    if (roll < 0.4) {
-                        key = 'desk';
-                        type = 'desk';
-                    }
-                    else if (roll < 0.5) {
-                        key = 'water_cooler';
-                        type = 'water_cooler';
-                    }
-
-                    room.objects.push({ x: rx, y: ry, id: `obst_${rx}_${ry}`, type: type, sprite_key: key }); // Type desk for blocking?
-                    // Update collision map? Decoration is blocking?
-                    // Currently GameScene renderRoom doesn't update collision map dynamically based on objects unless we do it here.
-                    // But InteractionSystem.handleBump checks objects.
-                    // A plant should be blocking. 'desk' type blocks.
+            // 1. Enemies (Simple Random placement, soft constraint)
+            // Difficulty Logic: Count = MIN(12, MAX(2, FLOOR(TowerLevel * 0.4) + 2))
+            const enemyCount = Math.min(12, Math.max(2, Math.floor(this.towerLevel * 0.4) + 2));
+            for (let i = 0; i < enemyCount; i++) {
+                const ex = Math.floor(this.rng() * 9) + 1;
+                const ey = Math.floor(this.rng() * 9) + 1;
+                // Avoid door 'immediate' zones for fairness (5,5 is safe? No, 5,0 etc)
+                // Simple Overlap check with other enemies
+                if (!room.enemies.some(e => e.x === ex && e.y === ey)) {
+                    const types: EnemyType[] = ['intern', 'roomba', 'manager', 'printer'];
+                    const type = types[Math.floor(this.rng() * types.length)];
+                    room.enemies.push(this.createEnemy(type, ex, ey));
                 }
             }
-            decorAttempts++;
+
+            // 2. Macro Elements
+            const bigCount = Math.floor(this.rng() * (macroLimit + 1));
+            for (let i = 0; i < bigCount; i++) {
+                const el = bigElements[Math.floor(this.rng() * bigElements.length)];
+                if (el.isPlaceholder && Math.random() > 0.3) continue; // Rare placeholder
+
+                // Try placement
+                for (let t = 0; t < 10; t++) {
+                    const rx = Math.floor(this.rng() * 9) + 1;
+                    const ry = Math.floor(this.rng() * 9) + 1;
+
+                    // Bounds Check (11x11, 0-10)
+                    if (rx + el.w > 10 || ry + el.h > 10) continue;
+
+                    // Collision Check (Walls/Windows)
+                    // Map borders are 1 or 2. Inner is 0.
+                    // Check if any part hits a wall (shouldn't if 1-9 range and size fits)
+
+                    // Overlap Check (Objects)
+                    const rect = { x: rx, y: ry, w: el.w, h: el.h };
+                    let overlaps = false;
+
+                    // Check existing objects
+                    for (const obj of room.objects) {
+                        const ow = obj.width || 1;
+                        const oh = obj.height || 1;
+                        if (this.rectIntersect(rect, { x: obj.x, y: obj.y, w: ow, h: oh })) {
+                            overlaps = true;
+                            break;
+                        }
+                    }
+
+                    // Check Door Buffers (Critical: Don't spawn ON door buffer)
+                    // Doors are at (5,0), (5,10), (0,5), (10,5). Buffer is +/- 1?
+                    // Let's just strictly forbid covering (5,0), (5,1), (5,9), (5,10) etc for cleanliness
+                    const doorZones = [
+                        { x: 5, y: 0, w: 1, h: 2 }, { x: 5, y: 9, w: 1, h: 2 }, // Vertical Doors
+                        { x: 0, y: 5, w: 2, h: 1 }, { x: 9, y: 5, w: 2, h: 1 }  // Horizontal Doors
+                    ];
+                    for (const dz of doorZones) {
+                        if (this.rectIntersect(rect, dz)) { overlaps = true; break; }
+                    }
+
+                    if (!overlaps) {
+                        room.objects.push({
+                            x: rx, y: ry, width: el.w, height: el.h,
+                            id: `macro_${i}_${room.room_id}`, type: el.type, sprite_key: el.key
+                        });
+                        break; // Placed
+                    }
+                }
+            }
+
+            // 3. Micro Elements
+            const smallCount = 4 + Math.floor(this.rng() * 6);
+            for (let i = 0; i < smallCount; i++) {
+                const el = smallElements[Math.floor(this.rng() * smallElements.length)];
+                for (let t = 0; t < 10; t++) {
+                    const rx = Math.floor(this.rng() * 9) + 1;
+                    const ry = Math.floor(this.rng() * 9) + 1;
+
+                    const rect = { x: rx, y: ry, w: 1, h: 1 };
+                    let overlaps = false;
+
+                    // Obj Overlap
+                    for (const obj of room.objects) {
+                        const ow = obj.width || 1;
+                        const oh = obj.height || 1;
+                        if (this.rectIntersect(rect, { x: obj.x, y: obj.y, w: ow, h: oh })) {
+                            overlaps = true;
+                            break;
+                        }
+                    }
+                    // Door Zone Overlap
+                    const doorZones = [
+                        { x: 5, y: 0, w: 1, h: 2 }, { x: 5, y: 9, w: 1, h: 2 },
+                        { x: 0, y: 5, w: 2, h: 1 }, { x: 9, y: 5, w: 2, h: 1 }
+                    ];
+                    for (const dz of doorZones) {
+                        if (this.rectIntersect(rect, dz)) { overlaps = true; break; }
+                    }
+
+                    if (!overlaps) {
+                        room.objects.push({ x: rx, y: ry, id: `micro_${i}_${room.room_id}`, type: el.type, sprite_key: el.key });
+                        break;
+                    }
+                }
+            }
+            // Vending (Random)
+            if (this.rng() < 0.2) {
+                // Try place vending
+                for (let t = 0; t < 10; t++) {
+                    const rx = Math.floor(this.rng() * 9) + 1;
+                    const ry = Math.floor(this.rng() * 9) + 1;
+                    const rect = { x: rx, y: ry, w: 1, h: 1 };
+                    let overlaps = false;
+                    for (const obj of room.objects) {
+                        const ow = obj.width || 1;
+                        const oh = obj.height || 1;
+                        if (this.rectIntersect(rect, { x: obj.x, y: obj.y, w: ow, h: oh })) {
+                            overlaps = true; break;
+                        }
+                    }
+                    if (!overlaps) {
+                        room.objects.push({ x: rx, y: ry, id: `vending_${room.room_id}`, type: 'vending', sprite_key: 'vending', cost: 5 });
+                        // placed = true;
+                        break;
+                    }
+                }
+            }
+
+            // 4. Validate
+            if (this.isLayoutValid(room, room.objects)) {
+                validLayout = true;
+                break; // Challenge Complete!
+            } else {
+                console.warn(`Room ${room.room_id} generation failed validation (Attempt ${attempt}). Retrying...`);
+                macroLimit = Math.max(0, macroLimit - 1); // Reduce complexity on failure
+            }
+        }
+
+        if (!validLayout) {
+            console.error(`Room ${room.room_id} failed to generate valid layout after retries. Clearing objects.`);
+            room.objects = []; // Fallback to empty safe room
         }
     }
 
@@ -305,6 +405,99 @@ export class MapGenerator {
         room.enemies.push(this.createEnemy('intern', 4, 6));
 
         room.objects.push({ x: 2, y: 0, width: 2, height: 1, id: `wb_${room.room_id}`, type: 'readable', sprite_key: 'whiteboard', text: 'Q3 Synergies: DOWN. Coffee Budget: UP.' });
+    }
+
+    // --- Procedural Generation Helpers ---
+
+    private rectIntersect(r1: { x: number, y: number, w: number, h: number }, r2: { x: number, y: number, w: number, h: number }): boolean {
+        return (r1.x < r2.x + r2.w &&
+            r1.x + r1.w > r2.x &&
+            r1.y < r2.y + r2.h &&
+            r1.y + r1.h > r2.y);
+    }
+
+    private getRoomDoors(room: Room): { x: number, y: number }[] {
+        const doors: { x: number, y: number }[] = [];
+        // Check standard door positions based on the collision map
+        // Top (5,0)
+        if (room.collision_map[0][5] === 0) doors.push({ x: 5, y: 0 });
+        // Bottom (5,10)
+        if (room.collision_map[10][5] === 0) doors.push({ x: 5, y: 10 });
+        // Left (0,5)
+        if (room.collision_map[5][0] === 0) doors.push({ x: 0, y: 5 });
+        // Right (10,5)
+        if (room.collision_map[5][10] === 0) doors.push({ x: 10, y: 5 });
+        return doors;
+    }
+
+    private isLayoutValid(room: Room, proposedObjects: any[]): boolean {
+        const doors = this.getRoomDoors(room);
+        if (doors.length === 0) return true; // Should ideally check center reachability if no doors, but rooms usually have 1.
+
+        const startNode = doors[0];
+        const queue: { x: number, y: number }[] = [startNode];
+        const visited = new Set<string>();
+        visited.add(`${startNode.x},${startNode.y}`);
+
+        const reachableDoors = new Set<string>();
+        // Mark start door as reachable
+        if (doors.some(d => d.x === startNode.x && d.y === startNode.y)) {
+            reachableDoors.add(`${startNode.x},${startNode.y}`);
+        }
+
+        while (queue.length > 0) {
+            const curr = queue.shift()!;
+
+            // Check neighbors
+            const neighbors = [
+                { x: curr.x + 1, y: curr.y },
+                { x: curr.x - 1, y: curr.y },
+                { x: curr.x, y: curr.y + 1 },
+                { x: curr.x, y: curr.y - 1 }
+            ];
+
+            for (const n of neighbors) {
+                // Bounds
+                if (n.x < 0 || n.x > 10 || n.y < 0 || n.y > 10) continue;
+
+                const key = `${n.x},${n.y}`;
+                if (visited.has(key)) continue;
+
+                // Collision Check (Walls + Proposed Objects)
+
+                // 1. Static Map
+                if (room.collision_map[n.y][n.x] === 1) continue; // Wall
+
+                // 2. Proposed Objects
+                // Treat objects as blocking rectangles
+                let blocked = false;
+                for (const obj of proposedObjects) {
+                    const w = obj.width || 1;
+                    const h = obj.height || 1;
+                    // Check if node 'n' is inside object rect
+                    if (n.x >= obj.x && n.x < obj.x + w &&
+                        n.y >= obj.y && n.y < obj.y + h) {
+                        blocked = true;
+                        break;
+                    }
+                }
+                if (blocked) continue;
+
+                // 3. Enemies (Optional: Treat enemies as blockers? Usually soft blockers, but for layout we care about static geometry)
+                // Let's assume enemies move, so they don't block layout validity permanently.
+
+                visited.add(key);
+                queue.push(n);
+
+                // If this is a door, mark it
+                if (doors.some(d => d.x === n.x && d.y === n.y)) {
+                    reachableDoors.add(key);
+                }
+            }
+        }
+
+        // Validate all doors are reachable
+        return doors.every(d => reachableDoors.has(`${d.x},${d.y}`));
     }
 
     private createEnemy(type: EnemyType, x: number, y: number): Enemy {

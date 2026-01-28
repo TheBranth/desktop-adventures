@@ -94,7 +94,6 @@ export class BootScene extends Phaser.Scene {
         createPlaceholder('wall', 0x444444);
         createPlaceholder('vending', 0x00ffff);
         // Desks & Coolers now have assets!
-        createPlaceholder('whiteboard', 0xFFFFFF);
 
         // Items
         createPlaceholder('key_blue', 0x0000ff);
