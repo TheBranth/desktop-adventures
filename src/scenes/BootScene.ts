@@ -7,50 +7,50 @@ export class BootScene extends Phaser.Scene {
 
     preload() {
         // Load assets
-        this.load.image('chars', 'src/assets/sprites_character_2.png');
+        this.load.image('chars', 'assets/sprites_character_2.png');
 
         // Load SVGs
         // Enemies
-        this.load.svg('intern', 'src/assets/enemy_intern.svg', { width: 32, height: 32 });
-        this.load.svg('manager', 'src/assets/enemy_manager.svg', { width: 32, height: 32 });
-        this.load.svg('printer', 'src/assets/enemy_printer.svg', { width: 32, height: 32 });
-        this.load.svg('roomba', 'src/assets/enemy_roomba.svg', { width: 32, height: 32 });
+        this.load.svg('intern', 'assets/enemy_intern.svg', { width: 32, height: 32 });
+        this.load.svg('manager', 'assets/enemy_manager.svg', { width: 32, height: 32 });
+        this.load.svg('printer', 'assets/enemy_printer.svg', { width: 32, height: 32 });
+        this.load.svg('roomba', 'assets/enemy_roomba.svg', { width: 32, height: 32 });
 
         // Hero
-        this.load.svg('protagonist', 'src/assets/protagonist_sheet.svg', { width: 96, height: 32 }); // 3 frames x 32
+        this.load.svg('protagonist', 'assets/protagonist_sheet.svg', { width: 96, height: 32 }); // 3 frames x 32
 
 
         // Environment
-        this.load.svg('floor', 'src/assets/environment/floor_office.svg', { width: 32, height: 32 });
-        this.load.svg('wall', 'src/assets/environment/wall_office.svg', { width: 32, height: 32 });
-        this.load.svg('window', 'src/assets/environment/window_office.svg', { width: 32, height: 32 }); // Edge decoration
-        this.load.svg('obstacle_plant', 'src/assets/environment/obstacle_plant.svg', { width: 32, height: 32 });
-        this.load.svg('floor_server', 'src/assets/environment/floor_server.svg', { width: 32, height: 32 });
-        this.load.svg('wall_server', 'src/assets/environment/wall_server.svg', { width: 32, height: 32 });
-        this.load.svg('vending', 'src/assets/environment/vending.svg', { width: 32, height: 32 });
-        this.load.svg('obstacle_meeting_table', 'src/assets/environment/obstacle_meeting_table.svg', { width: 96, height: 64 });
-        this.load.svg('water_cooler', 'src/assets/environment/obstacle_water_cooler.svg', { width: 32, height: 32 });
-        this.load.svg('desk', 'src/assets/environment/obstacle_desk.svg', { width: 32, height: 32 });
+        this.load.svg('floor', 'assets/environment/floor_office.svg', { width: 32, height: 32 });
+        this.load.svg('wall', 'assets/environment/wall_office.svg', { width: 32, height: 32 });
+        this.load.svg('window', 'assets/environment/window_office.svg', { width: 32, height: 32 }); // Edge decoration
+        this.load.svg('obstacle_plant', 'assets/environment/obstacle_plant.svg', { width: 32, height: 32 });
+        this.load.svg('floor_server', 'assets/environment/floor_server.svg', { width: 32, height: 32 });
+        this.load.svg('wall_server', 'assets/environment/wall_server.svg', { width: 32, height: 32 });
+        this.load.svg('vending', 'assets/environment/vending.svg', { width: 32, height: 32 });
+        this.load.svg('obstacle_meeting_table', 'assets/environment/obstacle_meeting_table.svg', { width: 96, height: 64 });
+        this.load.svg('water_cooler', 'assets/environment/obstacle_water_cooler.svg', { width: 32, height: 32 });
+        this.load.svg('desk', 'assets/environment/obstacle_desk.svg', { width: 32, height: 32 });
 
         // UI Icons
-        this.load.svg('icon_heart', 'src/assets/ui/ui_icon_heart.svg', { width: 32, height: 32 });
-        this.load.svg('icon_fire', 'src/assets/ui/ui_icon_fire.svg', { width: 32, height: 32 });
-        this.load.svg('icon_coin', 'src/assets/ui/ui_icon_coin.svg', { width: 32, height: 32 });
+        this.load.svg('icon_heart', 'assets/ui/ui_icon_heart.svg', { width: 32, height: 32 });
+        this.load.svg('icon_fire', 'assets/ui/ui_icon_fire.svg', { width: 32, height: 32 });
+        this.load.svg('icon_coin', 'assets/ui/ui_icon_coin.svg', { width: 32, height: 32 });
 
         // Items
-        this.load.svg('coffee', 'src/assets/items/coffee.svg', { width: 32, height: 32 });
-        this.load.svg('consumable', 'src/assets/items/coffee.svg', { width: 32, height: 32 }); // Alias
-        this.load.svg('key_blue', 'src/assets/items/keycard_blue.svg', { width: 32, height: 32 });
-        this.load.svg('key_red', 'src/assets/items/keycard_red.svg', { width: 32, height: 32 });
-        this.load.svg('stapler', 'src/assets/items/red_stapler.svg', { width: 32, height: 32 });
-        this.load.svg('weapon', 'src/assets/items/newspaper.svg', { width: 32, height: 32 }); // Newspaper as weapon
-        this.load.svg('macguffin', 'src/assets/items/floppy.svg', { width: 32, height: 32 });
-        this.load.svg('id_card', 'src/assets/items/pto_form.svg', { width: 32, height: 32 }); // PTO Form as ID? Close enough.
+        this.load.svg('coffee', 'assets/items/coffee.svg', { width: 32, height: 32 });
+        this.load.svg('consumable', 'assets/items/coffee.svg', { width: 32, height: 32 }); // Alias
+        this.load.svg('key_blue', 'assets/items/keycard_blue.svg', { width: 32, height: 32 });
+        this.load.svg('key_red', 'assets/items/keycard_red.svg', { width: 32, height: 32 });
+        this.load.svg('stapler', 'assets/items/red_stapler.svg', { width: 32, height: 32 });
+        this.load.svg('weapon', 'assets/items/newspaper.svg', { width: 32, height: 32 }); // Newspaper as weapon
+        this.load.svg('macguffin', 'assets/items/floppy.svg', { width: 32, height: 32 });
+        this.load.svg('id_card', 'assets/items/pto_form.svg', { width: 32, height: 32 }); // PTO Form as ID? Close enough.
 
         // New Consumables Mapping
-        this.load.svg('granola_bar', 'src/assets/items/granola_bar.svg', { width: 32, height: 32 });
-        this.load.svg('mint', 'src/assets/items/mint.svg', { width: 32, height: 32 });
-        this.load.svg('vitamin_pill', 'src/assets/items/vitamin_pill.svg', { width: 32, height: 32 });
+        this.load.svg('granola_bar', 'assets/items/granola_bar.svg', { width: 32, height: 32 });
+        this.load.svg('mint', 'assets/items/mint.svg', { width: 32, height: 32 });
+        this.load.svg('vitamin_pill', 'assets/items/vitamin_pill.svg', { width: 32, height: 32 });
     }
 
     create() {

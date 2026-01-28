@@ -99,11 +99,10 @@ export class UIManager {
     private getItemIconPath(id: string): string {
         // Map Item IDs to SVG Paths
         // Note: These paths are relative to web root (public) or handled by Vite?
-        // Since we imported them in BootScene as 'src/assets/...', we can reference them directly if they are in public or built.
-        // Vite handles 'src/assets' imports. 
-        // For DOM IMG tags, we should use the URL. 
-        // In dev: /src/assets/items/...
-        const basePath = '/src/assets/items/';
+        // Assets are in 'public/assets'.
+        // For DOM IMG tags, use root-relative URL. 
+        // In dev/prod: assets/items/...
+        const basePath = 'assets/items/';
 
         switch (id) {
             case 'coffee': case 'consumable': return `${basePath}coffee.svg`;
