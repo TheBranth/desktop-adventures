@@ -304,7 +304,7 @@ export class MapGenerator {
         room.enemies.push(this.createEnemy('intern', 4, 3));
         room.enemies.push(this.createEnemy('intern', 4, 6));
 
-        room.objects.push({ x: 5, y: 1, id: `wb_${room.room_id}`, type: 'readable', sprite_key: 'wall', text: 'Q3 Synergies: DOWN. Coffee Budget: UP.' });
+        room.objects.push({ x: 2, y: 0, width: 2, height: 1, id: `wb_${room.room_id}`, type: 'readable', sprite_key: 'whiteboard', text: 'Q3 Synergies: DOWN. Coffee Budget: UP.' });
     }
 
     private createEnemy(type: EnemyType, x: number, y: number): Enemy {

@@ -31,6 +31,7 @@ export class BootScene extends Phaser.Scene {
         this.load.svg('obstacle_meeting_table', 'assets/environment/obstacle_meeting_table.svg', { width: 96, height: 64 });
         this.load.svg('water_cooler', 'assets/environment/obstacle_water_cooler.svg', { width: 32, height: 32 });
         this.load.svg('desk', 'assets/environment/obstacle_desk.svg', { width: 32, height: 32 });
+        this.load.svg('whiteboard', 'assets/environment/obstacle_whiteboard.svg', { width: 64, height: 32 }); // New Request
 
         // UI Icons
         this.load.svg('icon_heart', 'assets/ui/ui_icon_heart.svg', { width: 32, height: 32 });
@@ -93,6 +94,7 @@ export class BootScene extends Phaser.Scene {
         createPlaceholder('wall', 0x444444);
         createPlaceholder('vending', 0x00ffff);
         // Desks & Coolers now have assets!
+        createPlaceholder('whiteboard', 0xFFFFFF);
 
         // Items
         createPlaceholder('key_blue', 0x0000ff);
