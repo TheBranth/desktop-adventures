@@ -33,6 +33,7 @@ export interface InteractionObject {
     loot_table?: { item: ItemType, chance: number }[];
     // Text properties
     text?: string; // Whiteboard text
+    uses?: number; // Consumable object uses (e.g. Water Cooler)
 }
 
 export interface Room {
@@ -44,6 +45,14 @@ export interface Room {
     objects: InteractionObject[];
 }
 
+export interface InventoryItem {
+    id: string;
+    type: string; // 'stapler', 'consumable', etc.
+    name: string; // Display name
+    uses?: number; // Components remaining
+    maxUses?: number; // For progress bar if needed
+}
+
 export interface GameState {
     currentRoomId: string;
     playerX: number;
@@ -51,11 +60,12 @@ export interface GameState {
     hp: number;
     maxHp: number;
     burnout: number; // 0-100
-    inventory: string[];
+    inventory: InventoryItem[];
     credits: number; // Score/Currency
     worldMap: { [key: string]: Room }; // Map room_id to Room data
     // Engine Room Specs
     tower_level: number;
     global_flags: { [key: string]: boolean };
     visited_rooms: string[];
+    floor: number;
 }

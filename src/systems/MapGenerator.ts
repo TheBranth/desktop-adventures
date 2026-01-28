@@ -108,7 +108,8 @@ export class MapGenerator {
             worldMap: rooms,
             tower_level: this.towerLevel,
             global_flags: {},
-            visited_rooms: [`${startNode.x}_${startNode.y}`]
+            visited_rooms: [`${startNode.x}_${startNode.y}`],
+            floor: 1 // Default start floor
         };
     }
 
@@ -124,13 +125,45 @@ export class MapGenerator {
     }
 
     private createRoom(id: string, biome: string, gridX: number, gridY: number): Room {
-        // Create 11x11 Grid
+        // Create 11x11 Grid or dynamic? 
+        // The spec implies Rooms are still 11x11 internally, but the Minimap/World Grid size changes?
+        // "Level 1 (Onboarding): 5x5 Grid (25 Rooms)."
+        // This implies the world map is 5x5 rooms. Each room is likely still 11x11 tiles.
+        // If the rooms scale too, that would be weird for sprites.
+        // Assuming Room Size is constant (11x11 tiles), but World Map Size is dynamic (width x height).
+
+        // Wait, the user said "5x5 Grid (25 Rooms)".
+        // My MapGenerator constructor takes width/height which are ROOM counts.
+        // `createRoom` generates the TILE map for a single room.
+        // So `createRoom` stays 11x11 (unless we want massive rooms, but 11x11 is fine).
+        // Let's verify the Door Logic uses 10/11 which is Room Size.
+        // Yes, createRoom uses 11x11.
+
+        // However, I need to check the "Edge" logic.
+        // `if (gridY === 0)` -> Top of World.
+        // `if (gridY === this.height - 1)` -> Bottom of World.
+        // This relies on `this.height` which IS the world size (e.g. 5).
+        // So `createRoom` is already mostly correct IF it uses `this.width` / `this.height` for boundary checks.
+
+        // Let's re-read the code I'm replacing.
+        // It checks `gridX === this.width - 1`.
+        // So as long as `this.width` is 5 (for level 1), it correctly identifying the rightmost room as an edge.
+        // The internal room size (11x11) seems constant.
+
+        // CONFIRMATION:
+        // `map[r][10]` where 10 is the index (11th tile).
+        // This is safe if Rooms are always 11x11.
+        // I will keep Room Size 11x11 constant for now.
+
+        const ROOM_SIZE = 11;
+        const CENTER = Math.floor(ROOM_SIZE / 2); // 5
+
         const map: number[][] = [];
-        for (let r = 0; r < 11; r++) {
+        for (let r = 0; r < ROOM_SIZE; r++) {
             const row: number[] = [];
-            for (let c = 0; c < 11; c++) {
+            for (let c = 0; c < ROOM_SIZE; c++) {
                 // Default Walls on borders
-                if (r === 0 || r === 10 || c === 0 || c === 10) row.push(1);
+                if (r === 0 || r === ROOM_SIZE - 1 || c === 0 || c === ROOM_SIZE - 1) row.push(1);
                 else row.push(0);
             }
             map.push(row);
@@ -142,30 +175,30 @@ export class MapGenerator {
         // North (Top)
         if (gridY === 0) {
             // Edge of world. User Request: "Row of Windows"
-            for (let c = 1; c < 10; c++) map[0][c] = 2; // 2 = Window
+            for (let c = 1; c < ROOM_SIZE - 1; c++) map[0][c] = 2; // 2 = Window
         } else {
-            map[0][5] = 0; // Open Door
+            map[0][CENTER] = 0; // Open Door
         }
 
         // South (Bottom)
         if (gridY === this.height - 1) {
-            for (let c = 1; c < 10; c++) map[10][c] = 2; // Window
+            for (let c = 1; c < ROOM_SIZE - 1; c++) map[ROOM_SIZE - 1][c] = 2; // Window
         } else {
-            map[10][5] = 0; // Open Door
+            map[ROOM_SIZE - 1][CENTER] = 0; // Open Door
         }
 
         // West (Left)
         if (gridX === 0) {
-            for (let r = 1; r < 10; r++) map[r][0] = 2; // Window
+            for (let r = 1; r < ROOM_SIZE - 1; r++) map[r][0] = 2; // Window
         } else {
-            map[5][0] = 0; // Open Door
+            map[CENTER][0] = 0; // Open Door
         }
 
         // East (Right)
         if (gridX === this.width - 1) {
-            for (let r = 1; r < 10; r++) map[r][10] = 2; // Window
+            for (let r = 1; r < ROOM_SIZE - 1; r++) map[r][ROOM_SIZE - 1] = 2; // Window
         } else {
-            map[5][10] = 0; // Open Door
+            map[CENTER][ROOM_SIZE - 1] = 0; // Open Door
         }
 
         return {
@@ -179,7 +212,8 @@ export class MapGenerator {
     }
 
     private populateReception(room: Room) {
-        room.objects.push({ x: 5, y: 2, id: 'wb_start', type: 'readable', sprite_key: 'wall', text: 'Floor 1. Find the Blue Keycard to access the Elevator.' });
+        // Centered Whiteboard (1 tile wide).
+        room.objects.push({ x: 5, y: 2, width: 1, height: 1, id: 'wb_start', type: 'readable', sprite_key: 'whiteboard', text: 'Floor 1. Find the Blue Keycard to access the Elevator.' });
     }
 
     private populateKeyRoom(room: Room, keyType: ItemType) {
@@ -197,10 +231,10 @@ export class MapGenerator {
         room.enemies.push(this.createEnemy('printer', 7, 3));
 
         // Barrier blocking the elevator
-        room.objects.push({ x: 5, y: 6, id: 'barrier', type: 'barrier', sprite_key: 'wall', text: 'Security Barrier' }); // Sprite? Wall for now.
+        room.objects.push({ x: 5, y: 6, id: 'barrier', type: 'barrier', sprite_key: 'barrier', text: 'Security Barrier' });
 
         // Elevator
-        room.objects.push({ x: 5, y: 4, id: 'elevator', type: 'elevator', sprite_key: 'door', text: '[ELEVATOR] Needs MacGuffin & Red Key.' });
+        room.objects.push({ x: 5, y: 4, id: 'elevator', type: 'elevator', sprite_key: 'elevator', text: '[ELEVATOR] Needs MacGuffin & Red Key.' });
     }
 
     private populateMacGuffinRoom(room: Room, name: string) {
@@ -228,13 +262,13 @@ export class MapGenerator {
         const smallElements = [
             { type: 'desk', key: 'desk', w: 1, h: 1 },
             { type: 'water_cooler', key: 'water_cooler', w: 1, h: 1 },
-            { type: 'desk', key: 'obstacle_plant', w: 1, h: 1 } // Plant acts as obstacle
+            { type: 'plant', key: 'obstacle_plant', w: 1, h: 1 } // Plant acts as obstacle
         ];
 
-        const bigElements = [
+        const bigElements: { type: string, key: string, w: number, h: number, isPlaceholder?: boolean }[] = [
             { type: 'desk', key: 'obstacle_meeting_table', w: 3, h: 2 },
-            // Placeholder for Server Rack (1x2)
-            { type: 'desk', key: 'wall', w: 1, h: 2, isPlaceholder: true } // "Server Rack"
+            // Server Rack (1x2)
+            { type: 'server', key: 'wall_server', w: 1, h: 2 }
         ];
 
         // Retry Loop
@@ -254,6 +288,10 @@ export class MapGenerator {
             for (let i = 0; i < enemyCount; i++) {
                 const ex = Math.floor(this.rng() * 9) + 1;
                 const ey = Math.floor(this.rng() * 9) + 1;
+
+                // Explicit Map Check
+                if (this.isBlockedByMap(ex, ey, 1, 1, room.collision_map)) continue;
+
                 // Avoid door 'immediate' zones for fairness (5,5 is safe? No, 5,0 etc)
                 // Simple Overlap check with other enemies
                 if (!room.enemies.some(e => e.x === ex && e.y === ey)) {
@@ -278,8 +316,7 @@ export class MapGenerator {
                     if (rx + el.w > 10 || ry + el.h > 10) continue;
 
                     // Collision Check (Walls/Windows)
-                    // Map borders are 1 or 2. Inner is 0.
-                    // Check if any part hits a wall (shouldn't if 1-9 range and size fits)
+                    if (this.isBlockedByMap(rx, ry, el.w, el.h, room.collision_map)) continue;
 
                     // Overlap Check (Objects)
                     const rect = { x: rx, y: ry, w: el.w, h: el.h };
@@ -295,9 +332,18 @@ export class MapGenerator {
                         }
                     }
 
+                    // Check existing Enemies
+                    if (!overlaps) {
+                        for (const enemy of room.enemies) {
+                            // Enemy is 1x1
+                            if (this.rectIntersect(rect, { x: enemy.x, y: enemy.y, w: 1, h: 1 })) {
+                                overlaps = true;
+                                break;
+                            }
+                        }
+                    }
+
                     // Check Door Buffers (Critical: Don't spawn ON door buffer)
-                    // Doors are at (5,0), (5,10), (0,5), (10,5). Buffer is +/- 1?
-                    // Let's just strictly forbid covering (5,0), (5,1), (5,9), (5,10) etc for cleanliness
                     const doorZones = [
                         { x: 5, y: 0, w: 1, h: 2 }, { x: 5, y: 9, w: 1, h: 2 }, // Vertical Doors
                         { x: 0, y: 5, w: 2, h: 1 }, { x: 9, y: 5, w: 2, h: 1 }  // Horizontal Doors
@@ -325,6 +371,9 @@ export class MapGenerator {
                     const ry = Math.floor(this.rng() * 9) + 1;
 
                     const rect = { x: rx, y: ry, w: 1, h: 1 };
+
+                    if (this.isBlockedByMap(rx, ry, 1, 1, room.collision_map)) continue;
+
                     let overlaps = false;
 
                     // Obj Overlap
@@ -336,6 +385,17 @@ export class MapGenerator {
                             break;
                         }
                     }
+
+                    // Enemy Overlap
+                    if (!overlaps) {
+                        for (const enemy of room.enemies) {
+                            if (this.rectIntersect(rect, { x: enemy.x, y: enemy.y, w: 1, h: 1 })) {
+                                overlaps = true;
+                                break;
+                            }
+                        }
+                    }
+
                     // Door Zone Overlap
                     const doorZones = [
                         { x: 5, y: 0, w: 1, h: 2 }, { x: 5, y: 9, w: 1, h: 2 },
@@ -358,6 +418,9 @@ export class MapGenerator {
                     const rx = Math.floor(this.rng() * 9) + 1;
                     const ry = Math.floor(this.rng() * 9) + 1;
                     const rect = { x: rx, y: ry, w: 1, h: 1 };
+
+                    if (this.isBlockedByMap(rx, ry, 1, 1, room.collision_map)) continue;
+
                     let overlaps = false;
                     for (const obj of room.objects) {
                         const ow = obj.width || 1;
@@ -408,6 +471,21 @@ export class MapGenerator {
     }
 
     // --- Procedural Generation Helpers ---
+
+    private isBlockedByMap(x: number, y: number, w: number, h: number, map: number[][]): boolean {
+        for (let dy = 0; dy < h; dy++) {
+            for (let dx = 0; dx < w; dx++) {
+                const cx = x + dx;
+                const cy = y + dy;
+                // Bounds check just in case
+                if (cy < 0 || cy >= map.length || cx < 0 || cx >= map[0].length) return true;
+
+                const cell = map[cy][cx];
+                if (cell === 1 || cell === 2) return true;
+            }
+        }
+        return false;
+    }
 
     private rectIntersect(r1: { x: number, y: number, w: number, h: number }, r2: { x: number, y: number, w: number, h: number }): boolean {
         return (r1.x < r2.x + r2.w &&

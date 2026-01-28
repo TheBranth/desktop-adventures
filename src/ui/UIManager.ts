@@ -1,3 +1,6 @@
+import { EventManager, GameEvents } from '../systems/EventManager';
+import { InventoryItem } from '../types/World';
+
 export class UIManager {
     private static instance: UIManager;
 
@@ -6,26 +9,25 @@ export class UIManager {
     private burnoutBar: HTMLElement | null;
     private messageLog: HTMLElement | null;
     private minimapGrid: HTMLElement | null;
+    private headerStats: HTMLElement | null;
+    private creditsValue: HTMLElement | null;
+    private hpValue: HTMLElement | null;
+    private burnoutValue: HTMLElement | null;
 
     private constructor() {
         this.hpBar = document.getElementById('hp-bar');
         this.burnoutBar = document.getElementById('burnout-bar');
         this.messageLog = document.getElementById('message-log');
         this.minimapGrid = document.getElementById('minimap-grid');
-        this.initMinimap();
-    }
+        this.headerStats = document.getElementById('header-stats');
+        this.creditsValue = document.getElementById('credits-value');
+        this.hpValue = document.getElementById('hp-value');
+        this.burnoutValue = document.getElementById('burnout-value');
 
-    private initMinimap() {
-        if (!this.minimapGrid) return;
-        this.minimapGrid.innerHTML = '';
-        for (let y = 0; y < 10; y++) {
-            for (let x = 0; x < 10; x++) {
-                const cell = document.createElement('div');
-                cell.className = 'map-cell unknown';
-                cell.id = `map-${x}_${y}`;
-                this.minimapGrid.appendChild(cell);
-            }
-        }
+        this.burnoutValue = document.getElementById('burnout-value');
+
+        // this.initMinimap(9,9); // Defer to GameScene init
+        this.setupEventListeners();
     }
 
     public static getInstance(): UIManager {
@@ -35,52 +37,93 @@ export class UIManager {
         return UIManager.instance;
     }
 
+    private setupEventListeners() {
+        const em = EventManager.getInstance();
+        em.on(GameEvents.STATS_CHANGE, (data: any) => {
+            this.updateStats(data.hp, data.maxHp, data.burnout, data.credits);
+        });
+        em.on(GameEvents.LOG_MESSAGE, (data: any) => {
+            // data can be string or object { msg: string }
+            const msg = typeof data === 'string' ? data : data.msg;
+            this.log(msg);
+        });
+        em.on(GameEvents.INVENTORY_UPDATE, (data: any) => {
+            this.updateInventory(data.inventory);
+        });
+        em.on(GameEvents.MINIMAP_UPDATE, (data: any) => {
+            this.updateMinimap(data.visited, data.current);
+        });
+    }
+
+    private minimapWidth: number = 10;
+    private minimapHeight: number = 10;
+
+    public initMinimap(width: number, height: number) {
+        if (!this.minimapGrid) return;
+
+        this.minimapWidth = width;
+        this.minimapHeight = height;
+
+        this.minimapGrid.innerHTML = '';
+        // Adjust grid template columns based on size to fit? 
+        // Or assume CSS handles it? The CSS likely has repeat(10, ...).
+        this.minimapGrid.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+        this.minimapGrid.style.gridTemplateRows = `repeat(${height}, 1fr)`;
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const cell = document.createElement('div');
+                cell.className = 'map-cell unknown';
+                cell.id = `map-${x}_${y}`;
+                this.minimapGrid.appendChild(cell);
+            }
+        }
+    }
+
     public updateStats(hp: number, maxHp: number, burnout: number, credits: number) {
         if (this.hpBar) {
             const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
             this.hpBar.style.width = `${hpPercent}%`;
         }
 
-        const hpVal = document.getElementById('hp-value');
-        if (hpVal) {
-            hpVal.textContent = `${hp}/${maxHp}`;
+        if (this.hpValue) {
+            this.hpValue.textContent = `${hp}/${maxHp}`;
         }
 
         if (this.burnoutBar) {
-            this.burnoutBar.style.width = `${Math.max(0, Math.min(100, burnout))}%`;
-            if (burnout >= 50) this.burnoutBar.style.backgroundColor = 'purple';
-            else this.burnoutBar.style.backgroundColor = 'blue';
+            const b = Math.max(0, Math.min(100, burnout));
+            this.burnoutBar.style.width = `${b}%`;
+            if (burnout >= 50) this.burnoutBar.style.backgroundColor = '#9b59b6'; // amethyst
+            else this.burnoutBar.style.backgroundColor = '#3498db'; // blue
         }
 
-        const burnVal = document.getElementById('burnout-value');
-        if (burnVal) {
-            burnVal.textContent = `${burnout}%`;
-            burnVal.style.color = burnout >= 80 ? '#FF5555' : '#CCCCCC';
+        if (this.burnoutValue) {
+            this.burnoutValue.textContent = `${burnout}%`;
+            this.burnoutValue.style.color = burnout >= 80 ? '#e74c3c' : '#CCCCCC';
         }
 
-        const credVal = document.getElementById('credits-value');
-        if (credVal) {
-            credVal.textContent = `¥${credits}`;
+        if (this.creditsValue) {
+            this.creditsValue.textContent = `¥${credits}`;
         }
 
-        const headerStats = document.getElementById('header-stats');
-        if (headerStats) {
-            headerStats.textContent = `HP: ${hp}/${maxHp} | Burnout: ${burnout}%`;
-            headerStats.style.fontSize = '12px';
-            headerStats.style.color = '#aaa';
-            headerStats.style.marginTop = '4px';
+        if (this.headerStats) {
+            this.headerStats.textContent = `HP: ${hp}/${maxHp} | Burnout: ${burnout}%`;
+            this.headerStats.style.fontSize = '12px';
+            this.headerStats.style.color = '#7f8c8d';
+            this.headerStats.style.marginTop = '4px';
         }
     }
 
     public updateMinimap(visited: string[], currentRoomId: string) {
         if (!this.minimapGrid) return;
 
-        for (let y = 0; y < 10; y++) {
-            for (let x = 0; x < 10; x++) {
+        for (let y = 0; y < this.minimapHeight; y++) {
+            for (let x = 0; x < this.minimapWidth; x++) {
                 const id = `${x}_${y}`;
                 const cell = document.getElementById(`map-${id}`);
                 if (!cell) continue;
 
+                // Reset base class
                 cell.className = 'map-cell';
 
                 if (id === currentRoomId) {
@@ -97,39 +140,33 @@ export class UIManager {
     public onItemClick: ((itemId: string, index: number) => void) | null = null;
 
     private getItemIconPath(id: string): string {
-        // Map Item IDs to SVG Paths
-        // Note: These paths are relative to web root (public) or handled by Vite?
-        // Assets are in 'public/assets'.
-        // For DOM IMG tags, use root-relative URL. 
-        // In dev/prod: assets/items/...
         const basePath = 'assets/items/';
-
         switch (id) {
             case 'coffee': case 'consumable': return `${basePath}coffee.svg`;
-            case 'id_card': return `${basePath}pto_form.svg`;
+            case 'id_card': return `${basePath}pto_form.svg`; // Reusing PTO form as ID card visual for now? Or generic
             case 'stapler': return `${basePath}red_stapler.svg`;
             case 'weapon': return `${basePath}newspaper.svg`;
             case 'key_blue': return `${basePath}keycard_blue.svg`;
             case 'key_red': return `${basePath}keycard_red.svg`;
             case 'granola_bar': return `${basePath}granola_bar.svg`;
             case 'mint': return `${basePath}mint.svg`;
-            case 'vitamin_pill': return `${basePath}vitamin_pill.svg`;
+            case 'vitamin_pill': return `${basePath}vitamin_pill.svg`; // missing asset?
             case 'macguffin': return `${basePath}floppy.svg`;
             default: return ''; // No icon
         }
     }
 
-    public updateInventory(inventory: string[]) {
+    public updateInventory(inventory: InventoryItem[]) {
         const grid = document.getElementById('inventory-grid');
         if (!grid) return;
 
         // Clear existing slots
         grid.innerHTML = '';
 
-        // Generate slots for items
-        inventory.forEach((itemId, index) => {
+        inventory.forEach((item, index) => {
             const slot = document.createElement('div');
             slot.className = 'slot';
+            slot.style.position = 'relative'; // For badges
             slot.style.width = '100%';
             slot.style.aspectRatio = '1';
             slot.style.background = '#2A2A2A';
@@ -139,26 +176,45 @@ export class UIManager {
             slot.style.alignItems = 'center';
             slot.style.justifyContent = 'center';
             slot.style.cursor = 'pointer';
-            slot.title = itemId;
+            slot.title = `${item.name}${item.uses ? ` (${item.uses} uses)` : ''}`;
 
-            const iconPath = this.getItemIconPath(itemId);
+            // Hover effect
+            slot.onmouseenter = () => slot.style.borderColor = 'var(--accent-color)';
+            slot.onmouseleave = () => slot.style.borderColor = 'var(--border-color)';
+
+            const iconPath = this.getItemIconPath(item.type);
             if (iconPath) {
                 const img = document.createElement('img');
                 img.src = iconPath;
-                img.style.width = '80%';
-                img.style.height = '80%';
+                img.style.width = '70%';
+                img.style.height = '70%';
                 img.style.objectFit = 'contain';
                 slot.appendChild(img);
             } else {
-                // Fallback to text/emoji if path missing?
                 const div = document.createElement('div');
                 div.textContent = '📦';
-                div.style.fontSize = '24px';
+                div.style.fontSize = '20px';
                 slot.appendChild(div);
             }
 
+            // Ammo/Uses Overlay
+            if (item.uses !== undefined) {
+                const badge = document.createElement('span');
+                badge.textContent = item.uses.toString();
+                badge.style.position = 'absolute';
+                badge.style.bottom = '2px';
+                badge.style.right = '4px';
+                badge.style.fontSize = '10px';
+                badge.style.color = 'white';
+                badge.style.fontFamily = 'monospace';
+                badge.style.backgroundColor = 'rgba(0,0,0,0.6)';
+                badge.style.padding = '1px 3px';
+                badge.style.borderRadius = '4px';
+                slot.appendChild(badge);
+            }
+
             slot.onclick = () => {
-                if (this.onItemClick) this.onItemClick(itemId, index);
+                if (this.onItemClick) this.onItemClick(item.type, index);
             };
 
             grid.appendChild(slot);
@@ -176,3 +232,4 @@ export class UIManager {
         }
     }
 }
+

@@ -3,6 +3,7 @@ import Phaser from 'phaser'; // Import standard Phaser
 import { BootScene } from './scenes/BootScene';
 import { GameScene } from './scenes/GameScene';
 import { StartScreen } from './scenes/StartScreen';
+import { GameOverScene } from './scenes/GameOverScene';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
@@ -21,7 +22,7 @@ const config: Phaser.Types.Core.GameConfig = {
             debug: false
         }
     },
-    scene: [BootScene, StartScreen, GameScene]
+    scene: [BootScene, StartScreen, GameScene, GameOverScene]
 };
 
 // Create the game instance

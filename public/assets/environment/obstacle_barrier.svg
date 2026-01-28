@@ -1,0 +1,21 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Barrier: Security Gate -->
+  <defs>
+    <pattern id="stripes" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="4" height="8" fill="#FFD700" />
+      <rect x="4" width="4" height="8" fill="#000" />
+    </pattern>
+  </defs>
+
+  <!-- Base -->
+  <rect x="2" y="28" width="28" height="4" fill="#333" />
+  <rect x="2" y="0" width="4" height="32" fill="#555" />
+  <rect x="26" y="0" width="4" height="32" fill="#555" />
+
+  <!-- Gate -->
+  <rect x="6" y="4" width="20" height="24" fill="url(#stripes)" opacity="0.8" />
+  
+  <!-- Lock Icon -->
+  <circle cx="16" cy="16" r="5" fill="#F44336" stroke="#FFF" stroke-width="2" />
+  <rect x="15" y="15" width="2" height="3" fill="#FFF" />
+</svg>

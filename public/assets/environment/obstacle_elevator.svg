@@ -1,0 +1,18 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Elevator: Steel Doors -->
+  <rect x="0" y="0" width="32" height="32" fill="#333" />
+  
+  <!-- Doors -->
+  <rect x="2" y="2" width="13" height="28" fill="#AAA" stroke="#555" />
+  <rect x="17" y="2" width="13" height="28" fill="#AAA" stroke="#555" />
+  
+  <!-- Seam -->
+  <line x1="16" y1="2" x2="16" y2="30" stroke="#000" stroke-width="2" />
+  
+  <!-- Display -->
+  <rect x="10" y="4" width="12" height="6" fill="#000" />
+  <text x="16" y="9" font-family="monospace" font-size="5" fill="#0F0" text-anchor="middle">^</text>
+
+  <!-- Button Panel -->
+  <rect x="28" y="12" width="2" height="6" fill="#555" />
+</svg>

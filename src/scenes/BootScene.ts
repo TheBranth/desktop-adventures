@@ -26,12 +26,15 @@ export class BootScene extends Phaser.Scene {
         this.load.svg('window', 'assets/environment/window_office.svg', { width: 32, height: 32 }); // Edge decoration
         this.load.svg('obstacle_plant', 'assets/environment/obstacle_plant.svg', { width: 32, height: 32 });
         this.load.svg('floor_server', 'assets/environment/floor_server.svg', { width: 32, height: 32 });
-        this.load.svg('wall_server', 'assets/environment/wall_server.svg', { width: 32, height: 32 });
+        this.load.svg('wall_server', 'assets/environment/wall_server.svg', { width: 32, height: 64 });
         this.load.svg('vending', 'assets/environment/vending.svg', { width: 32, height: 32 });
         this.load.svg('obstacle_meeting_table', 'assets/environment/obstacle_meeting_table.svg', { width: 96, height: 64 });
         this.load.svg('water_cooler', 'assets/environment/obstacle_water_cooler.svg', { width: 32, height: 32 });
+        this.load.svg('water_cooler_empty', 'assets/environment/obstacle_water_cooler_empty.svg', { width: 32, height: 32 });
         this.load.svg('desk', 'assets/environment/obstacle_desk.svg', { width: 32, height: 32 });
-        this.load.svg('whiteboard', 'assets/environment/obstacle_whiteboard.svg', { width: 64, height: 32 }); // New Request
+        this.load.svg('whiteboard', 'assets/environment/obstacle_whiteboard.svg', { width: 32, height: 32 });
+        this.load.svg('barrier', 'assets/environment/obstacle_barrier.svg', { width: 32, height: 32 });
+        this.load.svg('elevator', 'assets/environment/obstacle_elevator.svg', { width: 32, height: 32 });
 
         // UI Icons
         this.load.svg('icon_heart', 'assets/ui/ui_icon_heart.svg', { width: 32, height: 32 });

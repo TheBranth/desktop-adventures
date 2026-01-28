@@ -19,6 +19,9 @@ body {
     background-color: var(--bg-dark);
     font-family: var(--font-main);
     color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* Modern Full Screen Layout */

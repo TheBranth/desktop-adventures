@@ -185,4 +185,30 @@ export class EnemyAI {
         }
         return true;
     }
+
+    public static isThreatening(enemy: Enemy, gameState: GameState, room: Room): boolean {
+        // Check if enemy implies immediate danger to player at current positions
+        switch (enemy.type) {
+            case 'intern':
+            case 'roomba': // Roomba only bumps, but efficient to warn
+            case 'manager': // Melee range check
+                const dist = Math.abs(gameState.playerX - enemy.x) + Math.abs(gameState.playerY - enemy.y);
+                return dist === 1;
+
+            case 'printer':
+                // Ranged LOS check
+                // Same Row
+                if (enemy.y === gameState.playerY) {
+                    return this.hasLineOfSight(enemy.x, enemy.y, gameState.playerX, gameState.playerY, room, false);
+                }
+                // Same Column
+                else if (enemy.x === gameState.playerX) {
+                    return this.hasLineOfSight(enemy.x, enemy.y, gameState.playerX, gameState.playerY, room, true);
+                }
+                return false;
+
+            default:
+                return false;
+        }
+    }
 }
