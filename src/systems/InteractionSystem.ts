@@ -189,13 +189,21 @@ export class InteractionSystem {
 
             case 'elevator':
                 // Check conditions
-                const hasMacguffin = gameState.inventory.some(i => i.type.toLowerCase().includes('macguffin') || i.type === 'Golden Stapler' || i.type === 'TPS Report');
+                // Needs: Red Keycard AND (MacGuffin OR Specific Objective Item)
+                const hasRedKey = gameState.inventory.some(i => i.type === 'key_red');
+                const hasMacguffin = gameState.inventory.some(i =>
+                    i.type.toLowerCase().includes('macguffin') ||
+                    i.type === 'Golden Stapler' ||
+                    i.type === 'TPS Report' ||
+                    i.type === 'The Objective'
+                );
 
-                if (hasMacguffin) {
+                if (hasRedKey && hasMacguffin) {
                     log("Elevator Unlocked. Initiating Ascent...");
                     if (onWin) onWin();
                 } else {
-                    log("Cannot leave without the Objective!");
+                    if (!hasRedKey) log("Access Denied. Elevator requires Red Admin Key.");
+                    if (!hasMacguffin) log("Cannot leave without the Objective!");
                 }
                 return true;
 
