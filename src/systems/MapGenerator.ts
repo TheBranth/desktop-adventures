@@ -466,7 +466,7 @@ export class MapGenerator {
                 // Collision Check (Walls + Proposed Objects)
 
                 // 1. Static Map
-                if (room.collision_map[n.y][n.x] === 1) continue; // Wall
+                if (room.collision_map[n.y][n.x] === 1 || room.collision_map[n.y][n.x] === 2) continue; // Wall or Window
 
                 // 2. Proposed Objects
                 // Treat objects as blocking rectangles

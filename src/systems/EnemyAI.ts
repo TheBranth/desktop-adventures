@@ -138,8 +138,9 @@ export class EnemyAI {
         // Bounds
         if (x < 0 || x > 10 || y < 0 || y > 10) return false;
 
-        // Walls
-        if (room.collision_map[y][x] === 1) return false;
+        // Walls (1) or Windows (2)
+        const cell = room.collision_map[y][x];
+        if (cell === 1 || cell === 2) return false;
 
         // Player (blocked for movement, but we handled interaction above)
         if (x === gameState.playerX && y === gameState.playerY) return false;
