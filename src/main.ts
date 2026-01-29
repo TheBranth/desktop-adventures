@@ -26,6 +26,61 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 // Create the game instance
+// Mobile Controls
+const bindControl = (id: string, key: string) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+
+    const triggerKey = (type: 'keydown' | 'keyup') => {
+        window.dispatchEvent(new KeyboardEvent(type, {
+            code: key,
+            key: key,
+            bubbles: true
+        }));
+    };
+
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent scrolling/zoom
+        triggerKey('keydown');
+    });
+
+    btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        triggerKey('keyup');
+    });
+
+    // Mouse fallback for testing on desktop
+    btn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        triggerKey('keydown');
+    });
+    btn.addEventListener('mouseup', (e) => {
+        e.preventDefault();
+        triggerKey('keyup');
+    });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    bindControl('btn-up', 'ArrowUp');
+    bindControl('btn-down', 'ArrowDown');
+    bindControl('btn-left', 'ArrowLeft');
+    bindControl('btn-right', 'ArrowRight');
+    bindControl('btn-right', 'ArrowRight');
+    bindControl('btn-action', 'Space');
+
+    // Backpack Toggle (Mobile)
+    const btnInv = document.getElementById('btn-inv');
+    if (btnInv) {
+        const toggleInv = (e: Event) => {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent game input
+            document.body.classList.toggle('mobile-inventory-open');
+        };
+        btnInv.addEventListener('touchstart', toggleInv);
+        btnInv.addEventListener('mousedown', toggleInv);
+    }
+});
+
 const game = new Phaser.Game(config);
 
 // Boss Key Event Listener

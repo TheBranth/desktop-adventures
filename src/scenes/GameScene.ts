@@ -100,6 +100,14 @@ export class GameScene extends Phaser.Scene {
 
         // Setup Input
         if (this.input && this.input.keyboard) {
+            this.cursors = this.input.keyboard.createCursorKeys();
+            // Map Space to Interaction/Wait
+            this.input.keyboard.on('keydown-SPACE', () => {
+                this.handlePlayerInput('WAITE');
+                // Wait? Or Interact? 
+                // Actually existing logic might rely on cursors.space.isDown check in update?
+                // Let's check update()
+            });
             this.input.keyboard.addKeys({
                 up: Phaser.Input.Keyboard.KeyCodes.UP,
                 down: Phaser.Input.Keyboard.KeyCodes.DOWN,

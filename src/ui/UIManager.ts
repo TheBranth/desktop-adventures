@@ -13,6 +13,10 @@ export class UIManager {
     private creditsValue: HTMLElement | null;
     private hpValue: HTMLElement | null;
     private burnoutValue: HTMLElement | null;
+    // Mobile stats
+    private mobileHp: HTMLElement | null;
+    private mobileBurnout: HTMLElement | null;
+    private mobileCredits: HTMLElement | null;
 
     private constructor() {
         this.hpBar = document.getElementById('hp-bar');
@@ -24,7 +28,10 @@ export class UIManager {
         this.hpValue = document.getElementById('hp-value');
         this.burnoutValue = document.getElementById('burnout-value');
 
-        this.burnoutValue = document.getElementById('burnout-value');
+        // Mobile Header elements
+        this.mobileHp = document.getElementById('m-hp');
+        this.mobileBurnout = document.getElementById('m-burnout');
+        this.mobileCredits = document.getElementById('m-credits');
 
         // this.initMinimap(9,9); // Defer to GameScene init
         this.setupEventListeners();
@@ -112,6 +119,11 @@ export class UIManager {
             this.headerStats.style.color = '#7f8c8d';
             this.headerStats.style.marginTop = '4px';
         }
+
+        // Update Mobile
+        if (this.mobileHp) this.mobileHp.innerText = `${hp}`;
+        if (this.mobileBurnout) this.mobileBurnout.innerText = `${burnout}%`;
+        if (this.mobileCredits) this.mobileCredits.innerText = `${credits}`;
     }
 
     public updateMinimap(visited: string[], currentRoomId: string) {

@@ -69,6 +69,9 @@ export class BootScene extends Phaser.Scene {
             // Frame 2: Walk R
             tex.add('move_1', 0, 64, 0, 32, 32);
 
+            // Temporary Fallback for Attack
+            tex.add('attack_0', 0, 0, 0, 32, 32); // Reuse idle for now
+
             console.log('Protagonist SVG frames added.');
         } else if (this.textures.exists('chars')) {
             // ... Legacy (PNG) ...

@@ -327,6 +327,216 @@ body {
     border-left-color: var(--accent-primary);
 }
 
+/* Mobile Controls - Hidden by default on Desktop */
+#mobile-controls {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    height: 180px;
+    pointer-events: none;
+    /* Let clicks pass through gaps */
+    z-index: 1000;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.d-pad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.d-pad-row {
+    display: flex;
+    gap: 60px;
+    /* Spacer width */
+}
+
+.control-btn {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    touch-action: manipulation;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+}
+
+.control-btn:active {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.action-pad {
+    display: flex;
+    align-items: flex-end;
+    pointer-events: auto;
+    padding-bottom: 20px;
+}
+
+#btn-action {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 0, 0, 0.3);
+    border-color: rgba(255, 0, 0, 0.6);
+}
+
+/* Mobile Header (Hidden on Desktop) */
+#mobile-header {
+    display: none;
+}
+
+/* Responsive Layout ("Game Boy" Mode) */
+@media (max-width: 768px) {
+    #app {
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+        background: #000;
+    }
+
+    /* 1. Top Bar - Stats */
+    #mobile-header {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 50px;
+        background: #222;
+        border-bottom: 2px solid #444;
+        color: white;
+        font-family: monospace;
+        font-size: 16px;
+        z-index: 100;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .m-stat {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* 2. Middle - Game Screen */
+    #game-container {
+        position: absolute;
+        top: 50px;
+        bottom: 200px;
+        /* Leave space for controls */
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto;
+        border-bottom: 1px solid #333;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain;
+    }
+
+    /* 3. Hide Sidebar Completely */
+    #sidebar {
+        display: none !important;
+    }
+
+    /* 4. Bottom - Controls */
+    #mobile-controls {
+        display: flex !important;
+        /* Force show */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        background: #1a1a1a;
+        /* Dark console plastic look */
+        border-top: 2px solid #333;
+        z-index: 9999;
+        padding: 20px 20px 40px 20px;
+        /* Extra bottom padding for safe area */
+        align-items: center;
+        justify-content: space-between;
+        pointer-events: auto;
+        /* It's a solid footer now */
+    }
+
+    .control-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #555;
+        box-shadow: 0 4px 0 #000;
+        color: #ccc;
+        text-shadow: none;
+        transition: transform 0.1s;
+    }
+
+    .control-btn:active {
+        transform: translateY(4px);
+        box-shadow: 0 0 0 #000;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    #btn-action {
+        background: #cc3333;
+        /* A Button Red */
+        border-color: #a00;
+        color: white;
+    }
+
+    .sm-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        margin-right: 20px;
+    }
+}
+
+/* Mobile Inventory Modal State */
+body.mobile-inventory-open #sidebar {
+    display: flex !important;
+    position: fixed;
+    top: 50px;
+    /* Below Header */
+    bottom: 200px;
+    /* Above Controls */
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 5000;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+}
+
+body.mobile-inventory-open #sidebar .panel {
+    display: none;
+    /* Hide all by default */
+}
+
+body.mobile-inventory-open #sidebar #inventory-panel {
+    display: flex !important;
+    width: 100%;
+    max-width: 300px;
+    background: #252526;
+    border: 1px solid #555;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.mobile-inventory-open #game-container {
+    filter: blur(2px);
+}
+
 /* Boss Key (Kanban / Code) */
 #boss-overlay {
     position: fixed;
