@@ -34,6 +34,7 @@ export class BootScene extends Phaser.Scene {
         this.load.svg('desk', 'assets/environment/obstacle_desk.svg', { width: 32, height: 32 });
         this.load.svg('whiteboard', 'assets/environment/obstacle_whiteboard.svg', { width: 32, height: 32 });
         this.load.svg('barrier', 'assets/environment/obstacle_barrier.svg', { width: 32, height: 32 });
+        this.load.svg('door_secure', 'assets/environment/obstacle_door_secure.svg', { width: 32, height: 32 });
         this.load.svg('elevator', 'assets/environment/obstacle_elevator.svg', { width: 32, height: 32 });
 
         // UI Icons

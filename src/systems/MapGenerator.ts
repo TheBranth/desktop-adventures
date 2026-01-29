@@ -239,6 +239,12 @@ export class MapGenerator {
 
     private populateMacGuffinRoom(room: Room, name: string) {
         room.enemies.push(this.createEnemy('roomba', 4, 4));
+
+        // Locked Door guarding the prize (assuming entry is usually from a hallway)
+        // Hard to know exact entry without more context, but let's place it near the center or guarding the item.
+        // Let's place it at (5,4) directly in front of the item at (5,5)
+        room.objects.push({ x: 5, y: 4, id: 'door_secure', type: 'door_secure', sprite_key: 'door_secure', text: 'Secure Door' });
+
         // Check if name contains 'Stapler' etc for sprite?
         let sprite = 'consumable';
         if (name.includes('Stapler')) sprite = 'weapon'; // Reuse weapon icon

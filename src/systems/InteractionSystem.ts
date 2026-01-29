@@ -126,7 +126,15 @@ export class InteractionSystem {
 
         // 3. Deal Damage
         // Decrement Ammo
-        if (weaponItem.uses !== undefined) weaponItem.uses--;
+        if (weaponItem.uses !== undefined) {
+            weaponItem.uses--;
+            if (weaponItem.uses <= 0) {
+                // Remove from inventory
+                const idx = gameState.inventory.indexOf(weaponItem);
+                if (idx > -1) gameState.inventory.splice(idx, 1);
+                log("Weapon exhausted and discarded.");
+            }
+        }
         EventManager.emit(GameEvents.INVENTORY_UPDATE, { inventory: gameState.inventory });
 
         enemy.hp -= damage;
@@ -176,6 +184,18 @@ export class InteractionSystem {
                     room.objects.splice(index, 1);
                 }
                 return false;
+
+            case 'door_secure':
+                // Check for Blue Key (or Red for higher security)
+                if (gameState.inventory.some(i => i.type === 'key_blue' || i.type === 'key_red')) {
+                    log("Access Granted. Door unlocking...");
+                    // Using splice to remove object permanently
+                    room.objects.splice(index, 1);
+                    return true;
+                } else {
+                    log("Access Denied. Secure Door requires a Keycard.");
+                    return true;
+                }
 
             case 'barrier':
                 if (gameState.inventory.some(i => i.type === 'key_blue')) {

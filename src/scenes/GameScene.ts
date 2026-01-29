@@ -585,6 +585,7 @@ export class GameScene extends Phaser.Scene {
             if (output.success) {
                 // Consume turn?
                 this.targetingItem = null;
+                this.input.setDefaultCursor('default');
                 EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Disengaged.");
                 this.executePhase3_World();
             }
@@ -598,9 +599,11 @@ export class GameScene extends Phaser.Scene {
         if (itemType === 'stapler' || itemType === 'weapon') {
             if (this.targetingItem === itemType) {
                 this.targetingItem = null;
+                this.input.setDefaultCursor('default');
                 EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Cancelled.");
             } else {
                 this.targetingItem = itemType;
+                this.input.setDefaultCursor('crosshair');
                 EventManager.emit(GameEvents.LOG_MESSAGE, `Aiming ${itemType}... Click a target!`);
             }
             return;
