@@ -1,88 +1,73 @@
-<svg width="96" height="32" viewBox="0 0 96 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Protagonist Sprite Sheet: Temp (The Salaryman) -->
-  <!-- 32x32 Grid. Frames: Idle, Walk 1 (Left), Walk 2 (Right) -->
-
-  <!-- DEFINITIONS -->
+<svg width="128" height="32" viewBox="0 0 128 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Protagonist Sprite Sheet: 4 Frames x 32px -->
+  
   <defs>
-    <!-- Common Parts -->
-    <g id="head">
-       <!-- Head (Skin tone, Oversized) -->
-      <rect x="-7" y="-10" width="14" height="12" rx="3" fill="#FFCCBC" />
-      <!-- Hair (Balding, sides only, dark grey) -->
-      <path d="M-7 -7 L-7 -2 L-9 -2 L-9 -8 L-7 -10 Z" fill="#424242" />
-      <path d="M7 -7 L7 -2 L9 -2 L9 -8 L7 -10 Z" fill="#424242" />
-      <!-- Glasses (Thick black rims) -->
-      <rect x="-6" y="-6" width="5" height="3" stroke="#000" stroke-width="1" fill="rgba(200,240,255,0.5)" />
-      <rect x="1" y="-6" width="5" height="3" stroke="#000" stroke-width="1" fill="rgba(200,240,255,0.5)" />
-      <line x1="-1" y1="-4.5" x2="1" y2="-4.5" stroke="#000" stroke-width="1" />
-      <!-- Mouth (Tired line) -->
-      <path d="M-2 0 Q0 -1 2 0" stroke="#8D6E63" stroke-width="1" fill="none" />
-    </g>
-
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    
+    <!-- Shared Salaryman Parts -->
     <g id="body">
-       <!-- Body/Shirt (White, untucked) -->
-      <rect x="-6" y="0" width="12" height="10" rx="2" fill="#FFFFFF" />
-      <path d="M-6 0 L-6 10 L6 10 L6 0 Z" fill="#EEE" opacity="0.5" />
-      <!-- Tie (Red, loose) -->
-      <path d="M-1 0 L1 0 L0.5 6 L-0.5 6 Z" fill="#D32F2F" />
+       <rect x="10" y="14" width="12" height="10" fill="#FFF" /> <!-- Shirt -->
+       <path d="M16 14 L16 24" stroke="#E0E0E0" stroke-width="1" /> <!-- Button Placket -->
+       <path d="M16 14 L14 18 L16 20 L18 18 L16 14" fill="#F44336" /> <!-- Tie -->
+    </g>
+    <g id="head">
+       <circle cx="16" cy="10" r="5" fill="#FFCCBC" /> <!-- Face -->
+       <path d="M11 8 Q16 4 21 8" fill="#424242" /> <!-- Hair -->
     </g>
   </defs>
 
-  <!-- FRAME 1: IDLE (x=16) -->
-  <g transform="translate(16, 14)">
-    <!-- Shadow -->
-    <ellipse cx="0" cy="15" rx="8" ry="3" fill="rgba(0,0,0,0.3)" />
-    <!-- Legs (Standing) -->
-    <rect x="-5" y="8" width="4" height="6" fill="#5D4037" />
-    <rect x="1" y="8" width="4" height="6" fill="#5D4037" />
-    <!-- Body -->
+  <!-- FRAME 1: IDLE (x=0) -->
+  <g transform="translate(0, 0)" filter="url(#shadow)">
+    <!-- Legs -->
+    <rect x="11" y="24" width="4" height="6" fill="#455A64" />
+    <rect x="17" y="24" width="4" height="6" fill="#455A64" />
     <use href="#body" />
-    <!-- Arms (Idle) -->
-    <rect x="-8" y="1" width="3" height="7" rx="1" fill="#FFFFFF" />
-    <rect x="5" y="1" width="3" height="7" rx="1" fill="#FFFFFF" />
-    <circle cx="-6.5" cy="8.5" r="1.5" fill="#FFCCBC" />
-    <circle cx="6.5" cy="8.5" r="1.5" fill="#FFCCBC" />
-    <!-- Head -->
     <use href="#head" />
   </g>
 
-  <!-- FRAME 2: WALK LEFT (x=48) -->
-  <g transform="translate(48, 14)">
-     <!-- Shadow -->
-    <ellipse cx="0" cy="15" rx="8" ry="3" fill="rgba(0,0,0,0.3)" />
-    <!-- Legs (Left Forward, Right Back) -->
-    <rect x="-6" y="7" width="4" height="6" fill="#5D4037" /> <!-- Forward, slightly higher -->
-    <rect x="2" y="9" width="4" height="5" fill="#5D4037" /> <!-- Back -->
-    <!-- Body (Bob down 1px) -->
-    <g transform="translate(0, 1)">
-      <use href="#body" />
-      <use href="#head" />
-      <!-- Arms (Swinging) -->
-      <rect x="-8" y="2" width="3" height="7" rx="1" fill="#FFFFFF" transform="rotate(15 -6.5 2)" />
-      <rect x="5" y="0" width="3" height="7" rx="1" fill="#FFFFFF" transform="rotate(-15 6.5 0)" />
-       <circle cx="-6.5" cy="9.5" r="1.5" fill="#FFCCBC" /> <!-- Hand adjustment approx -->
-       <circle cx="6.5" cy="7.5" r="1.5" fill="#FFCCBC" />
+  <!-- FRAME 2: WALK LEFT (x=32) -->
+  <g transform="translate(32, 0)" filter="url(#shadow)">
+    <!-- Legs (Left Forward) -->
+    <rect x="11" y="22" width="4" height="6" fill="#455A64" /> <!-- Left Up -->
+    <rect x="17" y="25" width="4" height="6" fill="#455A64" /> <!-- Right Back -->
+    <!-- Bob Head -->
+    <g transform="translate(0, -1)">
+        <use href="#body" />
+        <use href="#head" />
     </g>
   </g>
 
-  <!-- FRAME 3: WALK RIGHT (x=80) -->
-  <g transform="translate(80, 14)">
-    <!-- Shadow -->
-    <ellipse cx="0" cy="15" rx="8" ry="3" fill="rgba(0,0,0,0.3)" />
-    <!-- Legs (Right Forward, Left Back) -->
-    <rect x="-6" y="9" width="4" height="5" fill="#5D4037" /> <!-- Back -->
-    <rect x="2" y="7" width="4" height="6" fill="#5D4037" /> <!-- Forward -->
-    <!-- Body (Bob down 1px) -->
-    <g transform="translate(0, 1)">
-      <use href="#body" />
-      <use href="#head" />
-      <!-- Arms (Swinging) -->
-      <rect x="-8" y="0" width="3" height="7" rx="1" fill="#FFFFFF" transform="rotate(-15 -6.5 0)" />
-      <rect x="5" y="2" width="3" height="7" rx="1" fill="#FFFFFF" transform="rotate(15 6.5 2)" />
-      <circle cx="-6.5" cy="7.5" r="1.5" fill="#FFCCBC" />
-      <circle cx="6.5" cy="9.5" r="1.5" fill="#FFCCBC" />
+  <!-- FRAME 3: WALK RIGHT (x=64) -->
+  <g transform="translate(64, 0)" filter="url(#shadow)">
+    <!-- Legs (Right Forward) -->
+    <rect x="11" y="25" width="4" height="6" fill="#455A64" /> <!-- Left Back -->
+    <rect x="17" y="22" width="4" height="6" fill="#455A64" /> <!-- Right Up -->
+    <!-- Bob Head -->
+    <g transform="translate(0, -1)">
+        <use href="#body" />
+        <use href="#head" />
     </g>
   </g>
-  
-  <!-- Grid Guides (Optional, removed for asset) -->
+
+  <!-- FRAME 4: ATTACK (x=96) -->
+  <g transform="translate(96, 0)" filter="url(#shadow)">
+    <!-- Wide Stance -->
+    <rect x="10" y="24" width="4" height="6" fill="#455A64" transform="rotate(10 12 24)" />
+    <rect x="18" y="24" width="4" height="6" fill="#455A64" transform="rotate(-10 20 24)" />
+    
+    <use href="#body" />
+    <use href="#head" />
+    
+    <!-- Arm with Red Stapler -->
+    <rect x="20" y="16" width="8" height="3" fill="#FFF" /> <!-- Arm -->
+    <rect x="26" y="14" width="6" height="4" fill="#D32F2F" /> <!-- Stapler Body -->
+    <rect x="26" y="18" width="6" height="1" fill="#B71C1C" /> <!-- Stapler Base -->
+    
+    <!-- Angry Eyes -->
+    <path d="M14 9 L15 10" stroke="#000" stroke-width="1" />
+    <path d="M18 9 L17 10" stroke="#000" stroke-width="1" />
+  </g>
+
 </svg>

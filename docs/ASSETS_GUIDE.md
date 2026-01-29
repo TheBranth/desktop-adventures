@@ -12,7 +12,7 @@ All character assets are centered within their frames to align with the grid.
 
 | Asset Name | Filename | Dimensions | Grid Size | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **Protagonist** | `protagonist_sheet.svg` | **96x32 px** | 1x1 | **Sprite Sheet** (3 Frames)<br>1. Idle<br>2. Walk (Left Leg)<br>3. Walk (Right Leg) |
+| **Protagonist** | `protagonist_sheet.svg` | **128x32 px** | 1x1 | **Sprite Sheet** (4 Frames)<br>1. Idle<br>2. Walk L<br>3. Walk R<br>4. Attack |
 | **Protagonist (Legacy)**| `protagonist.svg` | 32x32 px | 1x1 | Single static sprite (Idle). |
 | **The Intern** | `enemy_intern.svg` | 32x32 px | 1x1 | Enemy. Young, green hoodie, papers. |
 | **Middle Manager** | `enemy_manager.svg`| 32x32 px | 1x1 | Enemy. Blue suit, red face. |

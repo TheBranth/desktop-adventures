@@ -138,7 +138,7 @@ export class StartScreen extends Phaser.Scene {
         let ctaText = "Accept the assignment?";
         if (hasSave) ctaText = "Resume Work (#daily-standup)";
 
-        const btnTxt = this.add.text(boxX + 15, inputY + 15, ctaText, {
+        this.add.text(boxX + 15, inputY + 15, ctaText, {
             fontFamily: 'Arial, sans-serif', fontSize: '14px', color: '#888888'
         });
 

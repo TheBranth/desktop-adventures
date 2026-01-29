@@ -17,7 +17,8 @@ export class BootScene extends Phaser.Scene {
         this.load.svg('roomba', 'assets/enemy_roomba.svg', { width: 32, height: 32 });
 
         // Hero
-        this.load.svg('protagonist', 'assets/protagonist_sheet.svg', { width: 96, height: 32 }); // 3 frames x 32
+        // Hero
+        this.load.svg('protagonist', 'assets/protagonist_sheet.svg', { width: 128, height: 32 }); // 4 frames x 32
 
 
         // Environment
@@ -69,8 +70,8 @@ export class BootScene extends Phaser.Scene {
             // Frame 2: Walk R
             tex.add('move_1', 0, 64, 0, 32, 32);
 
-            // Temporary Fallback for Attack
-            tex.add('attack_0', 0, 0, 0, 32, 32); // Reuse idle for now
+            // Frame 3: Attack
+            tex.add('attack_0', 0, 96, 0, 32, 32);
 
             console.log('Protagonist SVG frames added.');
         } else if (this.textures.exists('chars')) {

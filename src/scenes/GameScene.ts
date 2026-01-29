@@ -16,8 +16,10 @@ export class GameScene extends Phaser.Scene {
     private worldHeight: number = 9;
     private readonly ROOM_SIZE: number = 11; // Tiles per Room
     private mapGroup!: Phaser.GameObjects.Group;
-    private player!: Phaser.GameObjects.Sprite;
-    private uiManager!: UIManager;
+    private mobGroup!: Phaser.GameObjects.Group;
+    private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+
+    // Constantse uiManager!: UIManager;
     private audioManager!: AudioManager;
     private turnLock: boolean = false;
 
