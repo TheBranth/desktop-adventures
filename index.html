@@ -1,190 +1,146 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Salaryman's Dungeon</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #333;
-    }
-
-    /* Boss Key Overlay */
-    #boss-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: white;
-      z-index: 9999;
-      display: none;
-      font-family: Arial, sans-serif;
-      color: black;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    th,
-    td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f2f2f2;
-    }
-
-    .ui-icon {
-      width: 16px;
-      height: 16px;
-      vertical-align: text-bottom;
-      margin-right: 4px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Salaryman's Dungeon - SaaS V2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <!-- Note: CSS is imported by main.ts usually, but style.css is here too -->
 </head>
 
 <body>
-  <div id="app">
-    <div id="game-container"></div>
-    <aside id="sidebar">
-      <!-- User Profile -->
-      <div class="panel" id="user-profile-panel">
-        <div class="panel-header">User Profile</div>
-        <div class="panel-body">
-          <div class="user-profile">
-            <div class="profile-header">
-              <div class="avatar">
-                👨‍💼
-                <div class="status-dot"></div>
-              </div>
-              <div class="user-info">
-                <span class="user-name">Salaryman #427</span>
-                <span class="user-title">Junior Associate</span>
-                <div id="header-stats" class="user-stats-summary">HP: 20 | Burnout: 0%</div>
-              </div>
-            </div>
 
-            <div class="stats-container">
-              <div class="stat-row">
-                <div class="stat-header">
-                  <span class="stat-label"><img src="assets/ui/ui_icon_coin.svg" class="ui-icon">Credits</span>
-                  <span class="stat-value" id="credits-value">0</span>
-                </div>
-              </div>
-              <div class="stat-row">
-                <div class="stat-header">
-                  <span class="stat-label"><img src="assets/ui/ui_icon_heart.svg" class="ui-icon">Health</span>
-                  <span class="stat-value" id="hp-value">OK</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill health" id="hp-bar" style="width: 100%;"></div>
-                </div>
-              </div>
-              <div class="stat-row">
-                <div class="stat-header">
-                  <span class="stat-label"><img src="assets/ui/ui_icon_fire.svg" class="ui-icon">Burnout</span>
-                  <span class="stat-value" id="burnout-value">LOW</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill sprint" id="burnout-bar" style="width: 0%;"></div>
-                </div>
-              </div>
-            </div>
+  <div id="app-shell">
+
+    <!-- === MOBILE HUD (Hidden on Desktop) === -->
+    <div class="mobile-hud mob-top">
+      <div class="mob-profile">
+        <div class="mob-avatar">👔</div>
+        <div class="mob-bars">
+          <div class="mob-bar">
+            <div class="bar-fill hp" id="m-hp" style="width: 100%;"></div>
+          </div>
+          <div class="mob-bar">
+            <div class="bar-fill burn" id="m-burnout" style="width: 0%;"></div>
           </div>
         </div>
       </div>
+      <!-- Settings Icon Top Right -->
+      <div style="background:rgba(0,0,0,0.6); padding:8px; border-radius:50%; pointer-events:auto;" id="btn-settings">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+        </svg>
+      </div>
+    </div>
 
-      <!-- Minimap (Floor Plan) -->
-      <div class="panel" id="minimap-panel">
-        <div class="panel-header">Floor Plan</div>
-        <div class="panel-body">
-          <div id="minimap-grid">
-            <!-- 10x10 grid generated by JS -->
+    <div class="mobile-hud mob-dock">
+      <button class="dock-btn" id="btn-dock-home"><svg class="icon" viewBox="0 0 24 24">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg></button>
+      <button class="dock-btn active" id="btn-dock-main"><svg class="icon" viewBox="0 0 24 24">
+          <path d="M3 6h18" />
+          <path d="M7 6v14" />
+          <path d="M17 6v14" />
+          <path d="M12 6v14" />
+        </svg></button>
+      <button class="dock-btn" id="btn-inv"><svg class="icon" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+        </svg></button>
+    </div>
+
+    <!-- === VIEWPORT (Center) === -->
+    <div id="viewport">
+      <!-- Game Container for Phaser -->
+      <div id="game-container">
+        <div class="floor-texture"></div>
+      </div>
+    </div>
+
+    <!-- === SIDEBAR (Right) === -->
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <span class="brand">SALARYMAN_OS v1.2</span>
+        <span class="version">DEV_BUILD</span>
+      </div>
+
+      <div class="section">
+        <div class="profile-card">
+          <div class="avatar">👔</div>
+          <div class="user-details">
+            <h3>Employee #8492</h3>
+            <p><span class="dot"></span> Online</p>
           </div>
         </div>
-      </div>
 
-      <!-- Asset Library -->
-      <div class="panel" id="inventory-panel">
-        <div class="panel-header">Asset Library</div>
-        <div class="panel-body asset-grid" id="inventory-grid">
-          <!-- slots generated by JS dynamically -->
+        <div class="stat-row">
+          <div class="stat-meta"><span>WILLPOWER</span><span>18 / 20</span></div>
+          <div class="bar-track">
+            <div class="bar-fill hp" id="hp-bar" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-meta"><span>BURNOUT</span><span>STABLE</span></div>
+          <div class="bar-track">
+            <div class="bar-fill burn" id="burnout-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-meta"><span>CREDITS</span><span id="credits-val">0 ¥</span></div>
         </div>
       </div>
 
-      <!-- Team Chat -->
-      <div class="panel" id="log-panel">
-        <div class="panel-header">#general</div>
-        <div class="panel-body" id="message-log">
-          <p class="log-entry"><span style="color:var(--accent-primary)">System</span> connected.</p>
+      <div class="section">
+        <div class="section-title">
+          <svg class="icon" viewBox="0 0 24 24" style="width:14px;">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+          <span>INVENTORY</span>
+        </div>
+        <div class="inv-grid" id="inventory-grid">
+          <!-- Items injected here -->
         </div>
       </div>
-    </aside>
-  </div>
 
-  </div>
-
-  </div>
-
-  <!-- Mobile Header (Stats) -->
-  <div id="mobile-header">
-    <div class="m-stat"><span class="m-icon">❤️</span> <span id="m-hp">20</span></div>
-    <div class="m-stat"><span class="m-icon">🪙</span> <span id="m-credits">0</span></div>
-    <div class="m-stat"><span class="m-icon">🔥</span> <span id="m-burnout">0%</span></div>
-  </div>
-
-  <!-- Mobile Virtual Controls -->
-  <div id="mobile-controls">
-    <div class="d-pad">
-      <button id="btn-up" class="control-btn">▲</button>
-      <div class="d-pad-row">
-        <button id="btn-left" class="control-btn">◀</button>
-        <div class="d-pad-spacer" style="width:60px"></div>
-        <button id="btn-right" class="control-btn">▶</button>
+      <div class="section" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <div class="section-title">
+          <svg class="icon" viewBox="0 0 24 24" style="width:14px;">
+            <polyline points="4 17 10 11 14 16 20 5" />
+          </svg>
+          <span>SYSTEM_LOG</span>
+        </div>
+        <div class="log-container" id="message-log">
+          <!-- Logs injected here -->
+        </div>
       </div>
-      <button id="btn-down" class="control-btn">▼</button>
+
+
     </div>
-    <div class="action-pad">
-      <button id="btn-inv" class="control-btn sm-btn">🎒</button>
-      <button id="btn-action" class="control-btn">◎</button>
+
+  </div>
+
+  <!-- Boss Key Overlay -->
+  <div id="boss-overlay"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; bg:white; z-index:9999;">
+    <!-- Simple white screen fallback if main.ts overlay logic isn't fully styled yet -->
+    <div style="padding:20px; font-family:monospace; color:black; background:white; height:100%;">
+      Running data_processor.py...
     </div>
   </div>
 
-  <!-- Boss Key Overlay (VS Code Look) -->
-  <div id="boss-overlay">
-    <div class="fake-editor">
-      <div class="fake-sidebar"></div>
-      <div class="fake-content">
-        <div class="code-line"><span class="k-blue">import</span> React <span class="k-blue">from</span> <span
-            class="k-orange">'react'</span>;</div>
-        <div class="code-line"><span class="k-blue">import</span> { useState } <span class="k-blue">from</span> <span
-            class="k-orange">'react'</span>;</div>
-        <div class="code-line">&nbsp;</div>
-        <div class="code-line"><span class="k-blue">export const</span> <span class="k-green">DataProcessor</span> = ()
-          => {</div>
-        <div class="code-line">&nbsp;&nbsp;<span class="k-blue">const</span> [data, setData] = useState(<span
-            class="k-blue">null</span>);</div>
-        <div class="code-line">&nbsp;&nbsp;<span class="k-green">// TODO: Optimize this heavy calculation</span></div>
-        <div class="code-line">&nbsp;&nbsp;<span class="k-blue">return</span> (</div>
-        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="k-green">div</span>&gt;Loading...&lt;/<span
-            class="k-green">div</span>&gt;</div>
-        <div class="code-line">&nbsp;&nbsp;);</div>
-        <div class="code-line">};</div>
-      </div>
-    </div>
-  </div>
+  <!-- Flash Notification Toast -->
+  <div id="toast-message" style="display:none;"></div>
 
   <script type="module" src="/src/main.ts"></script>
 </body>

@@ -67,31 +67,42 @@ export class EnemyAI {
                 return; // Stationary
 
             case 'manager':
-                // Kiting & Shouting
-                // Dist formula
+                // Cooldown Check (e.g., using a property on enemy, or just simple logic)
+                // Since we don't have a rigid cooldown prop yet, let's use a custom property if we can,
+                // or just rely on RNG with a lower chance + LOGIC.
+
+                // Let's add a `cooldown` field to the Enemy type later, but for now, 
+                // we can treat 'stunned' as a cooldown? No, that stops movement.
+                // Let's just drastically reduce the shout chance and range.
+
                 const distM = Math.abs(gameState.playerX - enemy.x) + Math.abs(gameState.playerY - enemy.y);
 
-                // Shout Ability (Range 3-4)
-                if (distM >= 3 && distM <= 4 && Math.random() < 0.15) { // Reduced from 0.3
-                    log("Manager yells about TPS reports! +10 Burnout.");
-                    gameState.burnout = Math.min(100, gameState.burnout + 10);
-                    return; // Action taken
+                // Attack logic:
+                // Only shout if NOT adjacent (adjacent is melee)
+                // Chance 20% (approx every 5 turns)
+                if (distM >= 2 && distM <= 4 && Math.random() < 0.2) {
+                    log("Manager yells about TPS reports! +5 Burnout.");
+                    gameState.burnout = Math.min(100, gameState.burnout + 5); // Nerfed from 10
+                    // Trigger "Action Taken" visual?
+                    if (onFX) onFX('shout', enemy.x, enemy.y, gameState.playerX, gameState.playerY);
+                    return;
                 }
 
-                // Movement Logic (Maintain Dist 3)
+                // Movement Logic (Maintain Dist 2-3, Don't rush in to melee unless necessary)
                 if (distM < 2) {
-                    // Too close, run away (Only if very close)
+                    // Too close, Step back to shout range
                     if (gameState.playerX > enemy.x) dx = -1;
                     else if (gameState.playerX < enemy.x) dx = 1;
                     else if (gameState.playerY > enemy.y) dy = -1;
                     else if (gameState.playerY < enemy.y) dy = 1;
-                } else if (distM > 4) {
-                    // Too far, close in
+                } else if (distM > 3) {
+                    // Close in slightly
                     if (gameState.playerX > enemy.x) dx = 1;
                     else if (gameState.playerX < enemy.x) dx = -1;
                     else if (gameState.playerY > enemy.y) dy = 1;
                     else if (gameState.playerY < enemy.y) dy = -1;
                 }
+                // If dist is 2 or 3, stay put (Ideal shouting range)
                 break;
         }
 

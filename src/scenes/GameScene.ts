@@ -16,10 +16,11 @@ export class GameScene extends Phaser.Scene {
     private worldHeight: number = 9;
     private readonly ROOM_SIZE: number = 11; // Tiles per Room
     private mapGroup!: Phaser.GameObjects.Group;
-    private mobGroup!: Phaser.GameObjects.Group;
-    private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+    private player!: Phaser.GameObjects.Sprite;
+    // private cursors!: Phaser.Types.Input.Keyboard.CursorKeys; // Unused for now
 
-    // Constantse uiManager!: UIManager;
+    // Constants
+    private uiManager!: UIManager;
     private audioManager!: AudioManager;
     private turnLock: boolean = false;
 
@@ -39,9 +40,10 @@ export class GameScene extends Phaser.Scene {
         this.audioManager = AudioManager.getInstance();
         // this.audioManager.play('bgm');
 
-        // Initialize UI
-        this.uiManager = UIManager.getInstance();
+        // Initialize UI (Singleton)
+        this.uiManager = UIManager.getInstance(); // Changed to this.uiManager
         this.uiManager.onItemClick = this.handleItemUse.bind(this);
+        // this.uiManager.initMinimap(this.worldWidth, this.worldHeight); // Deprecated/Defer
         const macguffin = this.registry.get('macguffin') || 'Golden Stapler';
         EventManager.emit(GameEvents.LOG_MESSAGE, `Game Started on Floor 1. Objective: Find the ${macguffin}.`);
 
@@ -102,14 +104,6 @@ export class GameScene extends Phaser.Scene {
 
         // Setup Input
         if (this.input && this.input.keyboard) {
-            this.cursors = this.input.keyboard.createCursorKeys();
-            // Map Space to Interaction/Wait
-            this.input.keyboard.on('keydown-SPACE', () => {
-                this.handlePlayerInput('WAITE');
-                // Wait? Or Interact? 
-                // Actually existing logic might rely on cursors.space.isDown check in update?
-                // Let's check update()
-            });
             this.input.keyboard.addKeys({
                 up: Phaser.Input.Keyboard.KeyCodes.UP,
                 down: Phaser.Input.Keyboard.KeyCodes.DOWN,
@@ -128,7 +122,10 @@ export class GameScene extends Phaser.Scene {
         // Mouse Input
         this.input.on('pointerdown', this.handlePointerDown, this);
 
-        this.cameras.main.setBackgroundColor('#111');
+        document.body.classList.add('game-active');
+        document.querySelectorAll<HTMLElement>('.mobile-hud').forEach(el => el.style.display = ''); // Reset inline style
+
+        this.cameras.main.setBackgroundColor('#000000');
 
         // Initial Camera Setup
         this.updateCamera();
@@ -245,13 +242,7 @@ export class GameScene extends Phaser.Scene {
 
         // Render Objects
         room.objects.forEach(obj => {
-            const emoji = this.getEmoji(obj.sprite_key);
-            if (emoji) {
-                const text = this.add.text(obj.x * this.tileSize + 16, obj.y * this.tileSize + 16, emoji, { fontSize: '24px' }).setOrigin(0.5);
-                this.mapGroup.add(text);
-            } else {
-                this.mapGroup.create(obj.x * this.tileSize, obj.y * this.tileSize, obj.sprite_key).setOrigin(0);
-            }
+            this.mapGroup.create(obj.x * this.tileSize, obj.y * this.tileSize, obj.sprite_key).setOrigin(0);
         });
 
         // Render Enemies
@@ -293,13 +284,9 @@ export class GameScene extends Phaser.Scene {
                 }
             }
         });
-
-        // Player logic continues...
-        // ...
     }
 
-    // ... (re-find Player Code block if needed, but the chunk above ends before it ideally) ...
-    // Wait, replacing lines 134-167 to include window logic.
+    // Player is rendered separately in updatePlayerSprite
 
     private getEmoji(key: string): string | null {
         switch (key) {
@@ -361,11 +348,12 @@ export class GameScene extends Phaser.Scene {
 
     // Phase 1: Input Validation
     private handleInput(event: KeyboardEvent) {
+        // ... (Cleaned up: remove redundant checks if processMovement handles them)
         if (this.turnLock || this.gameState.hp <= 0) return;
 
         let dx = 0;
         let dy = 0;
-        const isSprint = event.shiftKey; // Check for sprint
+        const isSprint = event.shiftKey;
 
         switch (event.code) {
             case 'ArrowUp': case 'KeyW': dy = -1; break;
@@ -373,54 +361,13 @@ export class GameScene extends Phaser.Scene {
             case 'ArrowLeft': case 'KeyA': dx = -1; break;
             case 'ArrowRight': case 'KeyD': dx = 1; break;
             case 'Space':
+                // Panic Mode / Wait
                 this.executePhase3_World();
                 return;
             default: return;
         }
 
-        const targetX = this.gameState.playerX + dx;
-        const targetY = this.gameState.playerY + dy;
-
-        // Transition Check
-        if (targetX < 0 || targetX >= this.ROOM_SIZE || targetY < 0 || targetY >= this.ROOM_SIZE) {
-            this.tryRoomTransition(dx, dy);
-            return;
-        }
-
-        const room = this.gameState.worldMap[this.gameState.currentRoomId];
-        // Wall/Window Check
-        const cell = room.collision_map[targetY][targetX];
-        if (cell === 1 || cell === 2) {
-            EventManager.emit(GameEvents.LOG_MESSAGE, cell === 2 ? "A nice view of the void." : "Bonk! That's a wall.");
-            // Bump logic (maybe small sound/shake)
-            return;
-        }
-
-        // Enemy Collision (Combat)
-        const enemy = room.enemies.find(e => e.x === targetX && e.y === targetY && e.hp > 0);
-        if (enemy) {
-            this.executeCombat(enemy);
-            this.executePhase3_World();
-            return;
-        }
-
-        // Object Bump (Interact or Move Block)
-        const blocked = InteractionSystem.handleBump(
-            this.gameState,
-            targetX,
-            targetY,
-            (msg) => EventManager.emit(GameEvents.LOG_MESSAGE, msg),
-            (id) => this.flashEnemyDamage(id),
-            () => this.handleWin()
-        );
-        if (blocked) {
-            this.renderRoom(); // Updates if item picked up
-            this.executePhase3_World();
-            return;
-        }
-
-        // If not blocked, proceed to Phase 2
-        this.executePhase2_Player(dx, dy, isSprint);
+        this.processMovement(dx, dy, isSprint);
     }
 
     // Phase 2: Player Execution
@@ -573,33 +520,109 @@ export class GameScene extends Phaser.Scene {
     // ... handleInput ...
 
     private handlePointerDown(pointer: Phaser.Input.Pointer) {
-        if (this.turnLock || !this.targetingItem) return;
+        if (this.turnLock || this.gameState.hp <= 0) return;
 
-        // Convert to Grid Coords
+        // Convert Click to Grid Coords
         const x = Math.floor(pointer.worldX / this.tileSize);
         const y = Math.floor(pointer.worldY / this.tileSize);
 
+        // Validation
         if (x < 0 || x >= this.ROOM_SIZE || y < 0 || y >= this.ROOM_SIZE) return;
 
-        // Check Range (Stapler Ranged Attack)
-        if (this.targetingItem === 'stapler' || this.targetingItem === 'weapon') {
-            const output = InteractionSystem.handleRangedAttack(
-                this.gameState,
-                x,
-                y,
-                this.targetingItem,
-                (msg) => EventManager.emit(GameEvents.LOG_MESSAGE, msg),
-                (id) => this.flashEnemyDamage(id)
-            );
+        // Interaction Mode: Targeting (Stapler etc.)
+        if (this.targetingItem) {
+            if (this.targetingItem === 'stapler' || this.targetingItem === 'weapon') {
+                const output = InteractionSystem.handleRangedAttack(
+                    this.gameState,
+                    x,
+                    y,
+                    this.targetingItem,
+                    (msg) => EventManager.emit(GameEvents.LOG_MESSAGE, msg),
+                    (id) => this.flashEnemyDamage(id)
+                );
 
-            if (output.success) {
-                // Consume turn?
-                this.targetingItem = null;
-                this.input.setDefaultCursor('default');
-                EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Disengaged.");
+                if (output.success) {
+                    this.targetingItem = null;
+                    this.input.setDefaultCursor('default');
+                    EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Disengaged.");
+                    this.executePhase3_World();
+                }
+            }
+            return;
+        }
+
+        // Tap-to-Move Logic
+        // For now, implementing "Tap Adjacent" (D-Pad style)
+        // Check relative position
+        const dx = x - this.gameState.playerX;
+        const dy = y - this.gameState.playerY;
+
+        // Only allow orthogonal movement (distance 1)
+        if (Math.abs(dx) + Math.abs(dy) === 1) {
+            // It's an adjacent tile! Mimic key input behavior
+            // We can reuse `handleInput` conceptually, but we need to pass dx/dy directly.
+            // Let's create a helper `processMovement(dx, dy)`.
+
+            this.processMovement(dx, dy, pointer.event.shiftKey);
+            // shiftKey works if they hold shift and click, nice for desktop testing
+        } else {
+            // Tap on self? Wait?
+            if (dx === 0 && dy === 0) {
+                // Wait / Skip Turn
                 this.executePhase3_World();
+            } else {
+                // Pathfinding / Teleport?
+                // For Phase 9, let's stick to Adjacent only to keep it tactical.
+                EventManager.emit(GameEvents.LOG_MESSAGE, "Too far! Move closer.");
             }
         }
+    }
+
+    private processMovement(dx: number, dy: number, isSprint: boolean) {
+        if (this.turnLock || this.gameState.hp <= 0) return;
+
+        const targetX = this.gameState.playerX + dx;
+        const targetY = this.gameState.playerY + dy;
+
+        // Transition Check
+        if (targetX < 0 || targetX >= this.ROOM_SIZE || targetY < 0 || targetY >= this.ROOM_SIZE) {
+            this.tryRoomTransition(dx, dy);
+            return;
+        }
+
+        const room = this.gameState.worldMap[this.gameState.currentRoomId];
+        // Wall/Window Check
+        const cell = room.collision_map[targetY][targetX];
+        if (cell === 1 || cell === 2) {
+            EventManager.emit(GameEvents.LOG_MESSAGE, cell === 2 ? "A nice view of the void." : "Bonk! That's a wall.");
+            return;
+        }
+
+        // Enemy Collision (Combat)
+        const enemy = room.enemies.find(e => e.x === targetX && e.y === targetY && e.hp > 0);
+        if (enemy) {
+            this.executeCombat(enemy);
+            this.executePhase3_World();
+            return;
+        }
+
+        // Object Bump (Interact or Move Block)
+        const blocked = InteractionSystem.handleBump(
+            this.gameState,
+            targetX,
+            targetY,
+            (msg) => EventManager.emit(GameEvents.LOG_MESSAGE, msg),
+            (id) => this.flashEnemyDamage(id),
+            () => this.handleWin()
+        );
+        if (blocked) {
+            this.renderRoom();
+            this.executePhase3_World();
+            return;
+        }
+
+        // If not blocked, move
+        this.executePhase2_Player(dx, dy, isSprint);
     }
 
     private handleItemUse(itemType: string, index: number) {

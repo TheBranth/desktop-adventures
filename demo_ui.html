@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Salaryman's Dungeon - SaaS V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* SaaS Dark Theme - "Linear" Style */
+            --bg-app: #0e0e11;
+            /* Deepest Black/Grey */
+            --bg-panel: #18181b;
+            /* Zinc 900 */
+            --bg-element: #27272a;
+            /* Zinc 800 */
+            --bg-hover: #3f3f46;
+
+            --border: #27272a;
+            /* Subtle border */
+            --border-highlight: #52525b;
+
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+
+            --accent: #6366f1;
+            /* Indigo */
+            --accent-glow: rgba(99, 102, 241, 0.15);
+
+            --danger: #ef4444;
+            --success: #10b981;
+            --warn: #eab308;
+
+            --font-ui: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* --- ICONS --- */
+        .icon {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* --- LAYOUT STRUCTURE (The Fix) --- */
+        #app-shell {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            grid-template-columns: 1fr 320px;
+            /* FIXED: Viewport takes remaining space, Sidebar is fixed 320px */
+            grid-template-rows: 100%;
+            overflow: hidden;
+        }
+
+        /* --- 1. GAME VIEWPORT (Left/Center) --- */
+        #viewport {
+            background-color: #050505;
+            /* Blacker than black */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-right: 1px solid var(--border);
+
+            /* Dotted Grid Pattern for "Design Tool" feel */
+            background-image: radial-gradient(var(--bg-element) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* The "Canvas" where Phaser lives */
+        #game-canvas {
+            width: min(85vh, 85vw);
+            height: min(85vh, 85vw);
+            position: relative;
+            background-color: #1c1c1e;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        /* CSS Floor Texture */
+        .floor-texture {
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            /* Tile Size */
+            /* Vignette */
+            box-shadow: inset 0 0 150px rgba(0, 0, 0, 1);
+        }
+
+        /* --- MOCK ENTITIES (CSS Art) --- */
+        .entity {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            transform: translate(-50%, -50%);
+        }
+
+        .player-sprite {
+            top: 50%;
+            left: 50%;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .p-head {
+            width: 20px;
+            height: 18px;
+            background: #fec;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .p-glasses {
+            width: 16px;
+            height: 6px;
+            background: #000;
+            opacity: 0.8;
+            position: absolute;
+            top: 6px;
+            left: 2px;
+        }
+
+        .p-body {
+            width: 16px;
+            height: 14px;
+            background: #fff;
+            position: relative;
+            top: -2px;
+            z-index: -1;
+        }
+
+        .p-tie {
+            width: 4px;
+            height: 10px;
+            background: #d00;
+            position: absolute;
+            left: 6px;
+            top: 0;
+        }
+
+        .enemy-sprite {
+            top: 30%;
+            left: 70%;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .wall-block {
+            position: absolute;
+            width: 32px;
+            height: 48px;
+            background: linear-gradient(to bottom, #475569 0%, #334155 10%, #1e293b 100%);
+            border-top: 1px solid #94a3b8;
+            top: 100px;
+            left: 100px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- 2. SIDEBAR (Right) --- */
+        #sidebar {
+            background-color: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        /* Sidebar Header */
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        .version {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-element);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Sidebar Sections */
+        .section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: var(--bg-element);
+            padding: 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: #333;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-details h3 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .user-details p {
+            margin: 0;
+            font-size: 11px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+        }
+
+        /* Stats Bars */
+        .stat-row {
+            margin-top: 12px;
+        }
+
+        .stat-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .bar-track {
+            height: 6px;
+            background: #000;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .hp {
+            background: var(--danger);
+            width: 85%;
+        }
+
+        .burn {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            width: 40%;
+        }
+
+        /* Inventory Grid */
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .inv-item {
+            aspect-ratio: 1;
+            background: var(--bg-element);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .inv-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--text-muted);
+        }
+
+        .inv-item.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .badge-count {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 9px;
+            font-family: var(--font-mono);
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1px 3px;
+            border-radius: 2px;
+        }
+
+        /* Logs */
+        .log-container {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .log-entry {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 8px;
+            line-height: 1.4;
+        }
+
+        .ts {
+            color: #52525b;
+        }
+
+        .msg span {
+            color: var(--accent);
+        }
+
+        /* --- MOBILE HUD (Hidden on Desktop) --- */
+        .mobile-hud {
+            display: none;
+        }
+
+        /* Default Hidden */
+
+        @media (max-width: 768px) {
+            #app-shell {
+                display: block;
+                /* Stack layout */
+            }
+
+            #sidebar {
+                display: none;
+            }
+
+            /* Hide Sidebar */
+            #viewport {
+                width: 100%;
+                height: 100%;
+                border: none;
+                background-image: none;
+                /* Cleaner on mobile */
+            }
+
+            #game-canvas {
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                border: none;
+            }
+
+            /* Mobile Elements Visible */
+            .mobile-hud {
+                display: flex;
+            }
+
+            /* 1. Mobile Top Bar */
+            .mob-top {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 12px 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                z-index: 50;
+                pointer-events: none;
+                /* Let clicks pass through */
+            }
+
+            /* Profile Pill */
+            .mob-profile {
+                background: rgba(24, 24, 27, 0.9);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 4px;
+                padding-right: 12px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                pointer-events: auto;
+            }
+
+            .mob-avatar {
+                width: 32px;
+                height: 32px;
+                background: #333;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 16px;
+            }
+
+            .mob-bars {
+                width: 60px;
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .mob-bar {
+                height: 4px;
+                background: #333;
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            /* 2. Mobile Dock (Bottom) */
+            .mob-dock {
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(24, 24, 27, 0.9);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 8px;
+                border-radius: 24px;
+                display: flex;
+                gap: 12px;
+                z-index: 50;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .dock-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: 16px;
+                border: none;
+                background: transparent;
+                color: var(--text-muted);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: 0.2s;
+            }
+
+            .dock-btn:active {
+                transform: scale(0.9);
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
+
+            .dock-btn.active {
+                background: var(--text-main);
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app-shell">
+
+        <!-- === MOBILE HUD (Hidden on Desktop) === -->
+        <div class="mobile-hud mob-top">
+            <div class="mob-profile">
+                <div class="mob-avatar">👔</div>
+                <div class="mob-bars">
+                    <div class="mob-bar">
+                        <div class="bar-fill hp"></div>
+                    </div>
+                    <div class="mob-bar">
+                        <div class="bar-fill burn"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Settings Icon Top Right -->
+            <div style="background:rgba(0,0,0,0.6); padding:8px; border-radius:50%; pointer-events:auto;">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="mobile-hud mob-dock">
+            <button class="dock-btn"><svg class="icon" viewBox="0 0 24 24">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg></button>
+            <button class="dock-btn active"><svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 6h18" />
+                    <path d="M7 6v14" />
+                    <path d="M17 6v14" />
+                    <path d="M12 6v14" />
+                </svg></button>
+            <button class="dock-btn"><svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg></button>
+        </div>
+
+        <!-- === VIEWPORT (Center) === -->
+        <div id="viewport">
+            <div id="game-canvas">
+                <div class="floor-texture"></div>
+
+                <!-- Mock Environment -->
+                <div class="wall-block" style="top: 150px; left: 150px;"></div>
+                <div class="wall-block" style="top: 150px; left: 182px;"></div>
+                <div class="wall-block" style="top: 150px; left: 214px;"></div>
+
+                <!-- Player -->
+                <div class="entity player-sprite">
+                    <div class="p-head">
+                        <div class="p-glasses"></div>
+                    </div>
+                    <div class="p-body"></div>
+                    <div class="p-tie"></div>
+                </div>
+
+                <!-- Enemy -->
+                <div class="entity enemy-sprite"></div>
+
+            </div>
+        </div>
+
+        <!-- === SIDEBAR (Right) === -->
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <span class="brand">SALARYMAN_OS v1.2</span>
+                <span class="version">DEV_BUILD</span>
+            </div>
+
+            <div class="section">
+                <div class="profile-card">
+                    <div class="avatar">👔</div>
+                    <div class="user-details">
+                        <h3>Employee #8492</h3>
+                        <p><span class="dot"></span> Online</p>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-meta"><span>WILLPOWER</span><span>18 / 20</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill hp"></div>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-meta"><span>BURNOUT</span><span>CRITICAL</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill burn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:14px;">
+                        <path
+                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                        <line x1="12" y1="22.08" x2="12" y2="12" />
+                    </svg>
+                    <span>INVENTORY</span>
+                </div>
+                <div class="inv-grid">
+                    <div class="inv-item active" title="Stapler">📎<div class="badge-count">14</div>
+                    </div>
+                    <div class="inv-item" title="Keycard">💳</div>
+                    <div class="inv-item" title="Coffee">☕</div>
+                    <div class="inv-item"></div>
+                    <div class="inv-item"></div>
+                    <div class="inv-item"></div>
+                </div>
+            </div>
+
+            <div class="section" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                <div class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:14px;">
+                        <polyline points="4 17 10 11 14 16 20 5" />
+                    </svg>
+                    <span>SYSTEM_LOG</span>
+                </div>
+                <div class="log-container">
+                    <div class="log-entry">
+                        <span class="ts">09:01</span>
+                        <span class="msg">Connected to Floor 1.</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="ts">09:02</span>
+                        <span class="msg">Picked up <span>Red Keycard</span>.</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="ts">09:05</span>
+                        <span class="msg" style="color:#ef4444;">Warning: Printer is jamming.</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="ts">09:06</span>
+                        <span class="msg">System Auto-saved.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="padding: 12px; font-size: 10px; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border);">
+                [SPACE] Panic Mode
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -9,9 +9,12 @@ export class StartScreen extends Phaser.Scene {
     }
 
     create() {
-        // Hide mobile controls on start screen
-        const mobileControls = document.getElementById('mobile-controls');
-        if (mobileControls) mobileControls.style.display = 'none';
+        document.body.classList.remove('game-active');
+        document.body.classList.remove('mobile-inventory-open');
+        document.body.classList.remove('mobile-logs-open');
+
+        // Explicitly hide HUDs to be safe
+        document.querySelectorAll<HTMLElement>('.mobile-hud').forEach(el => el.style.display = 'none');
 
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;

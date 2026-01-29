@@ -26,58 +26,101 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 // Create the game instance
-// Mobile Controls
-const bindControl = (id: string, key: string) => {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-
-    const triggerKey = (type: 'keydown' | 'keyup') => {
-        window.dispatchEvent(new KeyboardEvent(type, {
-            code: key,
-            key: key,
-            bubbles: true
-        }));
-    };
-
-    btn.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // Prevent scrolling/zoom
-        triggerKey('keydown');
-    });
-
-    btn.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        triggerKey('keyup');
-    });
-
-    // Mouse fallback for testing on desktop
-    btn.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        triggerKey('keydown');
-    });
-    btn.addEventListener('mouseup', (e) => {
-        e.preventDefault();
-        triggerKey('keyup');
-    });
-};
+// Mobile Controls helper removed (D-Pad deprecated in Phase 9)
 
 document.addEventListener('DOMContentLoaded', () => {
-    bindControl('btn-up', 'ArrowUp');
-    bindControl('btn-down', 'ArrowDown');
-    bindControl('btn-left', 'ArrowLeft');
-    bindControl('btn-right', 'ArrowRight');
-    bindControl('btn-right', 'ArrowRight');
-    bindControl('btn-action', 'Space');
+    // Phase 9: Mobile Dock Wiring
 
-    // Backpack Toggle (Mobile)
+    const resetDockActive = () => {
+        document.querySelectorAll('.dock-btn').forEach(btn => btn.classList.remove('active'));
+    };
+
+    // 0. Backdrop Click to Close (Shared)
+    document.addEventListener('click', (e) => {
+        const isInv = document.body.classList.contains('mobile-inventory-open');
+        const isLog = document.body.classList.contains('mobile-logs-open');
+
+        if (isInv || isLog) {
+            const sidebar = document.getElementById('sidebar');
+            const btnInv = document.getElementById('btn-inv');
+            const btnHome = document.getElementById('btn-dock-home'); // Log button
+
+            const target = e.target as Node;
+
+            // If click is outside sidebar AND outside the active toggle buttons
+            if (sidebar && !sidebar.contains(target) &&
+                btnInv && !btnInv.contains(target) &&
+                btnHome && !btnHome.contains(target)) {
+
+                document.body.classList.remove('mobile-inventory-open');
+                document.body.classList.remove('mobile-logs-open');
+
+                // Reset Active
+                resetDockActive();
+                const btnMain = document.getElementById('btn-dock-main');
+                if (btnMain) btnMain.classList.add('active');
+            }
+        }
+    });
+
+    // 1. Inventory Toggle
     const btnInv = document.getElementById('btn-inv');
     if (btnInv) {
-        const toggleInv = (e: Event) => {
+        btnInv.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+
+            // Close Logs if open
+            document.body.classList.remove('mobile-logs-open');
+            const isOpen = document.body.classList.toggle('mobile-inventory-open');
+
+            resetDockActive();
+            if (isOpen) {
+                btnInv.classList.add('active');
+            } else {
+                document.getElementById('btn-dock-main')?.classList.add('active');
+            }
+        });
+    }
+
+    // 2. Log Toggle (btn-dock-home)
+    const btnHome = document.getElementById('btn-dock-home');
+    if (btnHome) {
+        btnHome.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+
+            // Close Inv if open
+            document.body.classList.remove('mobile-inventory-open');
+            const isOpen = document.body.classList.toggle('mobile-logs-open');
+
+            resetDockActive();
+            if (isOpen) {
+                btnHome.classList.add('active');
+            } else {
+                document.getElementById('btn-dock-main')?.classList.add('active');
+            }
+        });
+    }
+
+    // 3. Settings / Menu (Top Right) -> Boss Key behavior?
+    const btnSettings = document.getElementById('btn-settings');
+    if (btnSettings) {
+        btnSettings.addEventListener('click', () => {
+            // Simulate Escape for Boss Menu
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+        });
+    }
+
+    // 4. Dock Main (Center) -> Close All
+    const btnMain = document.getElementById('btn-dock-main');
+    if (btnMain) {
+        btnMain.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation(); // Prevent game input
-            document.body.classList.toggle('mobile-inventory-open');
-        };
-        btnInv.addEventListener('touchstart', toggleInv);
-        btnInv.addEventListener('mousedown', toggleInv);
+            document.body.classList.remove('mobile-inventory-open');
+            document.body.classList.remove('mobile-logs-open');
+
+            resetDockActive();
+            btnMain.classList.add('active');
+        });
     }
 });
 

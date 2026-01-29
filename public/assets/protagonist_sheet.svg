@@ -1,38 +1,47 @@
 <svg width="128" height="32" viewBox="0 0 128 32" xmlns="http://www.w3.org/2000/svg">
   <!-- Protagonist Sprite Sheet: 4 Frames x 32px -->
+  <!-- Style: Bald, Glasses, Rotund -->
   
   <defs>
     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
       <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
     </filter>
     
-    <!-- Shared Salaryman Parts -->
+    <!-- Rotund Body Parts -->
     <g id="body">
-       <rect x="10" y="14" width="12" height="10" fill="#FFF" /> <!-- Shirt -->
-       <path d="M16 14 L16 24" stroke="#E0E0E0" stroke-width="1" /> <!-- Button Placket -->
-       <path d="M16 14 L14 18 L16 20 L18 18 L16 14" fill="#F44336" /> <!-- Tie -->
+       <!-- Rotund Belly (White Shirt) -->
+       <ellipse cx="16" cy="20" rx="8" ry="7" fill="#FFF" />
+       <!-- Tie (Short, resting on belly) -->
+       <path d="M16 16 L14 18 L16 22 L18 18 L16 16" fill="#F44336" />
     </g>
+    
     <g id="head">
-       <circle cx="16" cy="10" r="5" fill="#FFCCBC" /> <!-- Face -->
-       <path d="M11 8 Q16 4 21 8" fill="#424242" /> <!-- Hair -->
+       <!-- Bald Head -->
+       <circle cx="16" cy="11" r="6" fill="#FFCCBC" />
+       <!-- Glasses -->
+       <g fill="none" stroke="#000" stroke-width="1">
+         <circle cx="14" cy="11" r="2" fill="#E0F7FA" fill-opacity="0.5" />
+         <circle cx="18" cy="11" r="2" fill="#E0F7FA" fill-opacity="0.5" />
+         <line x1="16" y1="11" x2="16" y2="11" /> <!-- Bridge -->
+       </g>
     </g>
   </defs>
 
   <!-- FRAME 1: IDLE (x=0) -->
   <g transform="translate(0, 0)" filter="url(#shadow)">
-    <!-- Legs -->
-    <rect x="11" y="24" width="4" height="6" fill="#455A64" />
-    <rect x="17" y="24" width="4" height="6" fill="#455A64" />
+    <!-- Legs (Short & Stubby) -->
+    <rect x="12" y="25" width="3" height="5" fill="#455A64" />
+    <rect x="17" y="25" width="3" height="5" fill="#455A64" />
     <use href="#body" />
     <use href="#head" />
   </g>
 
   <!-- FRAME 2: WALK LEFT (x=32) -->
   <g transform="translate(32, 0)" filter="url(#shadow)">
-    <!-- Legs (Left Forward) -->
-    <rect x="11" y="22" width="4" height="6" fill="#455A64" /> <!-- Left Up -->
-    <rect x="17" y="25" width="4" height="6" fill="#455A64" /> <!-- Right Back -->
-    <!-- Bob Head -->
+    <!-- Legs (Waddle) -->
+    <rect x="12" y="23" width="3" height="5" fill="#455A64" /> <!-- Left Up -->
+    <rect x="17" y="26" width="3" height="5" fill="#455A64" /> <!-- Right Down -->
+    <!-- Bob -->
     <g transform="translate(0, -1)">
         <use href="#body" />
         <use href="#head" />
@@ -41,10 +50,10 @@
 
   <!-- FRAME 3: WALK RIGHT (x=64) -->
   <g transform="translate(64, 0)" filter="url(#shadow)">
-    <!-- Legs (Right Forward) -->
-    <rect x="11" y="25" width="4" height="6" fill="#455A64" /> <!-- Left Back -->
-    <rect x="17" y="22" width="4" height="6" fill="#455A64" /> <!-- Right Up -->
-    <!-- Bob Head -->
+    <!-- Legs (Waddle) -->
+    <rect x="12" y="26" width="3" height="5" fill="#455A64" /> <!-- Left Down -->
+    <rect x="17" y="23" width="3" height="5" fill="#455A64" /> <!-- Right Up -->
+    <!-- Bob -->
     <g transform="translate(0, -1)">
         <use href="#body" />
         <use href="#head" />
@@ -53,21 +62,26 @@
 
   <!-- FRAME 4: ATTACK (x=96) -->
   <g transform="translate(96, 0)" filter="url(#shadow)">
-    <!-- Wide Stance -->
-    <rect x="10" y="24" width="4" height="6" fill="#455A64" transform="rotate(10 12 24)" />
-    <rect x="18" y="24" width="4" height="6" fill="#455A64" transform="rotate(-10 20 24)" />
+    <!-- Aggressive Waddle Stance -->
+    <rect x="11" y="25" width="3" height="5" fill="#455A64" transform="rotate(15 12 28)" />
+    <rect x="18" y="25" width="3" height="5" fill="#455A64" transform="rotate(-15 20 28)" />
     
     <use href="#body" />
-    <use href="#head" />
     
+    <!-- Angry Eyes (Eyebrows over glasses) -->
+    <g transform="translate(0, 1)">
+        <use href="#head" />
+        <!-- Eyebrows -->
+        <path d="M13 7 L15 8" stroke="#000" stroke-width="1" />
+        <path d="M19 7 L17 8" stroke="#000" stroke-width="1" />
+    </g>
+
     <!-- Arm with Red Stapler -->
-    <rect x="20" y="16" width="8" height="3" fill="#FFF" /> <!-- Arm -->
-    <rect x="26" y="14" width="6" height="4" fill="#D32F2F" /> <!-- Stapler Body -->
-    <rect x="26" y="18" width="6" height="1" fill="#B71C1C" /> <!-- Stapler Base -->
-    
-    <!-- Angry Eyes -->
-    <path d="M14 9 L15 10" stroke="#000" stroke-width="1" />
-    <path d="M18 9 L17 10" stroke="#000" stroke-width="1" />
+    <rect x="22" y="18" width="8" height="3" rx="1" fill="#FFCCBC" transform="rotate(-10 22 18)" /> <!-- Arm -->
+    <g transform="translate(28, 14) rotate(-10)">
+        <rect x="0" y="0" width="6" height="4" fill="#D32F2F" /> <!-- Stapler Body -->
+        <rect x="0" y="4" width="6" height="1" fill="#B71C1C" /> <!-- Stapler Base -->
+    </g>
   </g>
 
 </svg>
