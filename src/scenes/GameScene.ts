@@ -58,13 +58,10 @@ export class GameScene extends Phaser.Scene {
         // Initialize Map
         const shouldLoad = this.registry.get('loadGame');
 
-        let floor = 1;
-
         if (shouldLoad) {
             const loadedState = SaveManager.loadGame();
             if (loadedState) {
                 this.gameState = loadedState;
-                floor = this.gameState.floor || 1; // Fallback
                 EventManager.emit(GameEvents.LOG_MESSAGE, "Game Loaded. Welcome back.");
             } else {
                 // Fallback if load fails
@@ -708,7 +705,7 @@ export class GameScene extends Phaser.Scene {
                 // Place player at Start (normally 5,5 or random edge)
                 // MapGenerator returns a fresh state. 
                 // We should merge it with our player stats (Inventory, HP).
-                const freshState = this.gameState; // This is the NEW map.
+                // const freshState = this.gameState; // Unused variable removed.
 
                 // Restore carry-over stats
                 // freshState.inventory = ... (Wait, generateNewFloor overwrites this.gameState entirely)

@@ -1,7 +1,6 @@
 
 export class AudioManager {
     private static instance: AudioManager;
-    private sounds: { [key: string]: HTMLAudioElement } = {};
     private muted: boolean = false;
 
     private constructor() {

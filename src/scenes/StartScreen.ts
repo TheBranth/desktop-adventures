@@ -13,12 +13,9 @@ export class StartScreen extends Phaser.Scene {
         const height = this.cameras.main.height;
 
         // Colors (Slack-ish)
+        // Colors (Slack-ish)
         const sidebarColor = 0x3F0E40; // Aubergine
-        const activeItemColor = 0x1164A3; // Blue
-        const textColor = 0xFFFFFF; // White
-        const dimTextColor = 0xAAAAAA;
         const chatBgColor = 0xFFFFFF;
-        const chatHeaderColor = 0xF8F8F8;
 
         // 1. Sidebar
         this.add.rectangle(0, 0, 220, height, sidebarColor).setOrigin(0);
@@ -115,7 +112,7 @@ export class StartScreen extends Phaser.Scene {
 
         const ctaText = hasSave ? "Resume your work? (Click #daily-standup)" : "Accept the assignment? (Click here)";
 
-        const cta = this.add.text(255, inputY + 15, ctaText, {
+        this.add.text(255, inputY + 15, ctaText, {
             fontFamily: 'Arial, sans-serif', fontSize: '14px', color: '#888888'
         });
 
