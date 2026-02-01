@@ -88,12 +88,18 @@ export class UIManager {
             this.hpBar.style.width = `${hpPercent}%`;
         }
 
+        const hpText = document.getElementById('hp-text');
+        if (hpText) hpText.innerText = `${hp} / ${maxHp}`;
+
         if (this.burnoutBar) {
             const b = Math.max(0, Math.min(100, burnout));
             this.burnoutBar.style.width = `${b}%`;
             if (burnout >= 50) this.burnoutBar.style.backgroundColor = '#9b59b6';
             else this.burnoutBar.style.backgroundColor = '#3498db';
         }
+
+        const burnoutText = document.getElementById('burnout-text');
+        if (burnoutText) burnoutText.innerText = `${burnout}%`;
 
         if (this.creditsVal) {
             this.creditsVal.textContent = `¥${credits}`;
@@ -130,14 +136,7 @@ export class UIManager {
 
     public onItemClick: ((itemId: string, index: number) => void) | null = null;
 
-    private getItemIcon(id: string): string {
-        switch (id) {
-            case 'stapler': return 'assets/ui/icon_stapler.svg';
-            case 'coffee': return 'assets/environment/water_cooler.svg';
-            // TODO: Ensure these assets exist or use generic fallback
-            default: return '';
-        }
-    }
+
 
     public updateInventory(inventory: any[]) {
         if (!this.inventoryGrid) return;
@@ -148,38 +147,31 @@ export class UIManager {
             slot.className = 'inv-item';
             slot.title = item.name;
 
-            // Hover effect handled by CSS .inv-item:hover
-
-            const iconPath = this.getItemIcon(item.id); // Use item.id not item.type if that's the property
-            // Check type definition, usually it's `type` or `id`.
-            // In GameScene logic: `itemType === 'stapler'`. Item structure has `.type`?
-            // Let's assume `.type` based on previous code usage `this.getItemIconPath(item.type)`.
-            // Wait, standard structure in `ItemSystem` usually puts ID in `type` or `id`.
-            // Using `item.id` to be safe, or fallback to name?
-            // Actually `GameState.inventory` is `InventoryItem[]`. `InventoryItem` has `id`, `name`, `type`?
-            // Let's just try to get a path.
-
+            // Image
             const img = document.createElement('img');
-            img.style.width = '60%';
-            img.style.height = '60%';
+            img.style.width = '64%';
+            img.style.height = '64%';
             img.style.objectFit = 'contain';
+            img.style.pointerEvents = 'none'; // Ensure click passes to slot
 
-            if (iconPath) {
-                img.src = iconPath;
-            } else {
-                // Fallback Logic
-                if (item.id === 'stapler') img.src = 'assets/items/red_stapler.svg';
-                else if (item.id === 'coffee') img.src = 'assets/items/coffee.svg';
-                else img.src = 'assets/items/newspaper.svg'; // Generic
-            }
+            // Asset Mapping
+            // We assume assets exist at assets/items/[sprite_key].svg
+            // fallback to 'box' if fails?
+            // item.sprite_key should be reliably populated by ItemSystem/MapGenerator
+            const spriteKey = item.sprite_key || item.id;
+            img.src = `assets/items/${spriteKey}.svg`;
 
             img.onerror = () => {
                 img.style.display = 'none';
-                slot.innerText = '📦';
+                slot.innerText = '📦'; // Text fallback
+                slot.style.display = 'flex';
+                slot.style.alignItems = 'center';
+                slot.style.justifyContent = 'center';
+                slot.style.fontSize = '24px';
             };
             slot.appendChild(img);
 
-            // Count/Uses
+            // Count/Uses Badge
             if (item.count > 1 || item.uses) {
                 const badge = document.createElement('div');
                 badge.className = 'badge-count';
@@ -187,22 +179,32 @@ export class UIManager {
                 slot.appendChild(badge);
             }
 
-            slot.onclick = () => {
-                if (this.onItemClick) this.onItemClick(item.id, index);
+            // Click Handler
+            // Use arrow function to capture 'item' and 'index' closure
+            slot.onclick = (e) => {
+                e.stopPropagation(); // Prevent bubbling if needed
+                console.log(`Inventory Click: ${item.id} at index ${index}`);
 
-                // Active highlighting
+                // Visual Active State
                 Array.from(this.inventoryGrid!.children).forEach(c => c.classList.remove('active'));
                 slot.classList.add('active');
+
+                // Trigger callback
+                if (this.onItemClick) {
+                    this.onItemClick(item.id, index);
+                } else {
+                    console.warn("UIManager: No onItemClick handler attached!");
+                }
             };
 
             this.inventoryGrid!.appendChild(slot);
         });
 
-        // Empty Slots
-        for (let i = 0; i < (6 - inventory.length); i++) {
+        // Fill Empty Slots
+        const TOTAL_SLOTS = 6;
+        for (let i = inventory.length; i < TOTAL_SLOTS; i++) {
             const el = document.createElement('div');
-            el.className = 'inv-item';
-            el.style.opacity = '0.1';
+            el.className = 'inv-item empty';
             this.inventoryGrid.appendChild(el);
         }
     }

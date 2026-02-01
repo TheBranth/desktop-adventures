@@ -49,6 +49,7 @@ export interface InventoryItem {
     id: string;
     type: string; // 'stapler', 'consumable', etc.
     name: string; // Display name
+    sprite_key?: string; // For UI icon
     uses?: number; // Components remaining
     maxUses?: number; // For progress bar if needed
 }

@@ -15,6 +15,25 @@ export class InteractionSystem {
 
         if (objectIndex !== -1) {
             const obj = room.objects[objectIndex];
+
+            // Locked Door Logic
+            if (obj.type === 'door_secure') {
+                // Check Inventory for 'security_pass'
+                const hasKey = gameState.inventory.some(i => i.id === 'security_pass');
+                if (hasKey) {
+                    log("Access Granted. Door unlocking...");
+                    // Remove door object
+                    room.objects.splice(objectIndex, 1);
+                    return true; // Return true to block THIS move, but it opens for next time. 
+                    // Or return false to allow move immediately? 
+                    // If we return false, we might need to re-check if the tile is now walkable?
+                    // Simple approach: Block this turn so they see the message. See the door disappear.
+                } else {
+                    log("Locked. Requires Security Pass.");
+                    return true;
+                }
+            }
+
             return this.interactWithObject(obj, objectIndex, gameState, room, log, onWin);
         }
 
@@ -60,13 +79,27 @@ export class InteractionSystem {
             credits: gameState.credits
         });
 
+        // Drop Logic
         if (Math.random() < 0.5) {
-            let lootItem = 'consumable';
-            if (enemy.type === 'manager') lootItem = 'id_card';
-            if (enemy.type === 'printer') lootItem = 'stapler';
-            if (Math.random() < 0.1) lootItem = 'weapon';
+            // Specific Loot Table
+            const lootTable = ['granola_bar', 'mint', 'vitamin_pill', 'coffee'];
+            let lootItem = lootTable[Math.floor(Math.random() * lootTable.length)];
 
-            room.objects.push({ x: enemy.x, y: enemy.y, id: `loot_${Math.random()}`, type: 'pickup', sprite_key: lootItem, itemType: lootItem });
+            // Managers have high chance to drop Security Pass
+            if (enemy.type === 'manager') {
+                if (Math.random() < 0.7) lootItem = 'security_pass';
+            }
+            else if (enemy.type === 'printer') lootItem = 'stapler';
+            else if (Math.random() < 0.1) lootItem = 'weapon';
+
+            room.objects.push({
+                x: enemy.x,
+                y: enemy.y,
+                id: `loot_${Math.random()}`,
+                type: 'pickup',
+                sprite_key: lootItem,
+                itemType: lootItem
+            });
             log(`Dropped ${lootItem}!`);
         }
 
@@ -159,6 +192,7 @@ export class InteractionSystem {
                         id: `item_${Date.now()}_${Math.random()}`,
                         type: obj.itemType,
                         name: obj.itemType,
+                        sprite_key: obj.sprite_key,
                         uses: undefined as number | undefined,
                         maxUses: undefined as number | undefined
                     };
@@ -239,11 +273,21 @@ export class InteractionSystem {
                         log("Vending Machine whirrs... but nothing falls out.");
                     } else if (roll <= 90) {
                         log("Dispensed Coffee. (+HP)");
-                        gameState.inventory.push({ id: `vend_${Date.now()}`, type: 'consumable', name: 'Coffee' });
+                        gameState.inventory.push({
+                            id: `vend_${Date.now()}`,
+                            type: 'coffee',
+                            name: 'Coffee',
+                            sprite_key: 'coffee'
+                        });
                         gameState.hp = Math.min(100, gameState.hp + 5);
                     } else {
                         log("JACKPOT! Rare Item dispensed.");
-                        gameState.inventory.push({ id: `vend_rare_${Date.now()}`, type: 'weapon', name: 'Newspaper' });
+                        gameState.inventory.push({
+                            id: `vend_rare_${Date.now()}`,
+                            type: 'weapon',
+                            name: 'Newspaper',
+                            sprite_key: 'newspaper'
+                        });
                     }
 
                     EventManager.emit(GameEvents.INVENTORY_UPDATE, { inventory: gameState.inventory });

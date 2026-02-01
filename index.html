@@ -81,16 +81,18 @@
           </div>
         </div>
 
-        <div class="stat-row">
-          <div class="stat-meta"><span>WILLPOWER</span><span>18 / 20</span></div>
-          <div class="bar-track">
-            <div class="bar-fill hp" id="hp-bar" style="width: 100%;"></div>
+        <div class="stat-bar-container">
+          <div class="stat-meta"><span>WILLPOWER</span><span id="hp-text">20 / 20</span></div>
+          <div class="bar-bg">
+            <div id="hp-bar" class="bar-fill" style="width: 100%;"></div>
           </div>
         </div>
-        <div class="stat-row">
-          <div class="stat-meta"><span>BURNOUT</span><span>STABLE</span></div>
-          <div class="bar-track">
-            <div class="bar-fill burn" id="burnout-bar" style="width: 0%;"></div>
+
+        <!-- Burnout (MP) -->
+        <div class="stat-bar-container">
+          <div class="stat-meta"><span>BURNOUT</span><span id="burnout-text">0%</span></div>
+          <div class="bar-bg">
+            <div id="burnout-bar" class="bar-fill" style="width: 0%; background-color: #3498db;"></div>
           </div>
         </div>
         <div class="stat-row">

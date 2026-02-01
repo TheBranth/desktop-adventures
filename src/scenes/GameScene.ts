@@ -261,7 +261,6 @@ export class GameScene extends Phaser.Scene {
                     sprite.name = enemy.id;
                 }
 
-                // Telegraphing / Threat Indicator
                 if (EnemyAI.isThreatening(enemy, this.gameState, room)) {
                     const warning = this.add.text(spriteX + 16, spriteY - 10, '!', {
                         fontSize: '20px',
@@ -291,6 +290,7 @@ export class GameScene extends Phaser.Scene {
     private getEmoji(key: string): string | null {
         switch (key) {
             case 'elevator': return '🛗';
+            case 'door_secure': return '🔒';
             default: return null;
         }
     }
@@ -516,6 +516,41 @@ export class GameScene extends Phaser.Scene {
 
     // Targeting State
     private targetingItem: string | null = null;
+    private rangeOverlay: Phaser.GameObjects.Group | null = null;
+
+    private renderRangeOverlay(range: number) {
+        if (!this.rangeOverlay) {
+            this.rangeOverlay = this.add.group();
+        }
+        this.rangeOverlay.clear(true, true);
+
+        const px = this.gameState.playerX;
+        const py = this.gameState.playerY;
+
+        // Simple Manhattan Range visualization
+        for (let y = 0; y < this.ROOM_SIZE; y++) {
+            for (let x = 0; x < this.ROOM_SIZE; x++) {
+                const dist = Math.abs(x - px) + Math.abs(y - py);
+                if (dist > 0 && dist <= range) {
+                    const rect = this.add.rectangle(
+                        x * this.tileSize,
+                        y * this.tileSize,
+                        this.tileSize,
+                        this.tileSize,
+                        0xffff00,
+                        0.2
+                    ).setOrigin(0);
+                    this.rangeOverlay.add(rect);
+                }
+            }
+        }
+    }
+
+    private clearRangeOverlay() {
+        if (this.rangeOverlay) {
+            this.rangeOverlay.clear(true, true);
+        }
+    }
 
     // ... handleInput ...
 
@@ -543,6 +578,7 @@ export class GameScene extends Phaser.Scene {
 
                 if (output.success) {
                     this.targetingItem = null;
+                    this.clearRangeOverlay();
                     this.input.setDefaultCursor('default');
                     EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Disengaged.");
                     this.executePhase3_World();
@@ -584,7 +620,35 @@ export class GameScene extends Phaser.Scene {
         const targetX = this.gameState.playerX + dx;
         const targetY = this.gameState.playerY + dy;
 
-        // Transition Check
+        // 1. Check for "Door Tile" entry (Internal Transition)
+        // If stepping ONTO a door tile (edges), immediately trigger transition.
+        const isDoorTile = (
+            (targetX === 0 && targetY === 5) ||
+            (targetX === 10 && targetY === 5) ||
+            (targetX === 5 && targetY === 0) ||
+            (targetX === 5 && targetY === 10)
+        );
+
+        if (isDoorTile) {
+            // Traverse!
+            // We need to pass the direction we are GOING.
+            // If target is (0,5), we are going Left (-1, 0).
+            // But wait, tryRoomTransition expects direction to *leave* the current room.
+            // If we are AT (1,5) and move to (0,5), we are entering the door.
+            // The transition logic currently expects us to be OUT OF BOUNDS.
+            // Let's modify tryRoomTransition OR just call it here with the correct dir.
+            // Actually, if we move to (0,5), we are still in bounds.
+            // But we want to trigger the room switch.
+
+            // Let's execute the move visibly? Or just fade out?
+            // "Teleport on Edge Entry" -> Move player to door, then switch.
+            // We need to run the specific transition logic.
+
+            this.tryRoomTransition(dx, dy);
+            return;
+        }
+
+        // Transition Check (Out of Bounds - Fallback)
         if (targetX < 0 || targetX >= this.ROOM_SIZE || targetY < 0 || targetY >= this.ROOM_SIZE) {
             this.tryRoomTransition(dx, dy);
             return;
@@ -632,10 +696,12 @@ export class GameScene extends Phaser.Scene {
         if (itemType === 'stapler' || itemType === 'weapon') {
             if (this.targetingItem === itemType) {
                 this.targetingItem = null;
+                this.clearRangeOverlay();
                 this.input.setDefaultCursor('default');
                 EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Cancelled.");
             } else {
                 this.targetingItem = itemType;
+                this.renderRangeOverlay(3);
                 this.input.setDefaultCursor('crosshair');
                 EventManager.emit(GameEvents.LOG_MESSAGE, `Aiming ${itemType}... Click a target!`);
             }
@@ -648,30 +714,39 @@ export class GameScene extends Phaser.Scene {
         const item = this.gameState.inventory[index];
         if (!item) return;
 
-        if (itemType === 'consumable' || itemType === 'coffee') {
+        // Use the type from the actual item, not the unique ID/arg passed in
+        const typeToUse = item.type; // e.g. 'vitamin_pill'
+
+        if (typeToUse === 'consumable' || typeToUse === 'coffee') {
             this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 5);
             this.gameState.burnout = Math.max(0, this.gameState.burnout - 5);
             EventManager.emit(GameEvents.LOG_MESSAGE, "Drank Coffee. HP +5, Burnout -5.");
             used = true;
             consumed = true;
-        } else if (itemType === 'granola_bar') {
+        } else if (typeToUse === 'granola_bar') {
             this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 2);
             this.gameState.burnout = Math.max(0, this.gameState.burnout - 2);
             EventManager.emit(GameEvents.LOG_MESSAGE, "Ate Granola. It's dry. HP +2, Burnout -2.");
             used = true;
             consumed = true;
-        } else if (itemType === 'mint') {
+        } else if (typeToUse === 'mint') {
             this.gameState.burnout = Math.max(0, this.gameState.burnout - 10);
             EventManager.emit(GameEvents.LOG_MESSAGE, "Fresh Mint! Burnout -10.");
             used = true;
             consumed = true;
-        } else if (itemType === 'vitamin_pill') {
+        } else if (typeToUse === 'vitamin_pill') {
             this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 10);
             EventManager.emit(GameEvents.LOG_MESSAGE, "Vitamin C Boost! HP +10.");
             used = true;
             consumed = true;
-        } else if (itemType === 'id_card') {
-            EventManager.emit(GameEvents.LOG_MESSAGE, "Access Card. Use on Barriers automatically.");
+        } else if (typeToUse === 'id_card' || typeToUse === 'security_pass') {
+            EventManager.emit(GameEvents.LOG_MESSAGE, "Security Pass. Auto-unlocks doors.");
+        } else if (typeToUse === 'consumable') {
+            // Generic Fallback for old save data or generic loot
+            this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 5);
+            EventManager.emit(GameEvents.LOG_MESSAGE, "You eat the snack. HP +5.");
+            used = true;
+            consumed = true;
         } else {
             EventManager.emit(GameEvents.LOG_MESSAGE, `You examine the ${item.name}. It seems corporate.`);
         }

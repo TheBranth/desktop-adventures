@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card Body -->
+  <rect x="12" y="10" width="40" height="44" rx="4" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+  <!-- Lanyard Hole -->
+  <circle cx="32" cy="16" r="3" fill="#95a5a6"/>
+  <!-- Photo Placeholder -->
+  <rect x="22" y="24" width="20" height="20" fill="#bdc3c7"/>
+  <!-- Barcode / text -->
+  <rect x="18" y="48" width="28" height="2" fill="#2c3e50"/>
+  <rect x="18" y="52" width="20" height="2" fill="#2c3e50"/>
+</svg>
