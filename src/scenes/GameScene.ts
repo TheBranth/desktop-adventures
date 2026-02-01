@@ -689,7 +689,7 @@ export class GameScene extends Phaser.Scene {
         this.executePhase2_Player(dx, dy, isSprint);
     }
 
-    private handleItemUse(itemId: string, index: number) {
+    private handleItemUse(_itemId: string, index: number) {
         if (this.turnLock || this.gameState.hp <= 0) return;
 
         const item = this.gameState.inventory[index];
