@@ -689,21 +689,26 @@ export class GameScene extends Phaser.Scene {
         this.executePhase2_Player(dx, dy, isSprint);
     }
 
-    private handleItemUse(itemType: string, index: number) {
+    private handleItemUse(itemId: string, index: number) {
         if (this.turnLock || this.gameState.hp <= 0) return;
 
+        const item = this.gameState.inventory[index];
+        if (!item) return;
+
+        const typeToUse = item.type; // e.g. 'stapler'
+
         // Toggle Targeting
-        if (itemType === 'stapler' || itemType === 'weapon') {
-            if (this.targetingItem === itemType) {
+        if (typeToUse === 'stapler' || typeToUse === 'weapon') {
+            if (this.targetingItem === typeToUse) {
                 this.targetingItem = null;
                 this.clearRangeOverlay();
                 this.input.setDefaultCursor('default');
                 EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Cancelled.");
             } else {
-                this.targetingItem = itemType;
+                this.targetingItem = typeToUse;
                 this.renderRangeOverlay(3);
                 this.input.setDefaultCursor('crosshair');
-                EventManager.emit(GameEvents.LOG_MESSAGE, `Aiming ${itemType}... Click a target!`);
+                EventManager.emit(GameEvents.LOG_MESSAGE, `Aiming ${typeToUse}... Click a target!`);
             }
             return;
         }
@@ -711,11 +716,7 @@ export class GameScene extends Phaser.Scene {
         let used = false;
         let consumed = false;
 
-        const item = this.gameState.inventory[index];
-        if (!item) return;
 
-        // Use the type from the actual item, not the unique ID/arg passed in
-        const typeToUse = item.type; // e.g. 'vitamin_pill'
 
         if (typeToUse === 'consumable' || typeToUse === 'coffee') {
             this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 5);

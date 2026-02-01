@@ -57,6 +57,7 @@ export class BootScene extends Phaser.Scene {
         this.load.svg('granola_bar', 'assets/items/granola_bar.svg', { width: 32, height: 32 });
         this.load.svg('mint', 'assets/items/mint.svg', { width: 32, height: 32 });
         this.load.svg('vitamin_pill', 'assets/items/vitamin_pill.svg', { width: 32, height: 32 });
+        this.load.svg('security_pass', 'assets/items/security_pass.svg', { width: 32, height: 32 });
     }
 
     create() {
