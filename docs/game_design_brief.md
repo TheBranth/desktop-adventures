@@ -22,13 +22,14 @@ Built with **Phaser 3 + TypeScript**, it combines turn-based combat, resource ma
 - **Printer Beast**: Stationary turret. Fires "Toner Blasts" (projectiles) if you cross its line of sight.
 
 ### Interactive World
+- **Locked Doors**: Secure areas requiring a **Security Pass** (dropped by Managers) or Keycard.
 - **Vending Machines**: Buy consumables (Coffee, Granola) with Credits. 10% Chance to Jam.
 - **Water Coolers**: Drink to restore HP and reduce Burnout.
 - **Whiteboards**: Read for procedural tips or corporate gibberish.
 - **Meeting Tables**: Large obstacles that provide cover or block paths.
-- **Windows**: Non-walkable tiles providing a view of the void.
 
 ### Technical Architecture
+- **Controls**: Hybrid **Tap-to-Move** (Grid) and Mouse Interaction (Shooting/UI).
 - **Tech Stack**: Vite, TypeScript, Phaser 3.
 - **Asset Pipeline**: SVG-based workflow. Assets served from `public/` for reliable deployment.
 - **Collision**: Custom Grid-Collision system supporting multi-tile objects and bounding boxes.

@@ -57,6 +57,7 @@ Items are represented as 32x32 icons.
 | **Quest** | Red Keycard | `items/keycard_red.svg` |
 | **Quest** | PTO Form | `items/pto_form.svg` |
 | **Quest** | Floppy Disk | `items/floppy.svg` |
+| **Quest** | Security Pass | `items/security_pass.svg` |
 | **Prop** | Paper Ball | `items/paper_ball.svg` |
 
 ## 5. UI Elements
