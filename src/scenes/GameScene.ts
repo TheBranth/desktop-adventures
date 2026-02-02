@@ -35,40 +35,63 @@ export class GameScene extends Phaser.Scene {
         (window as any).gameScene = this;
     }
 
+    init(data: { floor?: number, existingState?: GameState }) {
+        // If coming from Bodega, we might have existing state
+        if (data.existingState) {
+            this.gameState = data.existingState;
+            // Ensure we generate the new floor content now?
+            // If gameState.floor was incremented in Bodega, we need to generate that floor.
+            // But we can't overwrite the WHOLE state (inventory, HP).
+            // We need a way to say "Generate Map but keep Player Stats".
+            // See create() logic below.
+        }
+    }
+
     create() {
         // Initialize Audio
         this.audioManager = AudioManager.getInstance();
         // this.audioManager.play('bgm');
 
         // Initialize UI (Singleton)
-        this.uiManager = UIManager.getInstance(); // Changed to this.uiManager
+        this.uiManager = UIManager.getInstance();
         this.uiManager.onItemClick = this.handleItemUse.bind(this);
-        // this.uiManager.initMinimap(this.worldWidth, this.worldHeight); // Deprecated/Defer
+
         const macguffin = this.registry.get('macguffin') || 'Golden Stapler';
-        EventManager.emit(GameEvents.LOG_MESSAGE, `Game Started on Floor 1. Objective: Find the ${macguffin}.`);
+        EventManager.emit(GameEvents.LOG_MESSAGE, `Game Started/Resumed. Objective: Find the ${macguffin}.`);
 
         // Event Listeners
         EventManager.on(GameEvents.DAMAGE_DEALT, (data: any) => {
-            // Convert grid to world
-            const wx = data.x * this.tileSize + this.tileSize / 2; // Center
+            const wx = data.x * this.tileSize + this.tileSize / 2;
             const wy = data.y * this.tileSize;
-
             new DamageText(this, wx, wy, data.damage, data.isPlayer ? '#ff0000' : '#ffffff');
-
             this.audioManager.play('hit');
-            this.cameras.main.shake(100, 0.005); // Subtle shake
+            this.cameras.main.shake(100, 0.005);
         });
 
         // Initialize Map
         const shouldLoad = this.registry.get('loadGame');
 
-        if (shouldLoad) {
+        // Priority: 
+        // 1. Passed State (from Bodega) - implicitly handled by init() assignment to this.gameState?
+        //    But create() runs AFTER init(). so this.gameState might be set.
+        // 2. Load Game (if requested)
+        // 3. New Game
+
+        if (this.gameState) {
+            // We have state passed from Bodega.
+            // But does it have a map?
+            // If we just incremented floor, the map is likely old or empty.
+            if (!this.gameState.worldMap || Object.keys(this.gameState.worldMap).length === 0 || this.gameState.floor !== 1) { // Hacky check
+                // If we have state but need a NEW map for this floor:
+                // We need to regenerate the map PART of the state.
+                this.regenerateMapKeepStats(this.gameState.floor || 1);
+            }
+        } else if (shouldLoad) {
             const loadedState = SaveManager.loadGame();
             if (loadedState) {
                 this.gameState = loadedState;
                 EventManager.emit(GameEvents.LOG_MESSAGE, "Game Loaded. Welcome back.");
             } else {
-                // Fallback if load fails
                 this.generateNewFloor(1);
             }
         } else {
@@ -155,6 +178,26 @@ export class GameScene extends Phaser.Scene {
         const generator = new MapGenerator(this.worldWidth, this.worldHeight);
         this.gameState = generator.generateWorld();
         this.gameState.floor = floor; // Ensure floor is tracked
+    }
+
+    private regenerateMapKeepStats(floor: number) {
+        this.setMapDimensions(floor);
+        const generator = new MapGenerator(this.worldWidth, this.worldHeight);
+
+        // Generate FRESH state
+        const newState = generator.generateWorld();
+
+        // MERGE existing stats into new state
+        // We keep: HP, MaxHP, Inventory, Credits, Burnout
+        newState.hp = this.gameState.hp;
+        newState.maxHp = this.gameState.maxHp;
+        newState.inventory = this.gameState.inventory;
+        newState.credits = this.gameState.credits;
+        newState.burnout = this.gameState.burnout;
+        newState.floor = floor;
+        newState.visited_rooms = []; // Reset visited
+
+        this.gameState = newState;
     }
 
     private resize(gameSize: Phaser.Structs.Size) {
@@ -719,15 +762,15 @@ export class GameScene extends Phaser.Scene {
 
 
         if (typeToUse === 'consumable' || typeToUse === 'coffee') {
-            this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 5);
+            this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 10);
             this.gameState.burnout = Math.max(0, this.gameState.burnout - 5);
-            EventManager.emit(GameEvents.LOG_MESSAGE, "Drank Coffee. HP +5, Burnout -5.");
+            EventManager.emit(GameEvents.LOG_MESSAGE, "Drank Coffee. HP +10, Burnout -5.");
             used = true;
             consumed = true;
         } else if (typeToUse === 'granola_bar') {
-            this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 2);
+            this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 5);
             this.gameState.burnout = Math.max(0, this.gameState.burnout - 2);
-            EventManager.emit(GameEvents.LOG_MESSAGE, "Ate Granola. It's dry. HP +2, Burnout -2.");
+            EventManager.emit(GameEvents.LOG_MESSAGE, "Ate Granola. It's dry. HP +5, Burnout -2.");
             used = true;
             consumed = true;
         } else if (typeToUse === 'mint') {

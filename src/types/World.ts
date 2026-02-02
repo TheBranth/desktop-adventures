@@ -49,7 +49,8 @@ export interface InventoryItem {
     id: string;
     type: string; // 'stapler', 'consumable', etc.
     name: string; // Display name
-    sprite_key?: string; // For UI icon
+    sprite_key?: string; // For UI icon (Texture Key)
+    icon?: string; // For UI icon (Emoji string or unused)
     uses?: number; // Components remaining
     maxUses?: number; // For progress bar if needed
 }

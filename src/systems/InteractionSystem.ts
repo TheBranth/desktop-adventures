@@ -16,23 +16,8 @@ export class InteractionSystem {
         if (objectIndex !== -1) {
             const obj = room.objects[objectIndex];
 
-            // Locked Door Logic
-            if (obj.type === 'door_secure') {
-                // Check Inventory for 'security_pass'
-                const hasKey = gameState.inventory.some(i => i.id === 'security_pass');
-                if (hasKey) {
-                    log("Access Granted. Door unlocking...");
-                    // Remove door object
-                    room.objects.splice(objectIndex, 1);
-                    return true; // Return true to block THIS move, but it opens for next time. 
-                    // Or return false to allow move immediately? 
-                    // If we return false, we might need to re-check if the tile is now walkable?
-                    // Simple approach: Block this turn so they see the message. See the door disappear.
-                } else {
-                    log("Locked. Requires Security Pass.");
-                    return true;
-                }
-            }
+            // Locked Door Logic - Delegated to interactWithObject to handle various keys
+            // if (obj.type === 'door_secure') { ... }
 
             return this.interactWithObject(obj, objectIndex, gameState, room, log, onWin);
         }
@@ -206,6 +191,10 @@ export class InteractionSystem {
                         newItem.name = 'Coffee';
                     } else if (obj.itemType === 'weapon') {
                         newItem.name = 'Newspaper';
+                    } else if (obj.itemType === 'key_blue') {
+                        newItem.name = 'Blue Keycard';
+                    } else if (obj.itemType === 'key_red') {
+                        newItem.name = 'Red Keycard';
                     }
 
                     // Stackable check? For now just push.
@@ -220,14 +209,21 @@ export class InteractionSystem {
                 return false;
 
             case 'door_secure':
-                // Check for Blue Key (or Red for higher security)
-                if (gameState.inventory.some(i => i.type === 'key_blue' || i.type === 'key_red')) {
+                // Check for ANY valid key (Blue, Red, or Security Pass)
+                const hasValidKey = gameState.inventory.some(i =>
+                    i.type === 'key_blue' ||
+                    i.type === 'key_red' ||
+                    i.type === 'security_pass' ||
+                    i.id === 'security_pass' // Fallback for legacy items
+                );
+
+                if (hasValidKey) {
                     log("Access Granted. Door unlocking...");
                     // Using splice to remove object permanently
                     room.objects.splice(index, 1);
                     return true;
                 } else {
-                    log("Access Denied. Secure Door requires a Keycard.");
+                    log("Access Denied. Locked Door. Requires a Keycard.");
                     return true;
                 }
 
