@@ -464,6 +464,13 @@ export class GameScene extends Phaser.Scene {
 
 
 
+    // Public method for UI/Mobile Controls
+    public playerWait() {
+        if (this.turnLock || this.gameState.hp <= 0) return;
+        EventManager.emit(GameEvents.LOG_MESSAGE, "Waiting...");
+        this.executePhase3_World();
+    }
+
     // Phase 3: World Execution (The Tick)
     private executePhase3_World() {
         this.turnLock = true;

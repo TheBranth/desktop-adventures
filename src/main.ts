@@ -111,16 +111,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Dock Main (Center) -> Close All
+    // 4. Dock Main (Center) -> Wait / Interact
     const btnMain = document.getElementById('btn-dock-main');
     if (btnMain) {
         btnMain.addEventListener('click', (e) => {
             e.preventDefault();
+
+            // Close other menus
             document.body.classList.remove('mobile-inventory-open');
             document.body.classList.remove('mobile-logs-open');
-
             resetDockActive();
             btnMain.classList.add('active');
+
+            // Trigger Wait
+            if ((window as any).gameScene) {
+                (window as any).gameScene.playerWait();
+            }
         });
     }
 });
