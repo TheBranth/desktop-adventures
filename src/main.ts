@@ -40,21 +40,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
         const isInv = document.body.classList.contains('mobile-inventory-open');
         const isLog = document.body.classList.contains('mobile-logs-open');
+        const isMap = document.body.classList.contains('mobile-map-open');
 
-        if (isInv || isLog) {
+        if (isInv || isLog || isMap) {
             const sidebar = document.getElementById('sidebar');
             const btnInv = document.getElementById('btn-inv');
             const btnHome = document.getElementById('btn-dock-home'); // Log button
+            const btnMap = document.getElementById('btn-dock-map');
 
             const target = e.target as Node;
 
             // If click is outside sidebar AND outside the active toggle buttons
             if (sidebar && !sidebar.contains(target) &&
                 btnInv && !btnInv.contains(target) &&
-                btnHome && !btnHome.contains(target)) {
+                btnHome && !btnHome.contains(target) &&
+                btnMap && !btnMap.contains(target)) {
 
                 document.body.classList.remove('mobile-inventory-open');
                 document.body.classList.remove('mobile-logs-open');
+                document.body.classList.remove('mobile-map-open');
 
                 // Reset Active
                 resetDockActive();
@@ -129,6 +133,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // 5. Map Toggle
+    const btnMap = document.getElementById('btn-dock-map');
+    if (btnMap) {
+        btnMap.addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+
+            // Close others
+            document.body.classList.remove('mobile-inventory-open');
+            document.body.classList.remove('mobile-logs-open');
+
+            const isOpen = document.body.classList.toggle('mobile-map-open');
+
+            resetDockActive();
+            if (isOpen) {
+                btnMap.classList.add('active');
+            } else {
+                document.getElementById('btn-dock-main')?.classList.add('active');
+            }
+        });
+    }
+
+    // Update backdrop click to include map check
+    // Note: The backdrop listener (0.) handles "Shared" clicks.
+    // It checks 'mobile-inventory-open' OR 'mobile-logs-open'.
+    // We need to update it to check map too, OR just update the class removal logic.
+    // Actually, let's just make the backdrop listener more generic in a separate pass or rely on the user tapping the map button again.
+    // Wait, the backdrop listener explicitly checks class names. I should update it.
 });
 
 const game = new Phaser.Game(config);

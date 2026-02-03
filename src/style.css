@@ -589,3 +589,108 @@ body.mobile-inventory-open .inv-item {
     aspect-ratio: 1;
     font-size: 24px;
 }
+
+/* --- MOBILE MAP OVERLAY --- */
+body.mobile-map-open #sidebar {
+    display: flex !important;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 320px;
+    height: 60%;
+    z-index: 1000;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+    border: 1px solid var(--border-highlight);
+    animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: var(--bg-panel);
+}
+
+body.mobile-map-open #sidebar .section {
+    display: none !important;
+}
+
+/* --- MOBILE MAP OVERLAY --- */
+body.mobile-map-open #sidebar {
+    display: flex !important;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 320px;
+    height: 60%;
+    z-index: 1000;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+    border: 1px solid var(--border-highlight);
+    animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: var(--bg-panel);
+}
+
+body.mobile-map-open #sidebar .section {
+    display: none !important;
+}
+
+/* Show Minimap Section (It is the last section we added, let's target by class or order) */
+/* Detailed Sidebar order: 
+   1. Profile 
+   2. Inventory
+   3. Logs
+   4. Minimap (Newly added at bottom)
+*/
+body.mobile-map-open #sidebar .section:last-child {
+    display: block !important;
+    height: 100%;
+    border: none;
+    display: flex !important;
+    flex-direction: column;
+}
+
+body.mobile-map-open #sidebar .minimap-grid {
+    flex: 1;
+    width: 100%;
+}
+
+/* Base Minimap Styles */
+.map-cell {
+    background-color: #27272a;
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+.map-cell.current {
+    background-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.map-cell.visited {
+    background-color: #3f3f46;
+}
+
+.map-cell.unknown {
+    opacity: 0.2;
+}
+
+/* Shared Backdrop for Map */
+body.mobile-map-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 900;
+    backdrop-filter: blur(4px);
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+body.mobile-map-open #game-container {
+    filter: blur(8px) brightness(0.4);
+    transform: scale(0.95);
+    transition: 0.3s;
+}
