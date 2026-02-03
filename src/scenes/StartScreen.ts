@@ -3,6 +3,7 @@ import { SaveManager } from '../systems/SaveManager';
 export class StartScreen extends Phaser.Scene {
     private titles = ['CEO', 'Dynamic VP', 'Head of Syrup Distribution', 'Manager of Managers', 'CFO', 'Director of Vibes'];
     private macguffins = ['Golden Stapler', 'Quantum Toner Cartridge', 'The Coffee of Life', 'TPS Report', 'Server Password'];
+    private sidebarContainer!: Phaser.GameObjects.Container;
 
     constructor() {
         super('StartScreen');
@@ -21,58 +22,16 @@ export class StartScreen extends Phaser.Scene {
         const isMobile = width < 600;
 
         // Layout Constants
+        // Mobile: Chat takes full width (0 sidebar). Sidebar is drawer.
         const sidebarWidth = isMobile ? 0 : 220;
         const chatX = sidebarWidth;
         const chatWidth = width - sidebarWidth;
 
         // Colors (Slack-ish)
-        const sidebarColor = 0x3F0E40; // Aubergine
         const chatBgColor = 0xFFFFFF;
 
-        // 1. Sidebar (Desktop Only)
-        if (!isMobile) {
-            this.add.rectangle(0, 0, sidebarWidth, height, sidebarColor).setOrigin(0);
-
-            // Workspace Name
-            this.add.text(20, 20, 'Desktop Adventures', {
-                fontFamily: 'Arial, sans-serif', fontSize: '18px', color: '#ffffff', fontStyle: 'bold'
-            });
-
-            // Channels Header
-            this.add.text(20, 60, '▼ Channels', {
-                fontFamily: 'Arial, sans-serif', fontSize: '14px', color: '#aaaaaa'
-            });
-
-            const hasSave = SaveManager.hasSave();
-
-            // Channel Logic
-            const channels = [
-                { id: 'new', name: '# general', action: () => this.startNewGame(hasSave) },
-                { id: 'continue', name: '# daily-standup', action: hasSave ? () => this.continueGame() : null, disabled: !hasSave },
-                { id: 'procurement', name: '# it-services', action: () => this.visitProcurement(hasSave), disabled: false },
-                { id: 'random', name: '# random', action: null, disabled: true }
-            ];
-
-            let yPos = 90;
-            channels.forEach(channel => {
-                const color = channel.disabled ? '#666666' : '#cccccc';
-                const suffix = channel.id === 'continue' && hasSave ? ' (Active Run)' : '';
-
-                const txt = this.add.text(30, yPos, `${channel.name}${suffix}`, {
-                    fontFamily: 'Arial, sans-serif', fontSize: '16px', color: color
-                });
-
-                if (!channel.disabled) {
-                    txt.setInteractive({ useHandCursor: true });
-                    txt.on('pointerover', () => txt.setColor('#ffffff'));
-                    txt.on('pointerout', () => txt.setColor(color));
-                    txt.on('pointerdown', () => {
-                        if (channel.action) channel.action();
-                    });
-                }
-                yPos += 30;
-            });
-        }
+        // 1. Sidebar (Desktop & Mobile Drawer)
+        this.createSidebar(width, height, isMobile);
 
         // 2. Chat Area
         // Background
@@ -88,7 +47,19 @@ export class StartScreen extends Phaser.Scene {
         this.add.rectangle(chatX, 0, chatWidth, 60, 0xffffff).setOrigin(0);
         this.add.line(0, 0, chatX, 60, width, 60, 0xdddddd).setOrigin(0); // Border bottom
 
-        const headerPadding = isMobile ? 20 : 20;
+        const headerPadding = isMobile ? 50 : 20;
+
+        // Mobile Menu Button
+        if (isMobile) {
+            const menuBtn = this.add.text(15, 20, '☰', {
+                fontFamily: 'Arial, sans-serif', fontSize: '24px', color: '#000000', fontStyle: 'bold'
+            }).setInteractive();
+
+            menuBtn.on('pointerdown', () => {
+                this.sidebarContainer.setVisible(!this.sidebarContainer.visible);
+            });
+        }
+
         this.add.text(chatX + headerPadding, 20, `@${boss.replace(/ /g, '_').toLowerCase()}`, {
             fontFamily: 'Arial, sans-serif', fontSize: '18px', color: '#000000', fontStyle: 'bold'
         });
@@ -162,7 +133,78 @@ export class StartScreen extends Phaser.Scene {
             newGameBtn.setInteractive({ useHandCursor: true });
             newGameBtn.on('pointerdown', () => this.startNewGame(true));
         }
+    }
 
+    private createSidebar(width: number, height: number, isMobile: boolean) {
+        this.sidebarContainer = this.add.container(0, 0);
+
+        // Depth: Above chat (Start Screen doesn't use standard UI depth layers yet, so 100 is fine)
+        this.sidebarContainer.setDepth(100);
+
+        if (isMobile) {
+            this.sidebarContainer.setVisible(false);
+
+            // Backdrop (Click to close)
+            const backdrop = this.add.rectangle(0, 0, width, height, 0x000000, 0.5)
+                .setOrigin(0)
+                .setInteractive();
+
+            backdrop.on('pointerdown', () => this.sidebarContainer.setVisible(false));
+            this.sidebarContainer.add(backdrop);
+        }
+
+        const sidebarWidth = 240;
+        const sidebarColor = 0x3F0E40; // Aubergine
+
+        // Sidebar Background
+        const bg = this.add.rectangle(0, 0, sidebarWidth, height, sidebarColor).setOrigin(0);
+        // Block clicks passing through sidebar to game/chat
+        bg.setInteractive();
+        this.sidebarContainer.add(bg);
+
+        // Workspace Name
+        const title = this.add.text(20, 20, 'Desktop Adventures', {
+            fontFamily: 'Arial, sans-serif', fontSize: '18px', color: '#ffffff', fontStyle: 'bold'
+        });
+        this.sidebarContainer.add(title);
+
+        // Channels Header
+        const header = this.add.text(20, 60, '▼ Channels', {
+            fontFamily: 'Arial, sans-serif', fontSize: '14px', color: '#aaaaaa'
+        });
+        this.sidebarContainer.add(header);
+
+        const hasSave = SaveManager.hasSave();
+
+        // Channel Logic
+        const channels = [
+            { id: 'new', name: '# general', action: () => this.startNewGame(hasSave) },
+            { id: 'continue', name: '# daily-standup', action: hasSave ? () => this.continueGame() : null, disabled: !hasSave },
+            { id: 'procurement', name: '# it-services', action: () => this.visitProcurement(hasSave), disabled: false },
+            { id: 'random', name: '# random', action: null, disabled: true }
+        ];
+
+        let yPos = 90;
+        channels.forEach(channel => {
+            const color = channel.disabled ? '#666666' : '#cccccc';
+            const suffix = channel.id === 'continue' && hasSave ? ' (Active Run)' : '';
+
+            const txt = this.add.text(30, yPos, `${channel.name}${suffix}`, {
+                fontFamily: 'Arial, sans-serif', fontSize: '16px', color: color
+            });
+
+            if (!channel.disabled) {
+                txt.setInteractive({ useHandCursor: true });
+                txt.on('pointerover', () => txt.setColor('#ffffff'));
+                txt.on('pointerout', () => txt.setColor(color));
+                txt.on('pointerdown', () => {
+                    if (isMobile) this.sidebarContainer.setVisible(false);
+                    if (channel.action) channel.action();
+                });
+            }
+            this.sidebarContainer.add(txt);
+            yPos += 30;
+        });
     }
 
     private startNewGame(hasSave: boolean) {
@@ -185,23 +227,6 @@ export class StartScreen extends Phaser.Scene {
             SaveManager.clearSave();
         }
 
-        // Generate a fresh state for Floor 1
-        // We know MapGenerator exists, let's use it or create a default structure.
-        // Importing MapGenerator just for this might be circular or heavy? 
-        // Actually, we can just pass a flag to GameScene to "Start at Bodega"?
-        // No, BodegaScene needs the state.
-
-        // Let's rely on a helper to get initial state.
-        // For now, I'll construct a basic valid state manually to avoid heavy imports if MapGenerator isn't exported as static.
-        // MapGenerator IS a class.
-
-        // Better approach:
-        // Transition to BOD_SCENE with a "New Run" flag?
-        // BodegaScene init() takes { gameState }.
-
-        // Let's import MapGenerator at the top of file (I will add that in a separate edit or assume I can do it here if I scroll up, but I can't see top).
-        // I will implement a basic state factory here for now to be safe, or just minimalist state.
-
         const freshState = {
             floor: 0,
             hp: 20,
@@ -209,7 +234,7 @@ export class StartScreen extends Phaser.Scene {
             burnout: 0,
             credits: 0,
             inventory: [],
-            worldMap: {}, // Empty, GameScene will generate if missing/empty or we can force it.
+            worldMap: {},
             currentRoomId: 'start',
             playerX: 5,
             playerY: 5,
