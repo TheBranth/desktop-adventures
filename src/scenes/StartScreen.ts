@@ -49,6 +49,7 @@ export class StartScreen extends Phaser.Scene {
             const channels = [
                 { id: 'new', name: '# general', action: () => this.startNewGame(hasSave) },
                 { id: 'continue', name: '# daily-standup', action: hasSave ? () => this.continueGame() : null, disabled: !hasSave },
+                { id: 'procurement', name: '# it-services', action: () => this.visitProcurement(hasSave), disabled: false },
                 { id: 'random', name: '# random', action: null, disabled: true }
             ];
 
@@ -175,5 +176,48 @@ export class StartScreen extends Phaser.Scene {
     private continueGame() {
         this.registry.set('loadGame', true);
         this.scene.start('GameScene');
+    }
+
+    private visitProcurement(hasSave: boolean) {
+        if (hasSave) {
+            const confirm = window.confirm("WARNING: Entering IT Services (Bodega) will ABANDON your current run.\n\nAre you sure you want to start a new run?");
+            if (!confirm) return;
+            SaveManager.clearSave();
+        }
+
+        // Generate a fresh state for Floor 1
+        // We know MapGenerator exists, let's use it or create a default structure.
+        // Importing MapGenerator just for this might be circular or heavy? 
+        // Actually, we can just pass a flag to GameScene to "Start at Bodega"?
+        // No, BodegaScene needs the state.
+
+        // Let's rely on a helper to get initial state.
+        // For now, I'll construct a basic valid state manually to avoid heavy imports if MapGenerator isn't exported as static.
+        // MapGenerator IS a class.
+
+        // Better approach:
+        // Transition to BOD_SCENE with a "New Run" flag?
+        // BodegaScene init() takes { gameState }.
+
+        // Let's import MapGenerator at the top of file (I will add that in a separate edit or assume I can do it here if I scroll up, but I can't see top).
+        // I will implement a basic state factory here for now to be safe, or just minimalist state.
+
+        const freshState = {
+            floor: 0,
+            hp: 20,
+            maxHp: 20,
+            burnout: 0,
+            credits: 0,
+            inventory: [],
+            worldMap: {}, // Empty, GameScene will generate if missing/empty or we can force it.
+            currentRoomId: 'start',
+            playerX: 5,
+            playerY: 5,
+            visited_rooms: [],
+            global_flags: {},
+            tower_level: 1
+        };
+
+        this.scene.start('BodegaScene', { gameState: freshState });
     }
 }

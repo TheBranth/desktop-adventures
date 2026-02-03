@@ -156,8 +156,9 @@ export class BodegaScene extends Phaser.Scene {
 
     private goToNextFloor() {
         // Transition back to GameScene
+        const currentFloor = this.gameState.floor !== undefined ? this.gameState.floor : 1;
         this.scene.start('GameScene', {
-            floor: (this.gameState.floor || 1) + 1,
+            floor: currentFloor + 1,
             // Pass the state back. GameScene logic needs to handle generation based on this.
             // Actually, GameScene usually expects to Generate or Load.
             // If we pass an object to GameScene.init, we need GameScene to handle it.
