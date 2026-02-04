@@ -1,41 +1,98 @@
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Protagonist: Temp (The Salaryman) -->
-  <!-- Top-down 3/4 view, Chibi style -->
-  
-  <!-- Shadow/Grounding -->
-  <ellipse cx="16" cy="29" rx="8" ry="3" fill="rgba(0,0,0,0.3)" />
+<svg width="128" height="32" viewBox="0 0 128 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Common Style: Salaryman -->
+  <defs>
+    <rect id="skin" width="6" height="6" fill="#FFCCBC"/>
+    <rect id="suit" width="10" height="12" fill="#263238"/>
+    <rect id="pants" width="8" height="10" fill="#212121"/>
+    <rect id="tie" width="2" height="6" fill="#D32F2F"/>
+  </defs>
 
-  <!-- Legs/Pants (Brown) -->
-  <rect x="11" y="22" width="4" height="6" fill="#5D4037" />
-  <rect x="17" y="22" width="4" height="6" fill="#5D4037" />
+  <!-- Frame 1: Idle (0-32) -->
+  <g id="idle">
+    <!-- Head -->
+    <rect x="13" y="4" width="6" height="6" fill="#FFCCBC"/>
+    <!-- Hair -->
+    <rect x="13" y="2" width="6" height="3" fill="#212121"/>
+    <!-- Eyes (Tired) -->
+    <rect x="14" y="6" width="1" height="1" fill="#3E2723"/>
+    <rect x="17" y="6" width="1" height="1" fill="#3E2723"/>
+    <rect x="13" y="7" width="2" height="1" fill="#BDBDBD" opacity="0.5"/> <!-- Bags -->
+    <rect x="17" y="7" width="2" height="1" fill="#BDBDBD" opacity="0.5"/> <!-- Bags -->
+    
+    <!-- Body -->
+    <rect x="11" y="10" width="10" height="12" fill="#37474F"/> <!-- Suit Jacket Open -->
+    <rect x="13" y="10" width="6" height="12" fill="white"/> <!-- Shirt -->
+    <rect x="15" y="10" width="2" height="8" fill="#D32F2F"/> <!-- Tie -->
+    
+    <!-- Arms -->
+    <rect x="9" y="10" width="2" height="10" fill="#37474F"/>
+    <rect x="21" y="10" width="2" height="10" fill="#37474F"/>
 
-  <!-- Body/Shirt (White, untucked) -->
-  <rect x="10" y="14" width="12" height="10" rx="2" fill="#FFFFFF" />
-  <path d="M10 14 L10 24 L22 24 L22 14 Z" fill="#EEE" opacity="0.5" /> <!-- Shading -->
-  
-  <!-- Arms (White sleeves) -->
-  <rect x="8" y="15" width="3" height="7" rx="1" fill="#FFFFFF" />
-  <rect x="21" y="15" width="3" height="7" rx="1" fill="#FFFFFF" />
-  <!-- Hands (Skin tone) -->
-  <circle cx="9.5" cy="22.5" r="1.5" fill="#FFCCBC" />
-  <circle cx="22.5" cy="22.5" r="1.5" fill="#FFCCBC" />
+    <!-- Legs -->
+    <rect x="12" y="22" width="3" height="10" fill="#263238"/>
+    <rect x="17" y="22" width="3" height="10" fill="#263238"/>
+  </g>
 
-  <!-- Tie (Red, loose) -->
-  <path d="M15 14 L17 14 L16.5 20 L15.5 20 Z" fill="#D32F2F" />
+  <!-- Frame 2: Walk 1 (32-64) -->
+  <g id="walk1" transform="translate(32, 0)">
+     <!-- Head -->
+     <rect x="13" y="3" width="6" height="6" fill="#FFCCBC"/> <!-- Bob down -->
+     <rect x="13" y="1" width="6" height="3" fill="#212121"/>
+     
+     <!-- Body -->
+     <rect x="11" y="10" width="10" height="12" fill="#37474F"/>
+     <rect x="13" y="10" width="6" height="12" fill="white"/>
+     <rect x="15" y="10" width="2" height="7" fill="#D32F2F" transform="rotate(5 16 10)"/> <!-- Tie swing -->
 
-  <!-- Head (Skin tone, Oversized) -->
-  <rect x="9" y="4" width="14" height="12" rx="3" fill="#FFCCBC" />
+     <!-- Arms (Swing) -->
+     <rect x="8" y="11" width="2" height="9" fill="#37474F" transform="rotate(10 9 11)"/>
+     <rect x="22" y="11" width="2" height="9" fill="#37474F" transform="rotate(-10 23 11)"/>
 
-  <!-- Hair (Balding, sides only, dark grey) -->
-  <path d="M9 7 L9 12 L7 12 L7 6 L9 4 Z" fill="#424242" />
-  <path d="M23 7 L23 12 L25 12 L25 6 L23 4 Z" fill="#424242" />
+     <!-- Legs (Stride) -->
+     <rect x="11" y="22" width="3" height="9" fill="#263238"/> <!-- Back -->
+     <rect x="18" y="21" width="3" height="8" fill="#263238"/> <!-- Forward (Knee up) -->
+     <rect x="18" y="29" width="3" height="3" fill="#263238"/> <!-- Foot -->
+  </g>
 
-  <!-- Glasses (Thick black rims) -->
-  <rect x="10" y="8" width="5" height="3" stroke="#000" stroke-width="1" fill="rgba(200,240,255,0.5)" />
-  <rect x="17" y="8" width="5" height="3" stroke="#000" stroke-width="1" fill="rgba(200,240,255,0.5)" />
-  <line x1="15" y1="9.5" x2="17" y2="9.5" stroke="#000" stroke-width="1" />
+  <!-- Frame 3: Walk 2 (64-96) -->
+  <g id="walk2" transform="translate(64, 0)">
+     <!-- Head -->
+     <rect x="13" y="3" width="6" height="6" fill="#FFCCBC"/>
+     <rect x="13" y="1" width="6" height="3" fill="#212121"/>
+     
+     <!-- Body -->
+     <rect x="11" y="10" width="10" height="12" fill="#37474F"/>
+     <rect x="13" y="10" width="6" height="12" fill="white"/>
+     <rect x="15" y="10" width="2" height="7" fill="#D32F2F" transform="rotate(-5 16 10)"/>
 
-  <!-- Mouth (Tired line) -->
-  <path d="M14 14 Q16 13 18 14" stroke="#8D6E63" stroke-width="1" fill="none" />
+     <!-- Arms (Swap) -->
+     <rect x="8" y="11" width="2" height="9" fill="#37474F" transform="rotate(-10 9 11)"/>
+     <rect x="22" y="11" width="2" height="9" fill="#37474F" transform="rotate(10 23 11)"/>
+
+     <!-- Legs (Swap) -->
+     <rect x="18" y="22" width="3" height="9" fill="#263238"/>
+     <rect x="11" y="21" width="3" height="8" fill="#263238"/>
+     <rect x="11" y="29" width="3" height="3" fill="#263238"/>
+  </g>
+
+  <!-- Frame 4: Attack (96-128) -->
+  <g id="attack" transform="translate(96, 0)">
+    <!-- Head (Angry) -->
+    <rect x="14" y="4" width="6" height="6" fill="#FFCCBC"/>
+    <rect x="14" y="2" width="6" height="3" fill="#212121"/>
+    <rect x="15" y="6" width="1" height="1" fill="#3E2723"/> <!-- Wide eye -->
+    <rect x="18" y="6" width="2" height="1" fill="#3E2723"/> <!-- Squint -->
+    
+    <!-- Body (Lunging) -->
+    <rect x="12" y="11" width="10" height="12" fill="#37474F"/>
+    
+    <!-- Arms (Swing Stapler) -->
+    <rect x="22" y="12" width="8" height="3" fill="#37474F"/> <!-- Arm Extended -->
+    <rect x="30" y="11" width="4" height="4" fill="#D32F2F"/> <!-- THE STAPLER -->
+    
+    <!-- Legs (Braced) -->
+    <rect x="10" y="22" width="3" height="10" fill="#263238" transform="rotate(-10 11 32)"/>
+    <rect x="20" y="22" width="3" height="10" fill="#263238" transform="rotate(20 21 32)"/>
+  </g>
 
 </svg>

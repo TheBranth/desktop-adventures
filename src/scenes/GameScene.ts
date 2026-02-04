@@ -274,7 +274,13 @@ export class GameScene extends Phaser.Scene {
                 const cell = room.collision_map[y][x];
                 let texture = 'floor';
                 if (cell === 1) texture = 'wall';
-                else if (cell === 2) texture = 'window';
+                else if (cell === 2) {
+                    // Deterministic Random Window to avoid flickering on re-render
+                    // Use simple hash of coordinates
+                    const seed = (x * 7 + y * 13);
+                    const variant = (seed % 3) + 1;
+                    texture = `window_${variant}`;
+                }
 
                 const tile = this.mapGroup.create(x * this.tileSize, y * this.tileSize, texture).setOrigin(0);
 

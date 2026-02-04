@@ -24,7 +24,10 @@ export class BootScene extends Phaser.Scene {
         // Environment
         this.load.svg('floor', 'assets/environment/floor_office.svg', { width: 32, height: 32 });
         this.load.svg('wall', 'assets/environment/wall_office.svg', { width: 32, height: 32 });
-        this.load.svg('window', 'assets/environment/window_office.svg', { width: 32, height: 32 }); // Edge decoration
+        this.load.svg('window', 'assets/environment/window_office.svg', { width: 32, height: 32 }); // Fallback
+        this.load.svg('window_1', 'assets/environment/window_1.svg', { width: 32, height: 32 });
+        this.load.svg('window_2', 'assets/environment/window_2.svg', { width: 32, height: 32 });
+        this.load.svg('window_3', 'assets/environment/window_3.svg', { width: 32, height: 32 });
         this.load.svg('obstacle_plant', 'assets/environment/obstacle_plant.svg', { width: 32, height: 32 });
         this.load.svg('floor_server', 'assets/environment/floor_server.svg', { width: 32, height: 32 });
         this.load.svg('wall_server', 'assets/environment/wall_server.svg', { width: 32, height: 64 });

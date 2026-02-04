@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sky -->
+  <rect width="64" height="64" fill="#1A237E"/>
+  <!-- Moon (Lower, larger) -->
+  <circle cx="10" cy="15" r="6" fill="#FFF9C4" fill-opacity="0.3"/>
+  
+  <!-- Skyline (Distant) -->
+  <path d="M0 64V50H15V64H0Z" fill="#000051"/>
+  <path d="M20 64V45H30V64H20Z" fill="#000051"/>
+  <path d="M40 64V55H64V64H40Z" fill="#000051"/>
+
+  <!-- Lights (Sparse) -->
+  <rect x="22" y="48" width="2" height="2" fill="#F44336" fill-opacity="0.8"/> <!-- Red obstruction light? -->
+
+  <!-- Frame -->
+  <rect x="0" y="0" width="64" height="64" stroke="#424242" stroke-width="4"/> 
+  <rect x="30" y="0" width="4" height="64" fill="#424242"/> 
+  <path d="M64 64L0 0" stroke="white" stroke-opacity="0.05" stroke-width="2"/>
+</svg>

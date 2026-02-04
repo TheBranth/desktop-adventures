@@ -1,87 +1,98 @@
-<svg width="128" height="32" viewBox="0 0 128 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Protagonist Sprite Sheet: 4 Frames x 32px -->
-  <!-- Style: Bald, Glasses, Rotund -->
-  
+<svg width="128" height="32" viewBox="0 0 128 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Common Style: Salaryman -->
   <defs>
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
-    </filter>
-    
-    <!-- Rotund Body Parts -->
-    <g id="body">
-       <!-- Rotund Belly (White Shirt) -->
-       <ellipse cx="16" cy="20" rx="8" ry="7" fill="#FFF" />
-       <!-- Tie (Short, resting on belly) -->
-       <path d="M16 16 L14 18 L16 22 L18 18 L16 16" fill="#F44336" />
-    </g>
-    
-    <g id="head">
-       <!-- Bald Head -->
-       <circle cx="16" cy="11" r="6" fill="#FFCCBC" />
-       <!-- Glasses -->
-       <g fill="none" stroke="#000" stroke-width="1">
-         <circle cx="14" cy="11" r="2" fill="#E0F7FA" fill-opacity="0.5" />
-         <circle cx="18" cy="11" r="2" fill="#E0F7FA" fill-opacity="0.5" />
-         <line x1="16" y1="11" x2="16" y2="11" /> <!-- Bridge -->
-       </g>
-    </g>
+    <rect id="skin" width="6" height="6" fill="#FFCCBC"/>
+    <rect id="suit" width="10" height="12" fill="#263238"/>
+    <rect id="pants" width="8" height="10" fill="#212121"/>
+    <rect id="tie" width="2" height="6" fill="#D32F2F"/>
   </defs>
 
-  <!-- FRAME 1: IDLE (x=0) -->
-  <g transform="translate(0, 0)" filter="url(#shadow)">
-    <!-- Legs (Short & Stubby) -->
-    <rect x="12" y="25" width="3" height="5" fill="#455A64" />
-    <rect x="17" y="25" width="3" height="5" fill="#455A64" />
-    <use href="#body" />
-    <use href="#head" />
-  </g>
-
-  <!-- FRAME 2: WALK LEFT (x=32) -->
-  <g transform="translate(32, 0)" filter="url(#shadow)">
-    <!-- Legs (Waddle) -->
-    <rect x="12" y="23" width="3" height="5" fill="#455A64" /> <!-- Left Up -->
-    <rect x="17" y="26" width="3" height="5" fill="#455A64" /> <!-- Right Down -->
-    <!-- Bob -->
-    <g transform="translate(0, -1)">
-        <use href="#body" />
-        <use href="#head" />
-    </g>
-  </g>
-
-  <!-- FRAME 3: WALK RIGHT (x=64) -->
-  <g transform="translate(64, 0)" filter="url(#shadow)">
-    <!-- Legs (Waddle) -->
-    <rect x="12" y="26" width="3" height="5" fill="#455A64" /> <!-- Left Down -->
-    <rect x="17" y="23" width="3" height="5" fill="#455A64" /> <!-- Right Up -->
-    <!-- Bob -->
-    <g transform="translate(0, -1)">
-        <use href="#body" />
-        <use href="#head" />
-    </g>
-  </g>
-
-  <!-- FRAME 4: ATTACK (x=96) -->
-  <g transform="translate(96, 0)" filter="url(#shadow)">
-    <!-- Aggressive Waddle Stance -->
-    <rect x="11" y="25" width="3" height="5" fill="#455A64" transform="rotate(15 12 28)" />
-    <rect x="18" y="25" width="3" height="5" fill="#455A64" transform="rotate(-15 20 28)" />
+  <!-- Frame 1: Idle (0-32) -->
+  <g id="idle">
+    <!-- Head -->
+    <rect x="13" y="4" width="6" height="6" fill="#FFCCBC"/>
+    <!-- Hair -->
+    <rect x="13" y="2" width="6" height="3" fill="#212121"/>
+    <!-- Eyes (Tired) -->
+    <rect x="14" y="6" width="1" height="1" fill="#3E2723"/>
+    <rect x="17" y="6" width="1" height="1" fill="#3E2723"/>
+    <rect x="13" y="7" width="2" height="1" fill="#BDBDBD" opacity="0.5"/> <!-- Bags -->
+    <rect x="17" y="7" width="2" height="1" fill="#BDBDBD" opacity="0.5"/> <!-- Bags -->
     
-    <use href="#body" />
+    <!-- Body -->
+    <rect x="11" y="10" width="10" height="12" fill="#37474F"/> <!-- Suit Jacket Open -->
+    <rect x="13" y="10" width="6" height="12" fill="white"/> <!-- Shirt -->
+    <rect x="15" y="10" width="2" height="8" fill="#D32F2F"/> <!-- Tie -->
     
-    <!-- Angry Eyes (Eyebrows over glasses) -->
-    <g transform="translate(0, 1)">
-        <use href="#head" />
-        <!-- Eyebrows -->
-        <path d="M13 7 L15 8" stroke="#000" stroke-width="1" />
-        <path d="M19 7 L17 8" stroke="#000" stroke-width="1" />
-    </g>
+    <!-- Arms -->
+    <rect x="9" y="10" width="2" height="10" fill="#37474F"/>
+    <rect x="21" y="10" width="2" height="10" fill="#37474F"/>
 
-    <!-- Arm with Red Stapler -->
-    <rect x="22" y="18" width="8" height="3" rx="1" fill="#FFCCBC" transform="rotate(-10 22 18)" /> <!-- Arm -->
-    <g transform="translate(28, 14) rotate(-10)">
-        <rect x="0" y="0" width="6" height="4" fill="#D32F2F" /> <!-- Stapler Body -->
-        <rect x="0" y="4" width="6" height="1" fill="#B71C1C" /> <!-- Stapler Base -->
-    </g>
+    <!-- Legs -->
+    <rect x="12" y="22" width="3" height="10" fill="#263238"/>
+    <rect x="17" y="22" width="3" height="10" fill="#263238"/>
+  </g>
+
+  <!-- Frame 2: Walk 1 (32-64) -->
+  <g id="walk1" transform="translate(32, 0)">
+     <!-- Head -->
+     <rect x="13" y="3" width="6" height="6" fill="#FFCCBC"/> <!-- Bob down -->
+     <rect x="13" y="1" width="6" height="3" fill="#212121"/>
+     
+     <!-- Body -->
+     <rect x="11" y="10" width="10" height="12" fill="#37474F"/>
+     <rect x="13" y="10" width="6" height="12" fill="white"/>
+     <rect x="15" y="10" width="2" height="7" fill="#D32F2F" transform="rotate(5 16 10)"/> <!-- Tie swing -->
+
+     <!-- Arms (Swing) -->
+     <rect x="8" y="11" width="2" height="9" fill="#37474F" transform="rotate(10 9 11)"/>
+     <rect x="22" y="11" width="2" height="9" fill="#37474F" transform="rotate(-10 23 11)"/>
+
+     <!-- Legs (Stride) -->
+     <rect x="11" y="22" width="3" height="9" fill="#263238"/> <!-- Back -->
+     <rect x="18" y="21" width="3" height="8" fill="#263238"/> <!-- Forward (Knee up) -->
+     <rect x="18" y="29" width="3" height="3" fill="#263238"/> <!-- Foot -->
+  </g>
+
+  <!-- Frame 3: Walk 2 (64-96) -->
+  <g id="walk2" transform="translate(64, 0)">
+     <!-- Head -->
+     <rect x="13" y="3" width="6" height="6" fill="#FFCCBC"/>
+     <rect x="13" y="1" width="6" height="3" fill="#212121"/>
+     
+     <!-- Body -->
+     <rect x="11" y="10" width="10" height="12" fill="#37474F"/>
+     <rect x="13" y="10" width="6" height="12" fill="white"/>
+     <rect x="15" y="10" width="2" height="7" fill="#D32F2F" transform="rotate(-5 16 10)"/>
+
+     <!-- Arms (Swap) -->
+     <rect x="8" y="11" width="2" height="9" fill="#37474F" transform="rotate(-10 9 11)"/>
+     <rect x="22" y="11" width="2" height="9" fill="#37474F" transform="rotate(10 23 11)"/>
+
+     <!-- Legs (Swap) -->
+     <rect x="18" y="22" width="3" height="9" fill="#263238"/>
+     <rect x="11" y="21" width="3" height="8" fill="#263238"/>
+     <rect x="11" y="29" width="3" height="3" fill="#263238"/>
+  </g>
+
+  <!-- Frame 4: Attack (96-128) -->
+  <g id="attack" transform="translate(96, 0)">
+    <!-- Head (Angry) -->
+    <rect x="14" y="4" width="6" height="6" fill="#FFCCBC"/>
+    <rect x="14" y="2" width="6" height="3" fill="#212121"/>
+    <rect x="15" y="6" width="1" height="1" fill="#3E2723"/> <!-- Wide eye -->
+    <rect x="18" y="6" width="2" height="1" fill="#3E2723"/> <!-- Squint -->
+    
+    <!-- Body (Lunging) -->
+    <rect x="12" y="11" width="10" height="12" fill="#37474F"/>
+    
+    <!-- Arms (Swing Stapler) -->
+    <rect x="22" y="12" width="8" height="3" fill="#37474F"/> <!-- Arm Extended -->
+    <rect x="30" y="11" width="4" height="4" fill="#D32F2F"/> <!-- THE STAPLER -->
+    
+    <!-- Legs (Braced) -->
+    <rect x="10" y="22" width="3" height="10" fill="#263238" transform="rotate(-10 11 32)"/>
+    <rect x="20" y="22" width="3" height="10" fill="#263238" transform="rotate(20 21 32)"/>
   </g>
 
 </svg>
