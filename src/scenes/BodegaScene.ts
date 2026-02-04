@@ -82,26 +82,36 @@ export class BodegaScene extends Phaser.Scene {
         listY += itemHeight + gapY;
 
         // --- Footer (Pinned) ---
-        // We use a Container fixed to camera, OR just setScrollFactor(0) on elements.
-        const footerHeight = 60;
+        // Pinned to bottom. We use a larger background to cover safe area/overscroll.
+        const footerHeight = 80;
+        const footerY = height - footerHeight / 2;
 
-        // Background for footer to hide scrolled content behind it
-        this.add.rectangle(centerX, height - footerHeight / 2, width, footerHeight, 0x2d2d2d)
+        // Background for footer
+        this.add.rectangle(centerX, footerY, width, footerHeight, 0x2d2d2d)
             .setScrollFactor(0)
             .setDepth(10);
 
-        const nextBtn = this.add.rectangle(centerX, height - footerHeight / 2, isMobile ? width * 0.8 : 200, 40, 0x444444)
+        const isStart = (this.gameState.floor === 0);
+        const btnTextStr = isStart ? "START SHIFT >" : "NEXT FLOOR >";
+        const btnColor = isStart ? 0x228822 : 0x444444; // Green for start
+
+        const nextBtn = this.add.rectangle(centerX, footerY, isMobile ? width * 0.8 : 220, 50, btnColor)
             .setInteractive()
             .setScrollFactor(0)
-            .setDepth(11); // Above footer bg
+            .setDepth(11);
 
-        this.add.text(centerX, height - footerHeight / 2, "NEXT FLOOR >", { fontFamily: 'Inter', fontSize: '20px', color: '#ffffff' })
+        this.add.text(centerX, footerY, btnTextStr, {
+            fontFamily: 'Inter',
+            fontSize: '20px',
+            color: '#ffffff',
+            fontStyle: 'bold'
+        })
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setDepth(12);
 
-        nextBtn.on('pointerover', () => nextBtn.setFillStyle(0x666666));
-        nextBtn.on('pointerout', () => nextBtn.setFillStyle(0x444444));
+        nextBtn.on('pointerover', () => nextBtn.setFillStyle(isStart ? 0x33aa33 : 0x666666));
+        nextBtn.on('pointerout', () => nextBtn.setFillStyle(btnColor));
         nextBtn.on('pointerdown', () => this.goToNextFloor());
 
         // --- Scrolling Logic ---
