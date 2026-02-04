@@ -185,6 +185,14 @@ export class EnemyAI {
             const end = Math.max(y1, y2);
             for (let y = start + 1; y < end; y++) {
                 if (room.collision_map[y][x1] === 1) return false; // Wall hit
+
+                // Object Hit Check
+                const blockingObj = room.objects.find(o =>
+                    o.type !== 'pickup' &&
+                    x1 >= o.x && x1 < o.x + (o.width || 1) &&
+                    y >= o.y && y < o.y + (o.height || 1)
+                );
+                if (blockingObj) return false;
             }
         } else {
             // y is constant
@@ -192,6 +200,14 @@ export class EnemyAI {
             const end = Math.max(x1, x2);
             for (let x = start + 1; x < end; x++) {
                 if (room.collision_map[y1][x] === 1) return false; // Wall hit
+
+                // Object Hit Check
+                const blockingObj = room.objects.find(o =>
+                    o.type !== 'pickup' &&
+                    x >= o.x && x < o.x + (o.width || 1) &&
+                    y1 >= o.y && y1 < o.y + (o.height || 1)
+                );
+                if (blockingObj) return false;
             }
         }
         return true;
