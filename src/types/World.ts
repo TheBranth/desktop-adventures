@@ -64,6 +64,7 @@ export interface GameState {
     burnout: number; // 0-100
     inventory: InventoryItem[];
     credits: number; // Score/Currency
+    objectiveComplete?: boolean; // New Flag for Strongbox
     worldMap: { [key: string]: Room }; // Map room_id to Room data
     // Engine Room Specs
     tower_level: number;

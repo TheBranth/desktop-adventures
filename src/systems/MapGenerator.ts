@@ -105,6 +105,7 @@ export class MapGenerator {
             burnout: 0,
             inventory: [],
             credits: 0,
+            objectiveComplete: false,
             worldMap: rooms,
             tower_level: this.towerLevel,
             global_flags: {},
@@ -232,6 +233,9 @@ export class MapGenerator {
 
         // Barrier blocking the elevator
         room.objects.push({ x: 5, y: 6, id: 'barrier', type: 'barrier', sprite_key: 'barrier', text: 'Security Barrier' });
+
+        // Strongbox (Objectives) behind barrier
+        room.objects.push({ x: 7, y: 6, id: 'strongbox', type: 'strongbox', sprite_key: 'strongbox_empty', text: '[STRONGBOX] Deposit Objective Item.' });
 
         // Elevator
         room.objects.push({ x: 5, y: 4, id: 'elevator', type: 'elevator', sprite_key: 'elevator', text: '[ELEVATOR] Needs MacGuffin & Red Key.' });

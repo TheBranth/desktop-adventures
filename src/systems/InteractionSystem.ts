@@ -136,14 +136,14 @@ export class InteractionSystem {
         if (weaponType === 'stapler') {
             const dist = Math.abs(gameState.playerX - targetX) + Math.abs(gameState.playerY - targetY);
             if (dist <= 4) inRange = true;
-            damage = 4;
+            damage = 10; // Buffed
         }
         else if (weaponType === 'weapon') {
             // Newspaper: Melee (Adjacent including Diagonal) -> Chebyshev Distance 1
             const dx = Math.abs(gameState.playerX - targetX);
             const dy = Math.abs(gameState.playerY - targetY);
             if (dx <= 1 && dy <= 1) inRange = true;
-            damage = 5;
+            damage = 10; // Buffed
         }
 
         if (!inRange) {
@@ -194,12 +194,14 @@ export class InteractionSystem {
                     // Special Logic for specific items
                     if (obj.itemType === 'stapler') {
                         newItem.name = 'Red Stapler';
-                        newItem.uses = 10;
-                        newItem.maxUses = 10;
+                        newItem.uses = 3; // Nerfed Uses
+                        newItem.maxUses = 3;
                     } else if (obj.itemType === 'coffee') {
                         newItem.name = 'Coffee';
                     } else if (obj.itemType === 'weapon') {
                         newItem.name = 'Newspaper';
+                        newItem.uses = 1; // 1 Use only
+                        newItem.maxUses = 1;
                     } else if (obj.itemType === 'key_blue') {
                         newItem.name = 'Blue Keycard';
                     } else if (obj.itemType === 'key_red') {
@@ -248,21 +250,45 @@ export class InteractionSystem {
 
             case 'elevator':
                 // Check conditions
-                // Needs: Red Keycard AND (MacGuffin OR Specific Objective Item)
+                // Needs: Red Keycard AND Objective Complete (Strongbox Green)
                 const hasRedKey = gameState.inventory.some(i => i.type === 'key_red');
-                const hasMacguffin = gameState.inventory.some(i =>
+
+                if (hasRedKey && gameState.objectiveComplete) {
+                    log("Elevator Unlocked. Initiating Ascent...");
+                    if (onWin) onWin();
+                } else {
+                    if (!hasRedKey) log("Access Denied. Elevator requires Red Admin Key.");
+                    if (!gameState.objectiveComplete) log("Objective Incomplete: Deposit the Item in the Secure Box.");
+                }
+                return true;
+
+            case 'strongbox':
+                // Deposit Logic
+                if (gameState.objectiveComplete) {
+                    log("The Strongbox is active (Green). Item secured.");
+                    return true;
+                }
+
+                // Check for MacGuffin
+                const macguffinIndex = gameState.inventory.findIndex(i =>
                     i.type.toLowerCase().includes('macguffin') ||
                     i.type === 'Golden Stapler' ||
                     i.type === 'TPS Report' ||
                     i.type === 'The Objective'
                 );
 
-                if (hasRedKey && hasMacguffin) {
-                    log("Elevator Unlocked. Initiating Ascent...");
-                    if (onWin) onWin();
+                if (macguffinIndex > -1) {
+                    // Deposit!
+                    const item = gameState.inventory[macguffinIndex];
+                    log(`Deposited ${item.name}. Strongbox Activated.`);
+                    gameState.inventory.splice(macguffinIndex, 1);
+                    gameState.objectiveComplete = true;
+
+                    // Update Visuals
+                    obj.sprite_key = 'strongbox_full';
+                    EventManager.emit(GameEvents.INVENTORY_UPDATE, { inventory: gameState.inventory });
                 } else {
-                    if (!hasRedKey) log("Access Denied. Elevator requires Red Admin Key.");
-                    if (!hasMacguffin) log("Cannot leave without the Objective!");
+                    log("Strongbox is empty. Requires the MacGuffin.");
                 }
                 return true;
 

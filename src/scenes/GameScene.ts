@@ -647,11 +647,20 @@ export class GameScene extends Phaser.Scene {
                 );
 
                 if (output.success) {
-                    this.targetingItem = null;
-                    this.clearRangeOverlay();
-                    this.input.setDefaultCursor('default');
-                    EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Disengaged.");
-                    this.executePhase3_World();
+                    // Check if ammo remains
+                    const weapon = this.gameState.inventory.find(i => i.type === this.targetingItem);
+                    if (!weapon || (weapon.uses !== undefined && weapon.uses <= 0)) {
+                        this.targetingItem = null;
+                        this.input.setDefaultCursor('default');
+                        this.clearRangeOverlay(); // Use the method
+                        EventManager.emit(GameEvents.LOG_MESSAGE, "Targeting Disengaged.");
+                    } else {
+                        // Persist selection - Do nothing, keep cursor and overlay
+                    }
+                    this.executePhase3_World(); // Always advance turn after a successful attack
+                } else {
+                    // Invalid target or Miss? Keep selection or Clear?
+                    // User probably wants to try again if missed, so keep it.
                 }
             }
             return;
