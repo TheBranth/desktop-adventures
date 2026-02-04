@@ -1,0 +1,39 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes step {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-5deg) translateY(-2px); }
+    }
+    .shoe { transform-origin: 32px 50px; animation: step 0.8s infinite ease-in-out; }
+  </style>
+
+  <!-- Shadow -->
+  <ellipse cx="32" cy="54" rx="20" ry="4" fill="#000000" fill-opacity="0.3"/>
+
+  <g class="shoe">
+    <!-- Sole -->
+    <path d="M14 44C14 44 12 50 16 52H48C52 52 54 48 54 44L14 44Z" fill="#CFD8DC"/>
+    <path d="M14 44L16 52H48L54 44" stroke="#90A4AE" stroke-width="1"/>
+
+    <!-- Shoe Upper (Red High Top) -->
+    <path d="M16 44V34C16 30 18 20 24 16H36C40 16 42 24 44 30L52 38V44H16Z" fill="#F44336"/>
+
+    <!-- Toe Cap -->
+    <path d="M46 32C46 32 54 36 54 44H42" fill="#ECEFF1"/>
+
+    <!-- Laces Area -->
+    <path d="M26 44L24 18H36L38 44" fill="#FFCDD2"/>
+    
+    <!-- Laces (Crosses) -->
+    <path d="M26 24H34M26 30H36M26 36H36" stroke="#FFFFFF" stroke-width="2"/>
+
+    <!-- Logo Star (Pixel style) -->
+    <circle cx="20" cy="28" r="4" fill="white"/>
+    <path d="M20 26L21 28H23L21 29L22 31L20 30L18 31L19 29L17 28H19L20 26Z" fill="#F44336" transform="scale(0.8) translate(5, 7)"/>
+  </g>
+  
+  <!-- Speed Lines -->
+  <path d="M6 30H12" stroke="#B0BEC5" stroke-width="2" opacity="0.6"/>
+  <path d="M4 36H16" stroke="#B0BEC5" stroke-width="2" opacity="0.6"/>
+
+</svg>

@@ -1,28 +1,46 @@
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Item: Granola Bar -->
-  
-  <defs>
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
-    </filter>
-  </defs>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes shine {
+      0% { transform: translateX(-100%); opacity: 0; }
+      30% { transform: translateX(100%); opacity: 0.5; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+    .wrapper-shine { animation: shine 3s infinite ease-in-out; }
+  </style>
 
-  <g filter="url(#shadow)" transform="rotate(-30 16 16)">
-    <!-- Wrapper (Green foil) -->
-    <rect x="8" y="10" width="16" height="8" fill="#66BB6A" rx="1" />
-    <path d="M8 10 L8 18" stroke="#388E3C" stroke-width="1" />
-    <path d="M24 10 L24 18" stroke="#388E3C" stroke-width="1" />
-    
-    <!-- Exposed Bar (Oats texture) -->
-    <rect x="24" y="11" width="4" height="6" fill="#D7CCC8" />
-    <circle cx="25" cy="12" r="0.5" fill="#5D4037" /> <!-- Choc chips/Raisins -->
-    <circle cx="26" cy="15" r="0.5" fill="#5D4037" />
-    <circle cx="27" cy="13" r="0.5" fill="#5D4037" />
-    
-    <!-- Wrapper Shine -->
-    <path d="M10 11 L22 11" stroke="#A5D6A7" stroke-width="1" opacity="0.6" />
-    
-    <!-- Label -->
-    <rect x="12" y="13" width="8" height="2" fill="#FFF" />
+  <!-- Shadow -->
+  <rect x="8" y="44" width="48" height="6" rx="3" fill="#000000" fill-opacity="0.3"/>
+
+  <!-- Bar Body (Base) -->
+  <path d="M10 24H54C56.2 24 58 25.8 58 28V40C58 42.2 56.2 44 54 44H10C7.8 44 6 42.2 6 40V28C6 25.8 7.8 24 10 24Z" fill="#F57F17"/>
+  
+  <!-- Wrapper Texture (Folds) -->
+  <path d="M6 28L18 24V44L6 40V28Z" fill="#F9A825"/> <!-- Left End Fold -->
+  <path d="M58 28L46 24V44L58 40V28Z" fill="#F9A825"/> <!-- Right End Fold -->
+  
+  <!-- Center Label -->
+  <rect x="20" y="26" width="24" height="16" fill="#FFF9C4"/>
+  <rect x="22" y="30" width="20" height="2" fill="#F57F17"/>
+  <rect x="22" y="34" width="14" height="2" fill="#FBC02D"/>
+
+  <!-- Exposed Granola (Peek) -->
+  <!-- Just implying texture with dots -->
+  <circle cx="16" cy="34" r="1.5" fill="#5D4037" opacity="0.3"/>
+  <circle cx="12" cy="30" r="1.5" fill="#5D4037" opacity="0.3"/>
+
+  <!-- Shine Effect on Plastic -->
+  <g clip-path="url(#clip0)">
+      <rect x="6" y="24" width="52" height="20" fill="url(#grad1)" class="wrapper-shine" opacity="0.4"/>
   </g>
+
+  <defs>
+    <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="white" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="white" stop-opacity="1"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="clip0">
+        <path d="M10 24H54C56.2 24 58 25.8 58 28V40C58 42.2 56.2 44 54 44H10C7.8 44 6 42.2 6 40V28C6 25.8 7.8 24 10 24Z"/>
+    </clipPath>
+  </defs>
 </svg>

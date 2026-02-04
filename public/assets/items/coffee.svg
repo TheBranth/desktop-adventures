@@ -1,52 +1,42 @@
-<svg width="64" height="64" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-  <!-- Palette -->
-  <defs>
-    <style>
-      .bg { fill: none; }
-      .cup-light { fill: #e0e0e0; }
-      .cup-dark { fill: #9e9e9e; }
-      .coffee { fill: #3e2723; }
-      .sleeve { fill: #d4a017; } /* Gold/Premium */
-      .steam { fill: #ffffff; opacity: 0.6; }
-      .outline { fill: #1a1a1a; }
-    </style>
-  </defs>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes steamRise {
+      0% { transform: translateY(0) scale(1); opacity: 0.8; }
+      50% { transform: translateY(-4px) scale(1.1); opacity: 0.4; }
+      100% { transform: translateY(-8px) scale(1.2); opacity: 0; }
+    }
+    .steam-1 { animation: steamRise 2s infinite ease-out; transform-origin: center bottom; }
+    .steam-2 { animation: steamRise 2s infinite 0.6s ease-out; transform-origin: center bottom; }
+    .steam-3 { animation: steamRise 2s infinite 1.2s ease-out; transform-origin: center bottom; }
+  </style>
 
-  <!-- Steam (Pixelated) -->
-  <rect x="12" y="2" width="2" height="2" class="steam">
-    <animate attributeName="y" values="2;1;2" dur="1.5s" repeatCount="indefinite" />
-    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite" />
-  </rect>
-  <rect x="14" y="4" width="2" height="2" class="steam">
-     <animate attributeName="y" values="4;3;4" dur="1.5s" begin="0.2s" repeatCount="indefinite" />
-  </rect>
-  <rect x="18" y="3" width="2" height="2" class="steam">
-    <animate attributeName="y" values="3;2;3" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
-  </rect>
+  <!-- Shadow / Plate -->
+  <rect x="16" y="50" width="32" height="6" rx="3" fill="#000000" fill-opacity="0.3"/>
 
-  <!-- Cup Outline -->
-  <path d="M8 8 h16 v2 h2 v6 h-2 v8 h-2 v2 h-12 v-2 h-2 v-16 z" class="outline" />
+  <!-- Mug Body (Dark Brown/Ceramic) -->
+  <path d="M18 16H42C44.2091 16 46 17.7909 46 20V42C46 46.4183 42.4183 50 38 50H26C21.5817 50 18 46.4183 18 42V20C18 17.7909 19.7909 16 18 16Z" fill="#5D4037"/>
   
+  <!-- Mug Highlights (Pixel shading) -->
+  <rect x="18" y="16" width="2" height="26" fill="#8D6E63" fill-opacity="0.5"/>
+  <rect x="20" y="50" width="24" height="2" fill="#3E2723"/>
+
+  <!-- Rim -->
+  <rect x="16" y="14" width="32" height="4" rx="2" fill="#EFEBE9"/>
+  <rect x="18" y="16" width="28" height="2" fill="#D7CCC8"/>
+
+  <!-- Coffee Liquid -->
+  <rect x="20" y="18" width="24" height="4" fill="#3E2723"/>
+
   <!-- Handle -->
-  <path d="M24 10 h2 v6 h-2 z" class="cup-dark" /> 
-  <rect x="24" y="11" width="1" height="4" fill="#ffffff" opacity="0.2" />
+  <path d="M46 20H50C52.2091 20 54 21.7909 54 24V34C54 36.2091 52.2091 38 50 38H46" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Logo/Sleeve on Mug -->
+  <rect x="22" y="28" width="20" height="12" fill="#EFEBE9"/>
+  <rect x="28" y="32" width="8" height="4" fill="#6D4C41"/>
 
-  <!-- Cup Body Base -->
-  <rect x="9" y="9" width="14" height="15" class="cup-light" />
-  <rect x="11" y="24" width="10" height="2" class="cup-light" />
-  
-  <!-- Shading (Right side) -->
-  <rect x="21" y="9" width="2" height="15" class="cup-dark" />
-  
-  <!-- Coffee Liquid (Top) -->
-  <rect x="9" y="8" width="14" height="1" class="coffee" />
-
-  <!-- Sleeve (Gold) -->
-  <rect x="8" y="14" width="16" height="6" class="sleeve" />
-  <rect x="9" y="15" width="14" height="4" fill="#bcaaa4" opacity="0.2" /> <!-- Texture -->
-  
-  <!-- Logo (Mock Pixel) -->
-  <rect x="14" y="15" width="4" height="4" class="coffee" opacity="0.8" />
-  <rect x="15" y="16" width="2" height="2" class="cup-light" />
+  <!-- Steam -->
+  <path class="steam-1" d="M26 10C26 10 24 8 26 6C28 4 28 2 26 0" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round"/>
+  <path class="steam-2" d="M32 10C32 10 30 8 32 6C34 4 34 2 32 0" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round"/>
+  <path class="steam-3" d="M38 10C38 10 36 8 38 6C40 4 40 2 38 0" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="2" stroke-linecap="round"/>
 
 </svg>
