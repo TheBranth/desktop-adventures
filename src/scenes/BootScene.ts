@@ -18,7 +18,7 @@ export class BootScene extends Phaser.Scene {
 
         // Hero
         // Hero
-        this.load.svg('protagonist', 'assets/protagonist_sheet.svg', { width: 256, height: 64 }); // 4 frames x 64
+        this.load.svg('protagonist', 'assets/protagonist_sheet.svg', { width: 128, height: 32 }); // 4 frames x 32
 
 
         // Environment
@@ -68,14 +68,14 @@ export class BootScene extends Phaser.Scene {
         if (this.textures.exists('protagonist')) {
             const tex = this.textures.get('protagonist');
             // Frame 0: Idle
-            tex.add('idle', 0, 0, 0, 64, 64);
+            tex.add('idle', 0, 0, 0, 32, 32);
             // Frame 1: Walk L
-            tex.add('move_0', 0, 64, 0, 64, 64);
+            tex.add('move_0', 0, 32, 0, 32, 32);
             // Frame 2: Walk R
-            tex.add('move_1', 0, 128, 0, 64, 64);
+            tex.add('move_1', 0, 64, 0, 32, 32);
 
             // Frame 3: Attack
-            tex.add('attack_0', 0, 192, 0, 64, 64);
+            tex.add('attack_0', 0, 96, 0, 32, 32);
 
             console.log('Protagonist SVG frames added.');
         } else if (this.textures.exists('chars')) {

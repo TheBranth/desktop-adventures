@@ -354,18 +354,11 @@ export class GameScene extends Phaser.Scene {
                 (this.gameState.playerY * this.tileSize) + 32
             );
         } else {
-            // SVG / Fallback
-            // If it's the new 64x64 Protagonist, we need to center it larger.
-            // Tile Center: x*32 + 16
-            // Sprite Origin: 0.5, 0.5 (Center) -> x*32+16, y*32+16.
-            // But we want Feet at Bottom (y*32+32).
-            // So Origin 0.5, 1.0 -> x*32+16, y*32+32.
-
-            // Assume we set origin 0.5, 1 for the new sprite
-            this.player.setOrigin(0.5, 1);
+            // SVG / Fallback (Origin 0,0)
+            this.player.setOrigin(0, 0); // Reset origin
             this.player.setPosition(
-                (this.gameState.playerX * this.tileSize) + 16,
-                (this.gameState.playerY * this.tileSize) + 32
+                this.gameState.playerX * this.tileSize,
+                this.gameState.playerY * this.tileSize
             );
         }
 
