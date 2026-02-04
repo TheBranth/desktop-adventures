@@ -1,4 +1,5 @@
 import { EventManager, GameEvents } from '../systems/EventManager';
+import { RELEASE_NOTES } from '../data/ReleaseNotes';
 
 
 export class UIManager {
@@ -26,6 +27,8 @@ export class UIManager {
         // Mobile Header Elements
         this.mHp = document.getElementById('m-hp');
         this.mBurnout = document.getElementById('m-burnout');
+
+        this.setupModalListeners();
 
 
         // this.initMinimap(9,9); // Defer to GameScene init
@@ -224,6 +227,73 @@ export class UIManager {
 
         // 2. Trigger Flash Toast
         this.showToast(message);
+    }
+
+    private setupModalListeners() {
+        const modal = document.getElementById('modal-overlay');
+        const closeBtn = document.getElementById('modal-close');
+
+        // Close Logic
+        if (closeBtn) {
+            closeBtn.onclick = () => this.toggleModal(false);
+        }
+        if (modal) {
+            modal.onclick = (e) => {
+                if (e.target === modal) this.toggleModal(false);
+            };
+        }
+
+        // Desktop Trigger: Version Pill
+        const versionPill = document.querySelector('.version') as HTMLElement;
+        if (versionPill) {
+            versionPill.style.cursor = 'pointer';
+            versionPill.title = "View Release Notes";
+            versionPill.onclick = () => this.showReleaseNotes();
+        }
+
+        // Mobile Trigger: Settings Icon
+        const settingsBtn = document.getElementById('btn-settings');
+        if (settingsBtn) {
+            settingsBtn.onclick = () => this.showReleaseNotes();
+        }
+    }
+
+    private toggleModal(show: boolean) {
+        const modal = document.getElementById('modal-overlay');
+        if (!modal) return;
+
+        if (show) {
+            modal.style.display = 'flex';
+            // Force reflow for transition
+            setTimeout(() => modal.classList.add('open'), 10);
+        } else {
+            modal.classList.remove('open');
+            setTimeout(() => {
+                if (!modal.classList.contains('open')) modal.style.display = 'none';
+            }, 300);
+        }
+    }
+
+    public showReleaseNotes() {
+        const title = document.getElementById('modal-title');
+        const content = document.getElementById('modal-content');
+
+        if (title) title.innerText = "RELEASE NOTES";
+        if (content) {
+            content.innerHTML = RELEASE_NOTES.map(note => `
+                <div class="release-entry">
+                    <div class="release-header">
+                        <span class="release-version">${note.version}</span>
+                        <span class="release-date">${note.date}</span>
+                    </div>
+                    <ul class="release-changes">
+                        ${note.changes.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+        this.toggleModal(true);
     }
 
     private toastTimeout: any = null;
