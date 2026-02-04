@@ -139,6 +139,7 @@ export class BodegaScene extends Phaser.Scene {
                         id: `buy_${Date.now()}`,
                         type: type,
                         name: name,
+                        sprite_key: type, // Ensure UIManager finds the SVG
                         icon: '📦'
                     });
 

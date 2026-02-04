@@ -1,24 +1,52 @@
-<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <!-- Item: Coffee Cup -->
-  
+<svg width="64" height="64" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <!-- Palette -->
   <defs>
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
-    </filter>
+    <style>
+      .bg { fill: none; }
+      .cup-light { fill: #e0e0e0; }
+      .cup-dark { fill: #9e9e9e; }
+      .coffee { fill: #3e2723; }
+      .sleeve { fill: #d4a017; } /* Gold/Premium */
+      .steam { fill: #ffffff; opacity: 0.6; }
+      .outline { fill: #1a1a1a; }
+    </style>
   </defs>
 
-  <g filter="url(#shadow)">
-    <!-- Cup Body (White Styrofoam) -->
-    <path d="M8 8 L10 24 L22 24 L24 8 Z" fill="#FFF" stroke="#EEE" stroke-width="1" />
-    
-    <!-- Lid/Rim -->
-    <ellipse cx="16" cy="8" rx="8" ry="2" fill="#FFF" stroke="#EEE" stroke-width="1" />
-    
-    <!-- Coffee Liquid -->
-    <ellipse cx="16" cy="8" rx="7" ry="1.5" fill="#3E2723" />
-    
-    <!-- Steam -->
-    <path d="M14 6 Q14 2 12 4" stroke="#EEE" stroke-width="1" fill="none" opacity="0.6" />
-    <path d="M18 5 Q18 1 16 3" stroke="#EEE" stroke-width="1" fill="none" opacity="0.6" />
-  </g>
+  <!-- Steam (Pixelated) -->
+  <rect x="12" y="2" width="2" height="2" class="steam">
+    <animate attributeName="y" values="2;1;2" dur="1.5s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite" />
+  </rect>
+  <rect x="14" y="4" width="2" height="2" class="steam">
+     <animate attributeName="y" values="4;3;4" dur="1.5s" begin="0.2s" repeatCount="indefinite" />
+  </rect>
+  <rect x="18" y="3" width="2" height="2" class="steam">
+    <animate attributeName="y" values="3;2;3" dur="1.5s" begin="0.5s" repeatCount="indefinite" />
+  </rect>
+
+  <!-- Cup Outline -->
+  <path d="M8 8 h16 v2 h2 v6 h-2 v8 h-2 v2 h-12 v-2 h-2 v-16 z" class="outline" />
+  
+  <!-- Handle -->
+  <path d="M24 10 h2 v6 h-2 z" class="cup-dark" /> 
+  <rect x="24" y="11" width="1" height="4" fill="#ffffff" opacity="0.2" />
+
+  <!-- Cup Body Base -->
+  <rect x="9" y="9" width="14" height="15" class="cup-light" />
+  <rect x="11" y="24" width="10" height="2" class="cup-light" />
+  
+  <!-- Shading (Right side) -->
+  <rect x="21" y="9" width="2" height="15" class="cup-dark" />
+  
+  <!-- Coffee Liquid (Top) -->
+  <rect x="9" y="8" width="14" height="1" class="coffee" />
+
+  <!-- Sleeve (Gold) -->
+  <rect x="8" y="14" width="16" height="6" class="sleeve" />
+  <rect x="9" y="15" width="14" height="4" fill="#bcaaa4" opacity="0.2" /> <!-- Texture -->
+  
+  <!-- Logo (Mock Pixel) -->
+  <rect x="14" y="15" width="4" height="4" class="coffee" opacity="0.8" />
+  <rect x="15" y="16" width="2" height="2" class="cup-light" />
+
 </svg>
