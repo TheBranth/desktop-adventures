@@ -244,10 +244,23 @@ export class MapGenerator {
     private populateMacGuffinRoom(room: Room, name: string) {
         room.enemies.push(this.createEnemy('roomba', 4, 4));
 
-        // Locked Door guarding the prize (assuming entry is usually from a hallway)
-        // Hard to know exact entry without more context, but let's place it near the center or guarding the item.
-        // Let's place it at (5,4) directly in front of the item at (5,5)
-        room.objects.push({ x: 5, y: 4, id: 'door_secure', type: 'door_secure', sprite_key: 'door_secure', text: 'Secure Door' });
+        // Create a Vault Structure around 5,5
+        // Walls: (4,4), (6,4), (4,5), (6,5), (4,6), (5,6), (6,6)
+        // Door: (5,4)
+        // Item: (5,5)
+
+        const walls = [
+            { x: 4, y: 4 }, { x: 6, y: 4 },
+            { x: 4, y: 5 }, { x: 6, y: 5 },
+            { x: 4, y: 6 }, { x: 5, y: 6 }, { x: 6, y: 6 }
+        ];
+
+        walls.forEach(w => {
+            room.collision_map[w.y][w.x] = 1; // Set to Wall
+        });
+
+        // Locked Door guarding the prize
+        room.objects.push({ x: 5, y: 4, id: 'door_secure', type: 'door_secure', sprite_key: 'door_secure', text: 'Secure Vault Door' });
 
         // Check if name contains 'Stapler' etc for sprite?
         let sprite = 'pto_form'; // Default MacGuffin icon

@@ -35,15 +35,26 @@ export class GameScene extends Phaser.Scene {
         (window as any).gameScene = this;
     }
 
-    init(data: { floor?: number, existingState?: GameState }) {
+    init(data: { floor?: number, existingState?: GameState, newFloor?: boolean }) {
         // If coming from Bodega, we might have existing state
         if (data.existingState) {
             this.gameState = data.existingState;
-            // Ensure we generate the new floor content now?
-            // If gameState.floor was incremented in Bodega, we need to generate that floor.
-            // But we can't overwrite the WHOLE state (inventory, HP).
-            // We need a way to say "Generate Map but keep Player Stats".
-            // See create() logic below.
+
+            if (data.newFloor) {
+                // Generate Next Floor
+                const generator = new MapGenerator(5, 5, this.gameState.tower_level);
+                const newState = generator.generateWorld();
+
+                this.gameState.worldMap = newState.worldMap;
+                this.gameState.currentRoomId = newState.currentRoomId;
+                this.gameState.playerX = 2;
+                this.gameState.playerY = 2;
+                this.gameState.objectiveComplete = false;
+                this.gameState.visited_rooms = [newState.currentRoomId];
+
+                // Auto-Heal a bit
+                this.gameState.hp = Math.min(this.gameState.maxHp, this.gameState.hp + 20);
+            }
         }
     }
 
@@ -419,6 +430,57 @@ export class GameScene extends Phaser.Scene {
         this.processMovement(dx, dy, isSprint);
     }
 
+    private processMovement(dx: number, dy: number, isSprint: boolean) {
+        if (this.gameState.hp <= 0) return;
+
+        const targetX = this.gameState.playerX + dx;
+        const targetY = this.gameState.playerY + dy;
+
+        // Check Bump Interaction (Enemies / Objects)
+        const bumped = InteractionSystem.handleBump(this.gameState, targetX, targetY, (msg) => {
+            EventManager.emit(GameEvents.LOG_MESSAGE, msg);
+        }, (id) => this.flashEnemyDamage(id), () => {
+            // ON WIN (Elevator)
+            EventManager.emit(GameEvents.LOG_MESSAGE, "Objective Complete. Going Up...");
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+                this.scene.start('BodegaScene', { gameState: this.gameState });
+            });
+        });
+
+        if (bumped) {
+            // Interaction happened, turn passes
+            this.executePhase3_World();
+            return;
+        }
+
+        // Room Transition Check
+        const isDoorTile = (
+            (targetX === 0 && targetY === 5) ||
+            (targetX === 10 && targetY === 5) ||
+            (targetX === 5 && targetY === 0) ||
+            (targetX === 5 && targetY === 10)
+        );
+
+        if (isDoorTile || targetX < 0 || targetX >= this.ROOM_SIZE || targetY < 0 || targetY >= this.ROOM_SIZE) {
+            this.tryRoomTransition(dx, dy);
+            return;
+        }
+
+        // Wall/Window Check
+        const room = this.gameState.worldMap[this.gameState.currentRoomId];
+        // Ensure room exists (it should)
+        if (room && room.collision_map && room.collision_map[targetY] && room.collision_map[targetY][targetX] !== undefined) {
+            const cell = room.collision_map[targetY][targetX];
+            if (cell === 1 || cell === 2) {
+                EventManager.emit(GameEvents.LOG_MESSAGE, cell === 2 ? "A nice view of the void." : "Bonk! That's a wall.");
+                return;
+            }
+        }
+
+        this.executePhase2_Player(dx, dy, isSprint);
+    }
+
     // Phase 2: Player Execution
     private executePhase2_Player(dx: number, dy: number, isSprint: boolean) {
         this.gameState.playerX += dx;
@@ -446,27 +508,6 @@ export class GameScene extends Phaser.Scene {
         this.executePhase3_World();
     }
 
-    private executeCombat(enemy: any) {
-        // Player Attacking Enemy
-
-        // Animation
-        this.playerState = 'ATTACK';
-        this.stateTimer = 300;
-        this.player.setFrame('attack_0');
-
-        // Visual Shake
-        this.cameras.main.shake(100, 0.005);
-
-        const damage = 5; // Base weapon damage
-        enemy.hp -= damage;
-        EventManager.emit(GameEvents.LOG_MESSAGE, `You hit the ${enemy.type} for ${damage} dmg.`);
-        if (enemy.hp <= 0) {
-            const room = this.gameState.worldMap[this.gameState.currentRoomId];
-            InteractionSystem.handleDefeat(this.gameState, enemy, (msg) => EventManager.emit(GameEvents.LOG_MESSAGE, msg), room);
-        }
-        // Animation bump?
-        this.renderRoom();
-    }
 
 
 
@@ -693,80 +734,6 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    private processMovement(dx: number, dy: number, isSprint: boolean) {
-        if (this.turnLock || this.gameState.hp <= 0) return;
-
-        const targetX = this.gameState.playerX + dx;
-        const targetY = this.gameState.playerY + dy;
-
-        // 1. Check for "Door Tile" entry (Internal Transition)
-        // If stepping ONTO a door tile (edges), immediately trigger transition.
-        const isDoorTile = (
-            (targetX === 0 && targetY === 5) ||
-            (targetX === 10 && targetY === 5) ||
-            (targetX === 5 && targetY === 0) ||
-            (targetX === 5 && targetY === 10)
-        );
-
-        if (isDoorTile) {
-            // Traverse!
-            // We need to pass the direction we are GOING.
-            // If target is (0,5), we are going Left (-1, 0).
-            // But wait, tryRoomTransition expects direction to *leave* the current room.
-            // If we are AT (1,5) and move to (0,5), we are entering the door.
-            // The transition logic currently expects us to be OUT OF BOUNDS.
-            // Let's modify tryRoomTransition OR just call it here with the correct dir.
-            // Actually, if we move to (0,5), we are still in bounds.
-            // But we want to trigger the room switch.
-
-            // Let's execute the move visibly? Or just fade out?
-            // "Teleport on Edge Entry" -> Move player to door, then switch.
-            // We need to run the specific transition logic.
-
-            this.tryRoomTransition(dx, dy);
-            return;
-        }
-
-        // Transition Check (Out of Bounds - Fallback)
-        if (targetX < 0 || targetX >= this.ROOM_SIZE || targetY < 0 || targetY >= this.ROOM_SIZE) {
-            this.tryRoomTransition(dx, dy);
-            return;
-        }
-
-        const room = this.gameState.worldMap[this.gameState.currentRoomId];
-        // Wall/Window Check
-        const cell = room.collision_map[targetY][targetX];
-        if (cell === 1 || cell === 2) {
-            EventManager.emit(GameEvents.LOG_MESSAGE, cell === 2 ? "A nice view of the void." : "Bonk! That's a wall.");
-            return;
-        }
-
-        // Enemy Collision (Combat)
-        const enemy = room.enemies.find(e => e.x === targetX && e.y === targetY && e.hp > 0);
-        if (enemy) {
-            this.executeCombat(enemy);
-            this.executePhase3_World();
-            return;
-        }
-
-        // Object Bump (Interact or Move Block)
-        const blocked = InteractionSystem.handleBump(
-            this.gameState,
-            targetX,
-            targetY,
-            (msg) => EventManager.emit(GameEvents.LOG_MESSAGE, msg),
-            (id) => this.flashEnemyDamage(id),
-            () => this.handleWin()
-        );
-        if (blocked) {
-            this.renderRoom();
-            this.executePhase3_World();
-            return;
-        }
-
-        // If not blocked, move
-        this.executePhase2_Player(dx, dy, isSprint);
-    }
 
     private handleItemUse(_itemId: string, index: number) {
         if (this.turnLock || this.gameState.hp <= 0) return;
@@ -841,87 +808,4 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    private handleWin() {
-        const nextFloor = (this.gameState.floor || 1) + 1;
-
-        EventManager.emit(GameEvents.LOG_MESSAGE, `PROMOTION SECURED! Assessing Floor ${nextFloor}...`);
-
-        // Prevent movement
-        this.turnLock = true;
-
-        this.cameras.main.fade(2000, 255, 255, 255, false, (_camera: any, progress: number) => {
-            if (progress === 1) {
-                // Update State for Next Run
-                this.gameState.floor = nextFloor;
-
-                // Heal Player?
-                this.gameState.hp = this.gameState.maxHp;
-
-                // Keep Items? Yes.
-
-                // Clear map to force regeneration
-                // We're about to reload, so we need to save the "Transition State"
-                // Actually, simplest way: Save the core stats, but NOT the map.
-                // Or: Save everything, but set a flag 'generateNewMap' in registry?
-
-                // Better: Just save the stats we want to keep, and let GameScene logic handle "New Floor" generation.
-                // But SaveManager saves the WHOLE state.
-
-                // Logic:
-                // 1. Update gameState.floor
-                // 2. Clear worldMap (empty object) or flag it?
-                // 3. Save
-                // 4. StartScene -> Continue -> GameScene Checks Floor -> Generates New Map.
-
-                // Let's modify SaveManager or just hack it here.
-                // Resetting worldMap here is bold.
-                // But GameScene.create() checks `SaveManager.loadGame()`.
-                // If we save with the old map, it will load the old map.
-                // We need to signal "Generate New Map".
-
-                // Hack: Set worldMap to empty?
-                // The `loadGame` logic in `create` just restores state.
-                // We need a specific check: "Is Current Room Valid?"
-                // OR: Just clear the save and start fresh with carry-over stats?
-                // Let's go with: Modify `gameState` to have a 'clean' map state, Save, then Reload.
-
-                // Actually, `generateNewFloor` in `create` is only called if NO save exists (or new game).
-                // If we load a save, we use that map.
-                // So we MUST overwrite the map in the save file with a new one OR delete the map data.
-
-                // Let's force a new generation right now, THEN save?
-                // Yes. Generate Next Floor immediately.
-                this.generateNewFloor(nextFloor);
-
-                // Place player at Start (normally 5,5 or random edge)
-                // MapGenerator returns a fresh state. 
-                // We should merge it with our player stats (Inventory, HP).
-                // const freshState = this.gameState; // Unused variable removed.
-
-                // Restore carry-over stats
-                // freshState.inventory = ... (Wait, generateNewFloor overwrites this.gameState entirely)
-                // We need to preserve stats.
-
-                const keptInventory = this.gameState.inventory;
-                const keptCredits = this.gameState.credits;
-                const keptMaxHp = this.gameState.maxHp; // Maybe +Upgrades?
-                const keptHp = this.gameState.maxHp; // Full Heal
-
-                // Re-run generation to be safe/clean
-                this.generateNewFloor(nextFloor);
-
-                // Re-apply carry-overs
-                this.gameState.inventory = keptInventory;
-                this.gameState.credits = keptCredits;
-                this.gameState.maxHp = keptMaxHp;
-                this.gameState.hp = keptHp;
-
-                // Save this valid start-of-floor state
-                SaveManager.saveGame(this.gameState);
-
-                // Restart Scene to render it
-                this.scene.restart();
-            }
-        });
-    }
 }
