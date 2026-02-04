@@ -49,8 +49,10 @@ export class BootScene extends Phaser.Scene {
         // Items
         this.load.svg('coffee', 'assets/items/coffee.svg', { width: 32, height: 32 });
         this.load.svg('consumable', 'assets/items/coffee.svg', { width: 32, height: 32 }); // Alias
-        this.load.svg('key_blue', 'assets/items/keycard_blue.svg', { width: 32, height: 32 });
-        this.load.svg('key_red', 'assets/items/keycard_red.svg', { width: 32, height: 32 });
+        this.load.svg('keycard_blue', 'assets/items/keycard_blue.svg', { width: 32, height: 32 });
+        this.load.svg('key_blue', 'assets/items/keycard_blue.svg', { width: 32, height: 32 }); // Alias
+        this.load.svg('keycard_red', 'assets/items/keycard_red.svg', { width: 32, height: 32 });
+        this.load.svg('key_red', 'assets/items/keycard_red.svg', { width: 32, height: 32 }); // Alias
         this.load.svg('stapler', 'assets/items/red_stapler.svg', { width: 32, height: 32 });
         this.load.svg('newspaper', 'assets/items/newspaper.svg', { width: 32, height: 32 });
         this.load.svg('weapon', 'assets/items/newspaper.svg', { width: 32, height: 32 }); // Alias for older saves/spawns
