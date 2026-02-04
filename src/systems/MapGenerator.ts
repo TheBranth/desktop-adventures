@@ -218,12 +218,12 @@ export class MapGenerator {
 
     private populateKeyRoom(room: Room, keyType: ItemType) {
         room.enemies.push(this.createEnemy('manager', 5, 5));
-        room.objects.push({ x: 5, y: 8, id: 'key', type: 'pickup', sprite_key: 'key_blue', itemType: keyType }); // Barrier Key
+        room.objects.push({ x: 5, y: 8, id: 'key', type: 'pickup', sprite_key: 'keycard_blue', itemType: keyType }); // Barrier Key
     }
 
     private populateRedKeyRoom(room: Room) {
         room.enemies.push(this.createEnemy('printer', 5, 5));
-        room.objects.push({ x: 5, y: 5, id: 'key_red', type: 'pickup', sprite_key: 'key_red', itemType: 'key_red' }); // Elevator Key
+        room.objects.push({ x: 5, y: 5, id: 'key_red', type: 'pickup', sprite_key: 'keycard_red', itemType: 'key_red' }); // Elevator Key
     }
 
     private populateGoalRoom(room: Room) {
@@ -246,8 +246,8 @@ export class MapGenerator {
         room.objects.push({ x: 5, y: 4, id: 'door_secure', type: 'door_secure', sprite_key: 'door_secure', text: 'Secure Door' });
 
         // Check if name contains 'Stapler' etc for sprite?
-        let sprite = 'consumable';
-        if (name.includes('Stapler')) sprite = 'weapon'; // Reuse weapon icon
+        let sprite = 'pto_form'; // Default MacGuffin icon
+        if (name.includes('Stapler')) sprite = 'red_stapler';
 
         room.objects.push({ x: 5, y: 5, id: 'macguffin', type: 'pickup', sprite_key: sprite, itemType: name });
     }
