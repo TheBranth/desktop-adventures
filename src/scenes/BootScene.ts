@@ -52,7 +52,8 @@ export class BootScene extends Phaser.Scene {
         this.load.svg('key_blue', 'assets/items/keycard_blue.svg', { width: 32, height: 32 });
         this.load.svg('key_red', 'assets/items/keycard_red.svg', { width: 32, height: 32 });
         this.load.svg('stapler', 'assets/items/red_stapler.svg', { width: 32, height: 32 });
-        this.load.svg('weapon', 'assets/items/newspaper.svg', { width: 32, height: 32 }); // Newspaper as weapon
+        this.load.svg('newspaper', 'assets/items/newspaper.svg', { width: 32, height: 32 });
+        this.load.svg('weapon', 'assets/items/newspaper.svg', { width: 32, height: 32 }); // Alias for older saves/spawns
         this.load.svg('macguffin', 'assets/items/floppy.svg', { width: 32, height: 32 });
         this.load.svg('id_card', 'assets/items/pto_form.svg', { width: 32, height: 32 }); // PTO Form as ID? Close enough.
 
