@@ -1,10 +1,23 @@
 export interface ReleaseNote {
     version: string;
     date: string;
+    title?: string; // Added title field
     changes: string[];
 }
 
 export const RELEASE_NOTES: ReleaseNote[] = [
+    {
+        version: 'v0.3.0',
+        date: '2026-02-04',
+        title: 'The "Glow-Up" Update',
+        changes: [
+            '✨ **Visual Overhaul**: High-Def 32-bit textures for Walls, Floors, and Windows.',
+            '🏙️ **Dynamic Views**: Windows now feature 3 random skylines (City, Distant Moon, Void).',
+            '👨‍💼 **New Salaryman**: The protagonist is now a high-res, 64-bit, bald, rotund legend in jeans.',
+            '📰 **Combat Fix**: Newspapers can now attack diagonally!',
+            '📦 **Bug Fix**: Inventory icons for Keys and Quest Items now render correctly.'
+        ]
+    },
     {
         version: 'v0.2.1',
         date: '2026-02-04',
