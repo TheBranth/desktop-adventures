@@ -130,14 +130,23 @@ export class InteractionSystem {
         }
 
         // 2. Check Range
-        const dist = Math.abs(gameState.playerX - targetX) + Math.abs(gameState.playerY - targetY);
-        let maxRange = 1;
-        let damage = 2;
+        let inRange = false;
+        let damage = 2; // Default damage
 
-        if (weaponType === 'stapler') { maxRange = 4; damage = 4; }
-        else if (weaponType === 'weapon') { maxRange = 1; damage = 5; }
+        if (weaponType === 'stapler') {
+            const dist = Math.abs(gameState.playerX - targetX) + Math.abs(gameState.playerY - targetY);
+            if (dist <= 4) inRange = true;
+            damage = 4;
+        }
+        else if (weaponType === 'weapon') {
+            // Newspaper: Melee (Adjacent including Diagonal) -> Chebyshev Distance 1
+            const dx = Math.abs(gameState.playerX - targetX);
+            const dy = Math.abs(gameState.playerY - targetY);
+            if (dx <= 1 && dy <= 1) inRange = true;
+            damage = 5;
+        }
 
-        if (dist > maxRange) {
+        if (!inRange) {
             log("Target out of range!");
             return { success: false };
         }

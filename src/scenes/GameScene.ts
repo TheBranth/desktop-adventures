@@ -354,17 +354,24 @@ export class GameScene extends Phaser.Scene {
                 (this.gameState.playerY * this.tileSize) + 32
             );
         } else {
-            // SVG / Fallback (Origin 0,0)
+            // SVG / Fallback
+            // If it's the new 64x64 Protagonist, we need to center it larger.
+            // Tile Center: x*32 + 16
+            // Sprite Origin: 0.5, 0.5 (Center) -> x*32+16, y*32+16.
+            // But we want Feet at Bottom (y*32+32).
+            // So Origin 0.5, 1.0 -> x*32+16, y*32+32.
+
+            // Assume we set origin 0.5, 1 for the new sprite
+            this.player.setOrigin(0.5, 1);
             this.player.setPosition(
-                this.gameState.playerX * this.tileSize,
-                this.gameState.playerY * this.tileSize
+                (this.gameState.playerX * this.tileSize) + 16,
+                (this.gameState.playerY * this.tileSize) + 32
             );
         }
 
         // Ensure Player is always on top
         this.player.setDepth(100);
-        this.player.setVisible(true); // Redundant but safe
-        console.log(`Debug Player: [${this.gameState.playerX},${this.gameState.playerY}] -> (${this.player.x},${this.player.y})`);
+        this.player.setVisible(true);
     }
 
     update(time: number, delta: number) {
@@ -583,11 +590,25 @@ export class GameScene extends Phaser.Scene {
         const px = this.gameState.playerX;
         const py = this.gameState.playerY;
 
-        // Simple Manhattan Range visualization
+        // Determine Range Type based on item
+        const isNewspaper = this.targetingItem === 'weapon';
+
         for (let y = 0; y < this.ROOM_SIZE; y++) {
             for (let x = 0; x < this.ROOM_SIZE; x++) {
-                const dist = Math.abs(x - px) + Math.abs(y - py);
-                if (dist > 0 && dist <= range) {
+                let inRange = false;
+
+                if (isNewspaper) {
+                    // Chebyshev <= 1 (Adjacent + Diagonal)
+                    const dx = Math.abs(x - px);
+                    const dy = Math.abs(y - py);
+                    if (dx <= 1 && dy <= 1 && (dx + dy > 0)) inRange = true;
+                } else {
+                    // Manhattan (Stapler)
+                    const dist = Math.abs(x - px) + Math.abs(y - py);
+                    if (dist > 0 && dist <= range) inRange = true;
+                }
+
+                if (inRange) {
                     const rect = this.add.rectangle(
                         x * this.tileSize,
                         y * this.tileSize,
