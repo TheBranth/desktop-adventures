@@ -110,7 +110,9 @@ export class MapGenerator {
             tower_level: this.towerLevel,
             global_flags: {},
             visited_rooms: [`${startNode.x}_${startNode.y}`],
-            floor: 1 // Default start floor
+            floor: 1, // Default start floor
+            stocks: 0,
+            quests: []
         };
     }
 

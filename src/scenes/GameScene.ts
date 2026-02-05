@@ -8,6 +8,7 @@ import { EventManager, GameEvents } from '../systems/EventManager';
 import { AudioManager } from '../systems/AudioManager';
 import { DamageText } from '../ui/DamageText';
 import { SaveManager } from '../systems/SaveManager';
+import { QuestManager } from '../systems/QuestManager';
 
 export class GameScene extends Phaser.Scene {
     private gameState!: GameState;
@@ -66,6 +67,9 @@ export class GameScene extends Phaser.Scene {
         // Initialize UI (Singleton)
         this.uiManager = UIManager.getInstance();
         this.uiManager.onItemClick = this.handleItemUse.bind(this);
+
+        // Initialize Quest Manager
+        QuestManager.getInstance().init(this.gameState);
 
         const macguffin = this.registry.get('macguffin') || 'Golden Stapler';
         EventManager.emit(GameEvents.LOG_MESSAGE, `Game Started/Resumed. Objective: Find the ${macguffin}.`);

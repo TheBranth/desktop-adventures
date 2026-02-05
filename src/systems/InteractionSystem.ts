@@ -56,6 +56,9 @@ export class InteractionSystem {
         gameState.credits = (gameState.credits || 0) + coins;
         log(`Gained ¥${coins} credits. (Total: ¥${gameState.credits})`);
 
+        // Emit Defeat Event for Quests
+        EventManager.emit(GameEvents.ENEMY_DEFEATED, { type: enemy.type });
+
         // Emit Stats Update
         EventManager.emit(GameEvents.STATS_CHANGE, {
             hp: gameState.hp,

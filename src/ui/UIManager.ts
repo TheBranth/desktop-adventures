@@ -105,13 +105,18 @@ export class UIManager {
         if (burnoutText) burnoutText.innerText = `${burnout}%`;
 
         if (this.creditsVal) {
-            this.creditsVal.textContent = `¥${credits}`;
+            this.creditsVal.textContent = `¥${credits}`; //  Stocks logic handled separately or appended?
         }
 
         // Mobile Updates
         if (this.mHp) this.mHp.style.width = `${(hp / maxHp) * 100}%`;
         if (this.mBurnout) this.mBurnout.style.width = `${Math.min(100, burnout)}%`;
-        // if (this.mCredits) this.mCredits.innerText = `${credits}`; // Removed from HTML for now
+    }
+
+    public updateStocks(stocks: number) {
+        // Maybe add a stocks indicator in the header?
+        // For now, it shows in the Quest Log.
+        console.log('Stocks:', stocks);
     }
 
     public updateMinimap(visited: string[], currentRoomId: string) {
@@ -256,6 +261,16 @@ export class UIManager {
         if (settingsBtn) {
             settingsBtn.onclick = () => this.showReleaseNotes();
         }
+
+        // Quest Button (Add this element to index.html later or reuse existing)
+        const questBtn = document.getElementById('btn-quests');
+        if (questBtn) {
+            questBtn.onclick = () => {
+                // accessing gameScene global to get state... hacky but works for now
+                const state = (window as any).gameScene.gameState;
+                this.showQuestLog(state.quests || [], state.stocks || 0);
+            };
+        }
     }
 
     private toggleModal(show: boolean) {
@@ -323,5 +338,35 @@ export class UIManager {
                 if (!toast.classList.contains('show')) toast.style.display = 'none';
             }, 300);
         }, 3000); // 3 seconds visible
+    }
+    public showQuestLog(quests: any[], stocks: number) {
+        const title = document.getElementById('modal-title');
+        const content = document.getElementById('modal-content');
+
+        if (title) title.innerText = `QUEST LOG (Stocks: ${stocks} 📈)`;
+        if (content) {
+            if (quests.length === 0) {
+                content.innerHTML = '<p>No active quests. (Wait for daily reset)</p>';
+            } else {
+                content.innerHTML = quests.map(q => {
+                    const progress = Math.min(100, (q.currentValue / q.targetValue) * 100);
+                    const statusClass = q.isCompleted ? 'completed' : '';
+                    return `
+                    <div class="quest-entry ${statusClass}">
+                        <div class="quest-header">
+                            <span class="quest-type ${q.type}">${q.type.toUpperCase()}</span>
+                            <span class="quest-reward">+${q.reward} 📈</span>
+                        </div>
+                        <div class="quest-desc">${q.description}</div>
+                        <div class="quest-progress-bar">
+                             <div class="fill" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="quest-val">${q.currentValue} / ${q.targetValue}</div>
+                    </div>
+                `;
+                }).join('');
+            }
+        }
+        this.toggleModal(true);
     }
 }

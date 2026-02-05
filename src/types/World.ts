@@ -71,4 +71,23 @@ export interface GameState {
     global_flags: { [key: string]: boolean };
     visited_rooms: string[];
     floor: number;
+    // Quest System
+    stocks: number;
+    quests: Quest[];
+}
+
+export type QuestType = 'daily' | 'weekly';
+export type QuestObjective = 'kill_enemy' | 'consume_item' | 'reach_stat';
+
+export interface Quest {
+    id: string;
+    type: QuestType;
+    description: string;
+    objectiveType: QuestObjective;
+    targetId?: string; // e.g., 'intern', 'coffee', 'burnout'
+    targetValue: number;
+    currentValue: number;
+    reward: number; // Stocks
+    isCompleted: boolean;
+    dateGenerated: number; // Timestamp
 }
