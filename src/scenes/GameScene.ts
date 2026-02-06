@@ -158,7 +158,38 @@ export class GameScene extends Phaser.Scene {
         }
 
         // Mouse Input
-        this.input.on('pointerdown', this.handlePointerDown, this);
+        this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+            if (this.turnLock || this.gameState.hp <= 0) return;
+
+            // Get Player Center relative to world
+            const pX = this.player.x + (this.tileSize / 2);
+            const pY = this.player.y + (this.tileSize / 2);
+
+            // Pointer World Coords
+            const tX = pointer.worldX;
+            const tY = pointer.worldY;
+
+            const dist = Phaser.Math.Distance.Between(pX, pY, tX, tY);
+
+            // If tap is very close to player (e.g. on the player within 0.8 tile), Wait/Interact
+            if (dist < this.tileSize * 0.8) {
+                this.executePhase3_World(); // Wait
+                return;
+            }
+
+            // Directional Logic
+            const dx = tX - pX;
+            const dy = tY - pY;
+
+            // Determine primary axis
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Horizontal
+                this.processMovement(Math.sign(dx), 0, false);
+            } else {
+                // Vertical
+                this.processMovement(0, Math.sign(dy), false);
+            }
+        });
 
         document.body.classList.add('game-active');
         document.querySelectorAll<HTMLElement>('.mobile-hud').forEach(el => el.style.display = ''); // Reset inline style
