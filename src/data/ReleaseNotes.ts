@@ -45,13 +45,13 @@ export const RELEASE_NOTES: ReleaseNote[] = [
             'Combat and Inventory Systems'
         ]
     }
-    },
+
 {
-    version: 'v0.3.1',
+        version: 'v0.3.1',
         date: '2026-02-07',
-            changes: [
-                '📱 **Mobile**: Tap-to-move now supports clicking *anywhere* to move in that direction.',
-                '🚪 **Fix**: Locked Doors now explicitly spawn in doorways (between walls), not open space.'
-            ]
-}
+        changes: [
+            '📱 **Mobile**: Tap-to-move now supports clicking *anywhere* to move in that direction.',
+            '🚪 **Fix**: Locked Doors now explicitly spawn in doorways (between walls), not open space.'
+        ]
+    }
 ];
