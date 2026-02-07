@@ -44,9 +44,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
             'Basic Dungeon Generation',
             'Combat and Inventory Systems'
         ]
-    }
-
-{
+    },
+    {
         version: 'v0.3.1',
         date: '2026-02-07',
         changes: [
