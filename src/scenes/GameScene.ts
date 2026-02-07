@@ -148,14 +148,17 @@ export class GameScene extends Phaser.Scene {
                 left: Phaser.Input.Keyboard.KeyCodes.LEFT,
                 right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
                 w: Phaser.Input.Keyboard.KeyCodes.W,
-                s: Phaser.Input.Keyboard.KeyCodes.S,
                 a: Phaser.Input.Keyboard.KeyCodes.A,
+                s: Phaser.Input.Keyboard.KeyCodes.S,
                 d: Phaser.Input.Keyboard.KeyCodes.D,
                 space: Phaser.Input.Keyboard.KeyCodes.SPACE
             });
 
             this.input.keyboard.on('keydown', this.handleInput, this);
         }
+
+        // Mouse Input (Targeting)
+        this.input.on('pointerdown', this.handlePointerDown, this);
 
         // Mouse Input
         this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
@@ -743,29 +746,34 @@ export class GameScene extends Phaser.Scene {
         }
 
         // Tap-to-Move Logic
-        // For now, implementing "Tap Adjacent" (D-Pad style)
-        // Check relative position
         const dx = x - this.gameState.playerX;
         const dy = y - this.gameState.playerY;
 
-        // Only allow orthogonal movement (distance 1)
-        if (Math.abs(dx) + Math.abs(dy) === 1) {
-            // It's an adjacent tile! Mimic key input behavior
-            // We can reuse `handleInput` conceptually, but we need to pass dx/dy directly.
-            // Let's create a helper `processMovement(dx, dy)`.
+        if (dx === 0 && dy === 0) {
+            // Wait / Skip Turn
+            this.executePhase3_World();
+            return;
+        }
 
-            this.processMovement(dx, dy, pointer.event.shiftKey);
-            // shiftKey works if they hold shift and click, nice for desktop testing
+        // Determine primary direction if not adjacent
+        let moveX = 0;
+        let moveY = 0;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            // Horizontal preference
+            moveX = dx > 0 ? 1 : -1;
         } else {
-            // Tap on self? Wait?
-            if (dx === 0 && dy === 0) {
-                // Wait / Skip Turn
-                this.executePhase3_World();
-            } else {
-                // Pathfinding / Teleport?
-                // For Phase 9, let's stick to Adjacent only to keep it tactical.
-                EventManager.emit(GameEvents.LOG_MESSAGE, "Too far! Move closer.");
-            }
+            // Vertical preference
+            moveY = dy > 0 ? 1 : -1;
+        }
+
+        // Check if adjacent (Orthogonal)
+        // If adjacent, use exact dx/dy (which are -1, 0, or 1)
+        if (Math.abs(dx) + Math.abs(dy) === 1) {
+            this.processMovement(dx, dy, pointer.event.shiftKey);
+        } else {
+            // Distant tap -> Move in that direction
+            this.processMovement(moveX, moveY, pointer.event.shiftKey);
         }
     }
 

@@ -462,6 +462,37 @@ export class MapGenerator {
                 }
             }
 
+            // 5. Secure Doors
+            if (this.rng() < 0.15) {
+                for (let t = 0; t < 20; t++) {
+                    const rx = Math.floor(this.rng() * 9) + 1;
+                    const ry = Math.floor(this.rng() * 9) + 1;
+
+                    // Check neighbors for walls (Valid Doorframe)
+                    const left = room.collision_map[ry][rx - 1] === 1;
+                    const right = room.collision_map[ry][rx + 1] === 1;
+                    const top = room.collision_map[ry - 1][rx] === 1;
+                    const bottom = room.collision_map[ry + 1][rx] === 1;
+
+                    // Horizontal Doorframe: Walls Left & Right
+                    const horiz = left && right;
+                    // Vertical Doorframe: Walls Top & Bottom
+                    const vert = top && bottom;
+
+                    if ((horiz || vert) && !this.isBlockedByMap(rx, ry, 1, 1, room.collision_map)) {
+                        // Check interactions/objects overlap
+                        let overlaps = false;
+                        for (const obj of room.objects) {
+                            if (obj.x === rx && obj.y === ry) { overlaps = true; break; }
+                        }
+                        if (!overlaps) {
+                            room.objects.push({ x: rx, y: ry, id: `door_${room.room_id}`, type: 'door_secure', sprite_key: 'door_secure' });
+                            break;
+                        }
+                    }
+                }
+            }
+
             // 4. Validate
             if (this.isLayoutValid(room, room.objects)) {
                 validLayout = true;
